@@ -106,3 +106,5 @@ function TripsPage() {
     </main>
   );
 }
+
+export default TripsPage;
