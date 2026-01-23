@@ -83,6 +83,7 @@ export async function createReservation(
   const chat = await prisma.chat.create({
     data: {
       reservationId: reservation.id,
+      tripId: trip.id,
       driverId: trip.driverId,
       passengerId,
       telegramLink: chatLink,

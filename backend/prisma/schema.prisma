@@ -91,6 +91,7 @@ model Trip {
   driver                User          @relation(fields: [driverId], references: [id], onDelete: Cascade)
   reservations          Reservation[]
   seatAvailability      SeatAvailability?
+  chats                 Chat[]
 
   @@index([driverId])
   @@index([routeFrom, routeTo])
@@ -139,6 +140,7 @@ model SeatAvailability {
 model Chat {
   id            String     @id @default(uuid())
   reservationId String     @unique
+  tripId        String
   driverId      String
   passengerId   String
   status        ChatStatus @default(ACTIVE)
@@ -148,10 +150,12 @@ model Chat {
 
   // Relations
   reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  trip          Trip        @relation(fields: [tripId], references: [id], onDelete: Cascade)
   driver        User       @relation("DriverChats", fields: [driverId], references: [id], onDelete: Cascade)
   passenger     User       @relation("PassengerChats", fields: [passengerId], references: [id], onDelete: Cascade)
 
   @@index([reservationId])
+  @@index([tripId])
   @@index([driverId, passengerId])
   @@index([status])
 }
