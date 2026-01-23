@@ -1,7 +1,22 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onAnimationStart' | 'onAnimationEnd' | 'onAnimationIteration'> {
+// Exclude all props that conflict between React button and Framer Motion
+type ExcludedProps = 
+  | 'onAnimationStart' 
+  | 'onAnimationEnd' 
+  | 'onAnimationIteration'
+  | 'onDragStart'
+  | 'onDrag'
+  | 'onDragEnd'
+  | 'onPointerDown'
+  | 'onPointerUp'
+  | 'onPointerMove'
+  | 'onPointerCancel'
+  | 'onPointerEnter'
+  | 'onPointerLeave';
+
+interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, ExcludedProps> {
   variant?: 'primary' | 'secondary' | 'danger' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
