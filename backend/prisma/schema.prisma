@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  
 }
 
 datasource db {
@@ -90,7 +91,6 @@ model Trip {
   driver                User          @relation(fields: [driverId], references: [id], onDelete: Cascade)
   reservations          Reservation[]
   seatAvailability      SeatAvailability?
-  chats                 Chat[]
 
   @@index([driverId])
   @@index([routeFrom, routeTo])
