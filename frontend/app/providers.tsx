@@ -5,20 +5,38 @@ import { useState, useEffect, useMemo } from 'react';
 import { initTelegramWebApp, getTelegramUser } from '@/lib/telegram';
 import { useWebSocket } from '@/hooks/useWebSocket';
 
-export function Providers({ children }: { children: React.ReactNode }) {
-  // Create QueryClient inside component to avoid issues with static generation
-  const queryClient = useMemo(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            refetchOnWindowFocus: false,
-            retry: 1,
-          },
+// Create QueryClient outside component to ensure it's always available
+let browserQueryClient: QueryClient | undefined = undefined;
+
+function getQueryClient() {
+  if (typeof window === 'undefined') {
+    // Server: always make a new query client
+    return new QueryClient({
+      defaultOptions: {
+        queries: {
+          refetchOnWindowFocus: false,
+          retry: 1,
         },
-      }),
-    []
-  );
+      },
+    });
+  }
+  // Browser: use singleton pattern to keep the same query client
+  if (!browserQueryClient) {
+    browserQueryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          refetchOnWindowFocus: false,
+          retry: 1,
+        },
+      },
+    });
+  }
+  return browserQueryClient;
+}
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  // Use singleton QueryClient to ensure it's always available
+  const queryClient = useMemo(() => getQueryClient(), []);
 
   const [userId, setUserId] = useState<string | null>(null);
 
