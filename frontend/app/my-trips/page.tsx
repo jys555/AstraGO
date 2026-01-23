@@ -9,6 +9,9 @@ import { useRouter } from 'next/navigation';
 import { openTelegramChat } from '@/lib/telegram';
 import { useReservation } from '@/hooks/useReservation';
 
+// Disable SSR for pages that use React Query
+export const dynamic = 'force-dynamic';
+
 export default function MyTripsPage() {
   const router = useRouter();
   const { data: userData } = useQuery({

@@ -3,6 +3,8 @@ const path = require('path');
 
 const nextConfig = {
   reactStrictMode: true,
+  // Disable static optimization for all pages
+  output: 'standalone',
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
   },
