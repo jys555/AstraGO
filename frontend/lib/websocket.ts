@@ -1,6 +1,14 @@
 import { io, Socket } from 'socket.io-client';
 
-const WS_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+// Get WebSocket URL from environment variable
+// Socket.io automatically handles http -> ws and https -> wss conversion
+const getWSURL = () => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  // Ensure we use http/https, socket.io will handle ws/wss conversion
+  return apiUrl.replace(/^ws:/, 'http:').replace(/^wss:/, 'https:');
+};
+
+const WS_URL = getWSURL();
 
 class WebSocketClient {
   private socket: Socket | null = null;

@@ -26,11 +26,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Google Maps API - Replace with your API key */}
-        <Script
-          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}&libraries=places,geometry`}
-          strategy="lazyOnload"
-        />
+        {/* Google Maps API - Only load if API key is provided */}
+        {process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY && (
+          <Script
+            src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places,geometry&loading=async`}
+            strategy="lazyOnload"
+          />
+        )}
       </head>
       <body className={inter.className}>
         <Providers>
