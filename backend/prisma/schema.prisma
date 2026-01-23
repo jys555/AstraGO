@@ -1,0 +1,176 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  PASSENGER
+  DRIVER
+  BOTH
+}
+
+enum TripStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  EXPIRED
+  CANCELLED
+}
+
+enum ChatStatus {
+  ACTIVE
+  ARCHIVED
+  READ_ONLY
+}
+
+enum PickupType {
+  STATION_ONLY
+  HOME_PICKUP
+}
+
+enum DeliveryType {
+  PASSENGER_ONLY
+  CARGO_ACCEPTED
+}
+
+model User {
+  id            String    @id @default(uuid())
+  telegramId   String    @unique
+  username     String?
+  firstName    String?
+  lastName     String?
+  phone        String?
+  role         UserRole  @default(PASSENGER)
+  onlineStatus Boolean   @default(false)
+  lastSeen     DateTime  @default(now())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relations
+  tripsAsDriver     Trip[]
+  reservations      Reservation[]
+  chatsAsPassenger  Chat[] @relation("PassengerChats")
+  chatsAsDriver     Chat[] @relation("DriverChats")
+  driverMetrics     DriverMetrics?
+
+  @@index([telegramId])
+  @@index([onlineStatus])
+  @@index([role])
+}
+
+model Trip {
+  id                    String        @id @default(uuid())
+  driverId              String
+  routeFrom             String
+  routeTo               String
+  departureWindowStart  DateTime
+  departureWindowEnd    DateTime
+  vehicleType           String
+  totalSeats            Int
+  availableSeats        Int
+  pickupType            PickupType    @default(STATION_ONLY)
+  deliveryType          DeliveryType  @default(PASSENGER_ONLY)
+  status                TripStatus    @default(ACTIVE)
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  // Relations
+  driver                User          @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  reservations          Reservation[]
+  seatAvailability      SeatAvailability?
+  chats                 Chat[]
+
+  @@index([driverId])
+  @@index([routeFrom, routeTo])
+  @@index([departureWindowStart, departureWindowEnd])
+  @@index([status])
+  @@index([availableSeats])
+}
+
+model Reservation {
+  id          String            @id @default(uuid())
+  tripId      String
+  passengerId String
+  seatCount   Int               @default(1)
+  reservedAt  DateTime          @default(now())
+  expiresAt   DateTime
+  status      ReservationStatus @default(PENDING)
+  confirmedAt DateTime?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  // Relations
+  trip        Trip              @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  passenger   User              @relation(fields: [passengerId], references: [id], onDelete: Cascade)
+  chat        Chat?
+
+  @@index([tripId])
+  @@index([passengerId])
+  @@index([status])
+  @@index([expiresAt])
+  @@index([passengerId, status])
+}
+
+model SeatAvailability {
+  id            String   @id @default(uuid())
+  tripId        String   @unique
+  reservedSeats Int      @default(0)
+  availableSeats Int
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  trip          Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@index([tripId])
+}
+
+model Chat {
+  id            String     @id @default(uuid())
+  reservationId String     @unique
+  driverId      String
+  passengerId   String
+  status        ChatStatus @default(ACTIVE)
+  telegramLink  String?
+  createdAt     DateTime   @default(now())
+  archivedAt    DateTime?
+
+  // Relations
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  driver        User       @relation("DriverChats", fields: [driverId], references: [id], onDelete: Cascade)
+  passenger     User       @relation("PassengerChats", fields: [passengerId], references: [id], onDelete: Cascade)
+
+  @@index([reservationId])
+  @@index([driverId, passengerId])
+  @@index([status])
+}
+
+model DriverMetrics {
+  id              String   @id @default(uuid())
+  driverId        String   @unique
+  avgResponseTime Float?   // in seconds
+  responseRate    Float    @default(0) // percentage (0-100)
+  totalTrips      Int      @default(0)
+  totalReservations Int    @default(0)
+  confirmedReservations Int @default(0)
+  rankingScore    Float    @default(0) // calculated score for sorting
+  lastUpdated     DateTime @updatedAt
+
+  // Relations
+  driver          User     @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@index([driverId])
+  @@index([rankingScore])
+  @@index([avgResponseTime])
+}
