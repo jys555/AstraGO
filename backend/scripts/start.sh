@@ -22,7 +22,7 @@ fi
 
 # Verify database connection and tables exist
 echo "🔍 Verifying database connection..."
-npx prisma db execute --stdin <<< "SELECT 1;" > /dev/null 2>&1 || {
+echo "SELECT 1;" | npx prisma db execute --stdin > /dev/null 2>&1 || {
   echo "❌ Database connection failed!"
   exit 1
 }
