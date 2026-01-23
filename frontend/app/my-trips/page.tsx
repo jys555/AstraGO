@@ -150,3 +150,5 @@ export default function MyTripsPage() {
     </main>
   );
 }
+
+export default MyTripsPage;

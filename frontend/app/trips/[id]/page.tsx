@@ -11,7 +11,10 @@ import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/Button';
 import { MapView } from '@/components/maps/MapView';
 
-export default function TripDetailPage() {
+// Disable SSR for pages that use React Query
+export const dynamic = 'force-dynamic';
+
+function TripDetailPage() {
   const params = useParams();
   const router = useRouter();
   const tripId = params.id as string;
@@ -244,3 +247,5 @@ export default function TripDetailPage() {
     </main>
   );
 }
+
+export default TripDetailPage;

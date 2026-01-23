@@ -9,7 +9,10 @@ import { ReservationPanel } from '@/components/trips/ReservationPanel';
 import { TripFilters } from '@/types';
 import { Button } from '@/components/ui/Button';
 
-export default function TripsPage() {
+// Disable SSR for pages that use React Query
+export const dynamic = 'force-dynamic';
+
+function TripsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [filters, setFilters] = useState<TripFilters>({

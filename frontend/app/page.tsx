@@ -4,7 +4,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { RouteSearch } from '@/components/search/RouteSearch';
 
-export default function HomePage() {
+// Disable SSR for pages that use React Query
+export const dynamic = 'force-dynamic';
+
+function HomePage() {
   const router = useRouter();
   const [searchParams, setSearchParams] = useState<{
     from: string;
@@ -65,3 +68,5 @@ export default function HomePage() {
     </main>
   );
 }
+
+export default HomePage;

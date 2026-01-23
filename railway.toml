@@ -2,8 +2,9 @@
 builder = "NIXPACKS"
 
 [deploy]
-startCommand = "cd backend && npm run start:with-migration"
+startCommand = "npm run start:with-migration"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
-# Railway will watch the entire repo, but we set rootDirectory in Railway dashboard to "backend"
+# Note: Set Root Directory to "backend" in Railway Dashboard
+# If Root Directory is not set, use: startCommand = "cd backend && npm run start:with-migration"

@@ -1,20 +1,25 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { initTelegramWebApp, getTelegramUser } from '@/lib/telegram';
 import { useWebSocket } from '@/hooks/useWebSocket';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
-  },
-});
-
 export function Providers({ children }: { children: React.ReactNode }) {
+  // Create QueryClient inside component to avoid issues with static generation
+  const queryClient = useMemo(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            refetchOnWindowFocus: false,
+            retry: 1,
+          },
+        },
+      }),
+    []
+  );
+
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
