@@ -27,6 +27,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Telegram WebApp SDK - Required for Mini App */}
+        <Script
+          src="https://telegram.org/js/telegram-web-app.js"
+          strategy="beforeInteractive"
+        />
         {/* Google Maps API - Only load if API key is provided */}
         {process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY && (
           <Script
