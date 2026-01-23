@@ -2,25 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
-import { apiClient } from '@/lib/api';
-import { StatusBadge } from '../ui/StatusBadge';
+import { UserMenu } from './UserMenu';
 
 export const Header: React.FC = () => {
-  const { data } = useQuery({
-    queryKey: ['user', 'me'],
-    queryFn: () => apiClient.getCurrentUser(),
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
-
-  const user = data?.user;
-  const roleLabels = {
-    PASSENGER: 'Passenger',
-    DRIVER: 'Driver',
-    BOTH: 'Driver & Passenger',
-  };
-
   return (
     <header className="bg-white shadow-sm border-b">
       <div className="container mx-auto px-4 py-4">
@@ -33,30 +17,15 @@ export const Header: React.FC = () => {
               href="/"
               className="text-gray-700 hover:text-primary-600 transition-colors"
             >
-              Search
+              Qidirish
             </Link>
             <Link
               href="/my-trips"
               className="text-gray-700 hover:text-primary-600 transition-colors"
             >
-              My Trips
+              Mening Safarlarim
             </Link>
-            {user && (
-              <Link
-                href="/profile"
-                className="flex items-center gap-2 text-gray-700 hover:text-primary-600 transition-colors"
-              >
-                <span className="text-sm">
-                  {user.firstName || user.username || 'Profile'}
-                </span>
-                {user.role && (
-                  <StatusBadge
-                    status={user.role === 'DRIVER' ? 'active' : user.role === 'BOTH' ? 'online' : 'inactive'}
-                    label={roleLabels[user.role]}
-                  />
-                )}
-              </Link>
-            )}
+            <UserMenu />
           </nav>
         </div>
       </div>

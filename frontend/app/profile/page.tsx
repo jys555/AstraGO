@@ -74,50 +74,50 @@ export default function ProfilePage() {
   }
 
   const roleLabels = {
-    PASSENGER: 'Passenger',
-    DRIVER: 'Driver',
-    BOTH: 'Driver & Passenger',
+    PASSENGER: 'Yo\'lovchi',
+    DRIVER: 'Haydovchi',
+    BOTH: 'Haydovchi & Yo\'lovchi',
   };
 
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-2xl mx-auto">
-          <h1 className="text-2xl font-bold mb-6">My Profile</h1>
+            <h1 className="text-2xl font-bold mb-6">Mening Profilim</h1>
           
           <Card>
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">Profile Information</h2>
+                <h2 className="text-xl font-semibold">Profil Ma'lumotlari</h2>
                 <StatusBadge status={user.onlineStatus ? 'online' : 'offline'} />
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Name</label>
+                  <label className="text-sm font-medium text-gray-600">Ism</label>
                   <p className="text-lg font-semibold text-gray-900">
                     {user.firstName && user.lastName
                       ? `${user.firstName} ${user.lastName}`
-                      : user.firstName || user.lastName || 'Not set'}
+                      : user.firstName || user.lastName || 'Ko\'rsatilmagan'}
                   </p>
                 </div>
 
                 <div>
                   <label className="text-sm font-medium text-gray-600">Username</label>
                   <p className="text-lg text-gray-900">
-                    {user.username ? `@${user.username}` : 'Not set'}
+                    {user.username ? `@${user.username}` : 'Ko\'rsatilmagan'}
                   </p>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Phone</label>
+                  <label className="text-sm font-medium text-gray-600">Telefon</label>
                   <p className="text-lg text-gray-900">
-                    {user.phone || 'Not set'}
+                    {user.phone || 'Ko\'rsatilmagan'}
                   </p>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Role</label>
+                  <label className="text-sm font-medium text-gray-600">Rol</label>
                   <div className="mt-1">
                     <StatusBadge 
                       status={user.role === 'DRIVER' ? 'active' : user.role === 'BOTH' ? 'online' : 'inactive'}
@@ -134,26 +134,26 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Last Seen</label>
+                  <label className="text-sm font-medium text-gray-600">Oxirgi faollik</label>
                   <p className="text-sm text-gray-500">
-                    {new Date(user.lastSeen).toLocaleString()}
+                    {new Date(user.lastSeen).toLocaleString('uz-UZ')}
                   </p>
                 </div>
               </div>
 
               {user.role === 'DRIVER' || user.role === 'BOTH' ? (
                 <div className="pt-4 border-t">
-                  <h3 className="text-lg font-semibold mb-4">Driver Metrics</h3>
+                  <h3 className="text-lg font-semibold mb-4">Haydovchi Ko'rsatkichlari</h3>
                   {user.driverMetrics ? (
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium text-gray-600">Response Rate</label>
+                        <label className="text-sm font-medium text-gray-600">Javob Berish Darajasi</label>
                         <p className="text-lg font-semibold text-gray-900">
                           {user.driverMetrics.responseRate.toFixed(1)}%
                         </p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-600">Avg Response Time</label>
+                        <label className="text-sm font-medium text-gray-600">O'rtacha Javob Vaqti</label>
                         <p className="text-lg font-semibold text-gray-900">
                           {user.driverMetrics.avgResponseTime
                             ? `${Math.round(user.driverMetrics.avgResponseTime)}s`
@@ -161,20 +161,20 @@ export default function ProfilePage() {
                         </p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-600">Total Trips</label>
+                        <label className="text-sm font-medium text-gray-600">Jami Safarlar</label>
                         <p className="text-lg font-semibold text-gray-900">
                           {user.driverMetrics.totalTrips}
                         </p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-600">Ranking Score</label>
+                        <label className="text-sm font-medium text-gray-600">Reyting</label>
                         <p className="text-lg font-semibold text-gray-900">
                           {user.driverMetrics.rankingScore.toFixed(1)}
                         </p>
                       </div>
                     </div>
                   ) : (
-                    <p className="text-gray-500 text-sm">No metrics available yet</p>
+                    <p className="text-gray-500 text-sm">Hozircha ko'rsatkichlar mavjud emas</p>
                   )}
                 </div>
               ) : null}
@@ -183,7 +183,7 @@ export default function ProfilePage() {
 
           <div className="mt-4">
             <Button onClick={() => router.push('/')} variant="outline" className="w-full">
-              Back to Home
+              Bosh Sahifaga Qaytish
             </Button>
           </div>
         </div>

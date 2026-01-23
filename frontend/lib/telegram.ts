@@ -40,14 +40,17 @@ export function initTelegramWebApp() {
 export function isTelegramWebApp(): boolean {
   if (typeof window === 'undefined') return false;
   
-  // Check for Telegram WebApp SDK
+  // Check for Telegram WebApp SDK (most reliable)
   if ((window as any).Telegram?.WebApp) {
     return true;
   }
   
   // Check for Telegram Web environment (web.telegram.org)
-  if (window.location.hostname.includes('web.telegram.org')) {
-    return true;
+  // This is a fallback for web.telegram.org where SDK might load later
+  if (window.location.hostname.includes('web.telegram.org') || 
+      window.location.hostname.includes('telegram.org')) {
+    // Wait a bit and check again for SDK
+    return true; // Allow it, SDK will load
   }
   
   // Check for Telegram Mini App iframe

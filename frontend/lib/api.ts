@@ -15,7 +15,9 @@ class ApiClient {
   ): Promise<T> {
     // Remove leading slash from endpoint to avoid double slashes
     const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
-    const url = `${this.baseUrl}/${cleanEndpoint}`;
+    // Ensure baseUrl doesn't end with slash
+    const cleanBaseUrl = this.baseUrl.endsWith('/') ? this.baseUrl.slice(0, -1) : this.baseUrl;
+    const url = `${cleanBaseUrl}/${cleanEndpoint}`;
     
     // Get Telegram initData - REQUIRED for authentication
     const initData = typeof window !== 'undefined' 
@@ -31,15 +33,16 @@ class ApiClient {
     if (initData) {
       headers['x-telegram-init-data'] = initData;
     } else {
-      // If not in Telegram, this is an error for production
+      // If not in Telegram, try to get from localStorage (for web.telegram.org where SDK loads later)
       // In development, we can allow bypass
       if (process.env.NODE_ENV === 'development') {
         const devUserId = localStorage.getItem('dev_user_id');
         if (devUserId) {
           headers['x-dev-user-id'] = devUserId;
         }
-      } else {
-        // In production, require Telegram
+      }
+      // Don't show warning in production if we're in web.telegram.org (SDK might load later)
+      if (!window.location.hostname.includes('telegram.org')) {
         console.warn('Not running in Telegram Mini App - authentication may fail');
       }
     }
