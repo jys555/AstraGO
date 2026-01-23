@@ -39,8 +39,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = useMemo(() => getQueryClient(), []);
 
   const [userId, setUserId] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
+    
     // Initialize Telegram WebApp
     const tg = initTelegramWebApp();
     
@@ -71,12 +74,16 @@ export function Providers({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Initialize WebSocket connection
-  useWebSocket(userId);
-
   return (
     <QueryClientProvider client={queryClient}>
+      {isClient && <WebSocketInitializer userId={userId} />}
       {children}
     </QueryClientProvider>
   );
+}
+
+// Separate component to initialize WebSocket after QueryClientProvider is mounted
+function WebSocketInitializer({ userId }: { userId: string | null }) {
+  useWebSocket(userId);
+  return null;
 }
