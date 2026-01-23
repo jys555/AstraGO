@@ -315,18 +315,28 @@ export async function checkDriverResponse(reservationId: string): Promise<boolea
  * Auto-expire old reservations (should be called periodically)
  */
 export async function expireOldReservations() {
-  const expired = await prisma.reservation.findMany({
-    where: {
-      status: 'PENDING',
-      expiresAt: {
-        lt: new Date(),
+  try {
+    const expired = await prisma.reservation.findMany({
+      where: {
+        status: 'PENDING',
+        expiresAt: {
+          lt: new Date(),
+        },
       },
-    },
-  });
+    });
 
-  for (const reservation of expired) {
-    await expireReservation(reservation.id);
+    for (const reservation of expired) {
+      await expireReservation(reservation.id);
+    }
+
+    return expired.length;
+  } catch (error: any) {
+    // Handle database errors gracefully (e.g., table doesn't exist yet)
+    if (error?.code === 'P2021' || error?.message?.includes('does not exist')) {
+      console.warn('Reservation table does not exist yet, skipping expiration check');
+      return 0;
+    }
+    // Re-throw other errors
+    throw error;
   }
-
-  return expired.length;
 }
