@@ -30,7 +30,7 @@ class ApiClient {
     }
 
     // For development, allow bypassing auth
-    if (process.env.NODE_ENV === 'development') {
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
       const devUserId = localStorage.getItem('dev_user_id');
       if (devUserId) {
         headers['x-dev-user-id'] = devUserId;
