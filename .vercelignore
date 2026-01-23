@@ -1,0 +1,6 @@
+backend/
+docs/
+*.md
+!README.md
+.gitignore
+.env*
