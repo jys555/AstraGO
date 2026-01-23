@@ -19,13 +19,24 @@ export function TelegramGuard({ children }: TelegramGuardProps) {
 
   useEffect(() => {
     const checkTelegram = () => {
-      const inTelegram = isTelegramWebApp();
-      setIsInTelegram(inTelegram);
+      // Wait a bit for Telegram WebApp SDK to load
+      const check = () => {
+        const inTelegram = isTelegramWebApp();
+        setIsInTelegram(inTelegram);
+        
+        // In development, show warning but allow
+        if (!inTelegram && process.env.NODE_ENV === 'development') {
+          setShowWarning(true);
+        }
+      };
+
+      // Check immediately
+      check();
+
+      // Also check after a short delay in case SDK loads late
+      const timeout = setTimeout(check, 100);
       
-      // In development, show warning but allow
-      if (!inTelegram && process.env.NODE_ENV === 'development') {
-        setShowWarning(true);
-      }
+      return () => clearTimeout(timeout);
     };
 
     checkTelegram();
@@ -43,7 +54,8 @@ export function TelegramGuard({ children }: TelegramGuardProps) {
   }
 
   // If not in Telegram and production, show error
-  if (!isInTelegram && process.env.NODE_ENV === 'production') {
+  // But also allow if we're still checking (isInTelegram === null)
+  if (!isInTelegram && process.env.NODE_ENV === 'production' && isInTelegram !== null) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <Card className="max-w-md w-full">
@@ -62,7 +74,21 @@ export function TelegramGuard({ children }: TelegramGuardProps) {
               </p>
               <ol className="text-sm text-gray-600 text-left list-decimal list-inside space-y-1">
                 <li>Open Telegram</li>
-                <li>Search for @AstraGO_bot</li>
+                <li>
+                  Search for{' '}
+                  <a
+                    href="https://t.me/astrago_uz_bot"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary-600 hover:text-primary-700 underline font-semibold"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.open('https://t.me/astrago_uz_bot', '_blank');
+                    }}
+                  >
+                    @astrago_uz_bot
+                  </a>
+                </li>
                 <li>Start the bot and open the Mini App</li>
               </ol>
             </div>

@@ -7,7 +7,7 @@
 1. Telegram'da `@BotFather` ni oching
 2. `/newbot` buyrug'ini yuboring
 3. Bot nomini kiriting: `AstraGo`
-4. Bot username kiriting: `AstraGO_bot` (yoki boshqa, lekin `_bot` bilan tugashi kerak)
+4. Bot username kiriting: `astrago_uz_bot` (yoki boshqa, lekin `_bot` bilan tugashi kerak)
 5. BotFather bot token beradi - **SAQLANG!**
 
 ### 1.2 Bot Token'ni sozlash
@@ -42,7 +42,7 @@ Agar URL o'zgarsa:
 
 ### 3.1 Bot'ni ochish
 
-1. Telegram'da bot'ingizni qidiring: `@AstraGO_bot`
+1. Telegram'da bot'ingizni qidiring: `@astrago_uz_bot`
 2. `/start` yuboring
 3. Bot javob berishi kerak
 
@@ -105,6 +105,8 @@ search - Search for trips
 mytrips - View my trips
 help - Get help
 ```
+
+**Bot Username**: `@astrago_uz_bot`
 
 ## 7. Troubleshooting
 

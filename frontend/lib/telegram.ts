@@ -35,10 +35,27 @@ export function initTelegramWebApp() {
 
 /**
  * Check if app is running inside Telegram
+ * Also checks for Telegram Web environment
  */
 export function isTelegramWebApp(): boolean {
   if (typeof window === 'undefined') return false;
-  return !!(window as any).Telegram?.WebApp;
+  
+  // Check for Telegram WebApp SDK
+  if ((window as any).Telegram?.WebApp) {
+    return true;
+  }
+  
+  // Check for Telegram Web environment (web.telegram.org)
+  if (window.location.hostname.includes('web.telegram.org')) {
+    return true;
+  }
+  
+  // Check for Telegram Mini App iframe
+  if (window.parent !== window && document.referrer.includes('telegram.org')) {
+    return true;
+  }
+  
+  return false;
 }
 
 export function openTelegramChat(username?: string, phone?: string) {
@@ -49,12 +66,35 @@ export function openTelegramChat(username?: string, phone?: string) {
 
   let link = '';
   if (username) {
-    link = `https://t.me/${username}`;
+    // Remove @ if present
+    const cleanUsername = username.replace('@', '');
+    link = `https://t.me/${cleanUsername}`;
   } else if (phone) {
     link = `tg://resolve?phone=${phone}`;
   }
 
   if (link) {
+    // If in Telegram, use Telegram's openTelegramLink
+    const tg = (window as any).Telegram?.WebApp;
+    if (tg?.openTelegramLink) {
+      tg.openTelegramLink(link);
+    } else {
+      window.open(link, '_blank');
+    }
+  }
+}
+
+/**
+ * Open bot by username
+ */
+export function openBot(botUsername: string) {
+  const cleanUsername = botUsername.replace('@', '');
+  const link = `https://t.me/${cleanUsername}`;
+  
+  const tg = (window as any).Telegram?.WebApp;
+  if (tg?.openTelegramLink) {
+    tg.openTelegramLink(link);
+  } else {
     window.open(link, '_blank');
   }
 }
