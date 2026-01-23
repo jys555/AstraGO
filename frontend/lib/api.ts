@@ -13,7 +13,9 @@ class ApiClient {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
-    const url = `${this.baseUrl}${endpoint}`;
+    // Remove leading slash from endpoint to avoid double slashes
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+    const url = `${this.baseUrl}/${cleanEndpoint}`;
     
     // Get Telegram initData if available
     const initData = typeof window !== 'undefined' 

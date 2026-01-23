@@ -37,7 +37,7 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
             value={from}
             onChange={(e) => setFrom(e.target.value)}
             placeholder="Departure city"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900 bg-white"
             required
           />
         </div>
@@ -50,7 +50,7 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
             value={to}
             onChange={(e) => setTo(e.target.value)}
             placeholder="Destination city"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900 bg-white"
             required
           />
         </div>
@@ -63,7 +63,7 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
             value={date}
             onChange={(e) => setDate(e.target.value)}
             min={new Date().toISOString().split('T')[0]}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900 bg-white"
             required
           />
         </div>
