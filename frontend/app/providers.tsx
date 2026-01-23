@@ -44,31 +44,62 @@ export function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setIsClient(true);
     
-    // Initialize Telegram WebApp
-    const tg = initTelegramWebApp();
-    
-    if (tg) {
-      // Running in Telegram Mini App
-      const user = getTelegramUser();
-      if (user) {
-        // Use Telegram user ID
-        const telegramUserId = String(user.id);
-        setUserId(telegramUserId);
-        
-        // Store for API calls (for development fallback)
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('dev_user_id', telegramUserId);
+    // Function to initialize Telegram and get user
+    const initializeTelegram = () => {
+      // Initialize Telegram WebApp
+      const tg = initTelegramWebApp();
+      
+      if (tg) {
+        // Running in Telegram Mini App
+        const user = getTelegramUser();
+        if (user) {
+          // Use Telegram user ID
+          const telegramUserId = String(user.id);
+          setUserId(telegramUserId);
+          
+          // Store for API calls (for development fallback)
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('dev_user_id', telegramUserId);
+          }
+          
+          console.log('Telegram user authenticated:', {
+            id: user.id,
+            username: user.username,
+            firstName: user.first_name,
+          });
+          return;
         }
-        
-        console.log('Telegram user authenticated:', {
-          id: user.id,
-          username: user.username,
-          firstName: user.first_name,
-        });
-      } else {
-        console.warn('Telegram WebApp initialized but no user data available');
       }
-    } else {
+      
+      // If in Telegram environment but SDK not loaded yet, retry
+      if (typeof window !== 'undefined' && window.location.hostname.includes('telegram.org')) {
+        let retryCount = 0;
+        const maxRetries = 10;
+        
+        const retryInit = () => {
+          const tg = (window as any).Telegram?.WebApp;
+          const user = getTelegramUser();
+          
+          if (tg && user) {
+            const telegramUserId = String(user.id);
+            setUserId(telegramUserId);
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('dev_user_id', telegramUserId);
+            }
+            console.log('Telegram user authenticated (retry):', {
+              id: user.id,
+              username: user.username,
+            });
+          } else if (retryCount < maxRetries) {
+            retryCount++;
+            setTimeout(retryInit, 200);
+          }
+        };
+        
+        setTimeout(retryInit, 100);
+        return;
+      }
+      
       // Not in Telegram - only allow in development
       if (process.env.NODE_ENV === 'development') {
         if (typeof window !== 'undefined') {
@@ -85,6 +116,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
         // Production: require Telegram
         console.error('Not running in Telegram Mini App');
       }
+    };
+    
+    // Initial initialization
+    initializeTelegram();
+    
+    // Also listen for window load event
+    if (typeof window !== 'undefined') {
+      window.addEventListener('load', initializeTelegram);
+      return () => window.removeEventListener('load', initializeTelegram);
     }
   }, []);
 

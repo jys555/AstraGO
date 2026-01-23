@@ -20,9 +20,21 @@ class ApiClient {
     const url = `${cleanBaseUrl}/${cleanEndpoint}`;
     
     // Get Telegram initData - REQUIRED for authentication
-    const initData = typeof window !== 'undefined' 
-      ? (window as any).Telegram?.WebApp?.initData 
-      : null;
+    let initData: string | null = null;
+    
+    if (typeof window !== 'undefined') {
+      // Try to get initData from Telegram WebApp SDK
+      const tg = (window as any).Telegram?.WebApp;
+      if (tg?.initData) {
+        initData = tg.initData;
+      }
+      
+      // If not available, wait a bit and try again (for web.telegram.org where SDK loads later)
+      if (!initData && window.location.hostname.includes('telegram.org')) {
+        // Wait for SDK to load - this is a synchronous check, so we'll retry in the request
+        // For now, we'll proceed without initData and let backend handle it
+      }
+    }
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -42,7 +54,7 @@ class ApiClient {
         }
       }
       // Don't show warning in production if we're in web.telegram.org (SDK might load later)
-      if (!window.location.hostname.includes('telegram.org')) {
+      if (typeof window !== 'undefined' && !window.location.hostname.includes('telegram.org')) {
         console.warn('Not running in Telegram Mini App - authentication may fail');
       }
     }

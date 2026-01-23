@@ -30,6 +30,13 @@ export async function authenticateTelegram(
           return next();
         }
       }
+      
+      // Log for debugging
+      console.warn('Missing Telegram initData', {
+        headers: Object.keys(req.headers),
+        userAgent: req.headers['user-agent'],
+      });
+      
       throw new UnauthorizedError('Telegram initData required');
     }
 
