@@ -1,11 +1,10 @@
 import React from 'react';
-import { motion, HTMLMotionProps } from 'framer-motion';
+import { motion } from 'framer-motion';
 
-interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
-  children?: React.ReactNode;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -34,6 +33,9 @@ export const Button: React.FC<ButtonProps> = ({
 
   const isDisabled = disabled || isLoading;
 
+  // Extract motion-specific props to avoid conflicts
+  const { onAnimationStart, onAnimationEnd, onAnimationIteration, ...buttonProps } = props;
+
   return (
     <motion.button
       whileHover={isDisabled ? undefined : { scale: 1.02 }}
@@ -42,7 +44,7 @@ export const Button: React.FC<ButtonProps> = ({
         isDisabled ? 'opacity-50 cursor-not-allowed' : ''
       }`}
       disabled={isDisabled}
-      {...(props as any)}
+      {...buttonProps}
     >
       {isLoading ? (
         <span className="flex items-center">
