@@ -67,11 +67,11 @@ export async function getTrips(
 
     // Filter by online status if requested
     let filteredTrips = onlineOnly === 'true'
-      ? trips.filter((t) => t.driver.onlineStatus)
+      ? trips.filter((t: any) => t.driver.onlineStatus)
       : trips;
 
     // Sort trips
-    filteredTrips.sort((a, b) => {
+    filteredTrips.sort((a: any, b: any) => {
       // First: Online drivers first
       if (a.driver.onlineStatus !== b.driver.onlineStatus) {
         return a.driver.onlineStatus ? -1 : 1;
@@ -102,7 +102,7 @@ export async function getTrips(
 
     // If earliestDeparture, prioritize trips starting soonest
     if (earliestDeparture === 'true') {
-      filteredTrips.sort((a, b) => {
+      filteredTrips.sort((a: any, b: any) => {
         if (a.driver.onlineStatus !== b.driver.onlineStatus) {
           return a.driver.onlineStatus ? -1 : 1;
         }
