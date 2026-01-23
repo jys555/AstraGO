@@ -17,7 +17,7 @@ class ApiClient {
     const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
     const url = `${this.baseUrl}/${cleanEndpoint}`;
     
-    // Get Telegram initData if available
+    // Get Telegram initData - REQUIRED for authentication
     const initData = typeof window !== 'undefined' 
       ? (window as any).Telegram?.WebApp?.initData 
       : null;
@@ -27,15 +27,20 @@ class ApiClient {
       ...(options.headers as Record<string, string> || {}),
     };
 
+    // Always send initData if available (Telegram Mini App)
     if (initData) {
       headers['x-telegram-init-data'] = initData;
-    }
-
-    // For development, allow bypassing auth
-    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-      const devUserId = localStorage.getItem('dev_user_id');
-      if (devUserId) {
-        headers['x-dev-user-id'] = devUserId;
+    } else {
+      // If not in Telegram, this is an error for production
+      // In development, we can allow bypass
+      if (process.env.NODE_ENV === 'development') {
+        const devUserId = localStorage.getItem('dev_user_id');
+        if (devUserId) {
+          headers['x-dev-user-id'] = devUserId;
+        }
+      } else {
+        // In production, require Telegram
+        console.warn('Not running in Telegram Mini App - authentication may fail');
       }
     }
 

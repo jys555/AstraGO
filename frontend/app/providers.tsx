@@ -48,28 +48,42 @@ export function Providers({ children }: { children: React.ReactNode }) {
     const tg = initTelegramWebApp();
     
     if (tg) {
+      // Running in Telegram Mini App
       const user = getTelegramUser();
       if (user) {
         // Use Telegram user ID
         const telegramUserId = String(user.id);
         setUserId(telegramUserId);
         
-        // Store for API calls
+        // Store for API calls (for development fallback)
         if (typeof window !== 'undefined') {
           localStorage.setItem('dev_user_id', telegramUserId);
         }
+        
+        console.log('Telegram user authenticated:', {
+          id: user.id,
+          username: user.username,
+          firstName: user.first_name,
+        });
+      } else {
+        console.warn('Telegram WebApp initialized but no user data available');
       }
     } else {
-      // Development mode - use stored user ID or create one
-      if (typeof window !== 'undefined') {
-        const stored = localStorage.getItem('dev_user_id');
-        if (stored) {
-          setUserId(stored);
-        } else {
-          const devUserId = `dev_${Date.now()}`;
-          localStorage.setItem('dev_user_id', devUserId);
-          setUserId(devUserId);
+      // Not in Telegram - only allow in development
+      if (process.env.NODE_ENV === 'development') {
+        if (typeof window !== 'undefined') {
+          const stored = localStorage.getItem('dev_user_id');
+          if (stored) {
+            setUserId(stored);
+          } else {
+            const devUserId = `dev_${Date.now()}`;
+            localStorage.setItem('dev_user_id', devUserId);
+            setUserId(devUserId);
+          }
         }
+      } else {
+        // Production: require Telegram
+        console.error('Not running in Telegram Mini App');
       }
     }
   }, []);
