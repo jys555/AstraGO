@@ -147,8 +147,6 @@ export default function MyTripsPage() {
           </div>
         )}
       </div>
-    </main>
-  );
+      </main>
+    );
 }
-
-export default MyTripsPage;
