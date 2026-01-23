@@ -21,7 +21,7 @@ Railway'da backend service'ga environment variable qo'shing:
 ### 2.1 BotFather orqali Mini App yaratish
 
 1. `@BotFather` ga `/newapp` yuboring
-2. Bot'ingizni tanlang (`AstraGO_bot`)
+2. Bot'ingizni tanlang (`astrago_uz_bot`)
 3. Mini App nomini kiriting: `AstraGo`
 4. Mini App description: `Intercity shared taxi platform`
 5. Mini App photo yuklang (optional)
