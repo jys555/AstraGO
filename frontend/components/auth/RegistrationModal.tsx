@@ -242,7 +242,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
         <h3>Profilingizni to'ldiring</h3>
         
         <div className="flex-1 overflow-y-auto" ref={modalContentRef}>
-          <form onSubmit={handleSubmit} className="pb-4">
+          <form onSubmit={handleSubmit} id="registration-form" className="pb-4">
             {/* First Name */}
             <div className="floating-input">
               <div className="relative">
@@ -483,12 +483,12 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
           </form>
         </div>
 
-        <div className="border-t pt-4 mt-4">
+        <div className="border-t pt-4 mt-4 flex-shrink-0">
           <button
             type="submit"
+            form="registration-form"
             id="register-submit-btn"
             disabled={isSubmitting}
-            onClick={handleSubmit}
           >
             {isSubmitting ? 'Saqlanmoqda...' : 'Saqlash'}
           </button>
