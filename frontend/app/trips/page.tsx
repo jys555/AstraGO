@@ -52,12 +52,12 @@ function TripsPage() {
     // Check if user is registered - fetch user data if needed
     if (!userData) {
       const currentUser = await apiClient.getCurrentUser();
-      if (!currentUser?.user?.isProfileComplete) {
+      if (!currentUser || !currentUser.user?.isProfileComplete) {
         setPendingTripId(tripId);
         setShowRegistration(true);
         return;
       }
-    } else if (!userData.user?.isProfileComplete) {
+    } else if (!userData.user || !userData.user.isProfileComplete) {
       setPendingTripId(tripId);
       setShowRegistration(true);
       return;
