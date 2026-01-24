@@ -3,7 +3,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import { initTelegramWebApp, getTelegramUser } from '@/lib/telegram';
-import { useWebSocket } from '@/hooks/useWebSocket';
+import { WebSocketInitializer } from '@/components/websocket/WebSocketInitializer';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   // Create QueryClient using useState to ensure it's only created once per client instance
@@ -53,11 +53,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Initialize WebSocket connection
-  useWebSocket(userId);
-
   return (
     <QueryClientProvider client={queryClient}>
+      <WebSocketInitializer userId={userId} />
       {children}
     </QueryClientProvider>
   );
