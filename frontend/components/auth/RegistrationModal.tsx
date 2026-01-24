@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { apiClient } from '@/lib/api';
 
 interface RegistrationModalProps {
@@ -81,6 +81,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
   const [carColor, setCarColor] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const modalContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -236,162 +237,258 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="register-modal bg-white rounded-2xl w-full max-w-md mx-4 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+      <div className="register-modal bg-white rounded-2xl w-full max-w-md shadow-xl max-h-[90vh] flex flex-col">
         <h3>Profilingizni to'ldiring</h3>
         
-        <form onSubmit={handleSubmit}>
-          {/* First Name */}
-          <div className="floating-input">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Ism (majburiy)
-            </label>
-            <input
-              type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-              placeholder="Ismingizni kiriting"
-            />
-            {errors.firstName && (
-              <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
-            )}
-          </div>
-
-          {/* Last Name */}
-          <div className="floating-input">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Familiya (ixtiyoriy)
-            </label>
-            <input
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-              placeholder="Familiyangizni kiriting"
-            />
-          </div>
-
-          {/* Phone Number */}
-          <div className="floating-input">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Telefon raqam
-            </label>
-            <div className="relative">
-              <div className="absolute left-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
-                <span className="text-xl">🇺🇿</span>
-              </div>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => handlePhoneChange(e.target.value)}
-                onBlur={(e) => {
-                  // Ensure format is complete
-                  if (e.target.value.length < 17) {
-                    handlePhoneChange(e.target.value);
-                  }
-                }}
-                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                placeholder="+998 00 000 00 00"
-                maxLength={17}
-              />
-            </div>
-            {errors.phone && (
-              <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
-            )}
-          </div>
-
-          {/* Role Selection */}
-          <div className="floating-input">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Rol
-            </label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value as 'PASSENGER' | 'DRIVER' | 'BOTH')}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-            >
-              <option value="PASSENGER">Yo'lovchi</option>
-              <option value="DRIVER">Haydovchi</option>
-              <option value="BOTH">Haydovchi & Yo'lovchi</option>
-            </select>
-          </div>
-
-          {/* Driver-specific fields */}
-          {(role === 'DRIVER' || role === 'BOTH') && (
-            <>
-              {/* Car Number */}
-              <div className="floating-input">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Mashina raqami (majburiy)
-                </label>
+        <div className="flex-1 overflow-y-auto" ref={modalContentRef}>
+          <form onSubmit={handleSubmit} className="pb-4">
+            {/* First Name */}
+            <div className="floating-input">
+              <div className="relative">
                 <input
                   type="text"
-                  value={carNumber}
-                  onChange={(e) => handleCarNumberChange(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white uppercase"
-                  placeholder="01 A 123 BC"
-                  maxLength={12}
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className={`w-full px-4 pt-6 pb-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white transition-all ${
+                    errors.firstName ? 'border-red-500' : 'border-gray-300'
+                  } ${firstName ? 'pt-6 pb-2' : 'pt-4 pb-4'}`}
+                  placeholder=" "
                 />
-                {errors.carNumber && (
-                  <p className="text-red-500 text-xs mt-1">{errors.carNumber}</p>
-                )}
-              </div>
-
-              {/* Car Model */}
-              <div className="floating-input">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Mashina modeli (majburiy)
-                </label>
-                <select
-                  value={carModel}
-                  onChange={(e) => setCarModel(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                <label
+                  htmlFor="firstName"
+                  className={`absolute left-4 transition-all duration-200 pointer-events-none ${
+                    firstName || errors.firstName
+                      ? 'top-2 text-xs text-gray-500'
+                      : 'top-4 text-base text-gray-400'
+                  }`}
                 >
-                  <option value="">Modelni tanlang</option>
-                  {CAR_MODELS.map((model) => (
-                    <option key={model} value={model}>
-                      {model}
-                    </option>
-                  ))}
-                </select>
-                {errors.carModel && (
-                  <p className="text-red-500 text-xs mt-1">{errors.carModel}</p>
-                )}
-              </div>
-
-              {/* Car Color */}
-              <div className="floating-input">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Mashina rangi (majburiy)
+                  Ism (majburiy)
                 </label>
-                <select
-                  value={carColor}
-                  onChange={(e) => setCarColor(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                >
-                  <option value="">Rangni tanlang</option>
-                  {CAR_COLORS.map((color) => (
-                    <option key={color} value={color}>
-                      {color}
-                    </option>
-                  ))}
-                </select>
-                {errors.carColor && (
-                  <p className="text-red-500 text-xs mt-1">{errors.carColor}</p>
-                )}
               </div>
-            </>
-          )}
+              {errors.firstName && (
+                <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
+              )}
+            </div>
 
-          {errors.submit && (
-            <p className="text-red-500 text-xs mt-2">{errors.submit}</p>
-          )}
+            {/* Last Name */}
+            <div className="floating-input">
+              <div className="relative">
+                <input
+                  type="text"
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className={`w-full px-4 pt-6 pb-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white transition-all ${
+                    lastName ? 'pt-6 pb-2' : 'pt-4 pb-4'
+                  } border-gray-300`}
+                  placeholder=" "
+                />
+                <label
+                  htmlFor="lastName"
+                  className={`absolute left-4 transition-all duration-200 pointer-events-none ${
+                    lastName
+                      ? 'top-2 text-xs text-gray-500'
+                      : 'top-4 text-base text-gray-400'
+                  }`}
+                >
+                  Familiya (ixtiyoriy)
+                </label>
+              </div>
+            </div>
 
+            {/* Phone Number */}
+            <div className="floating-input">
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2 z-10">
+                  <span className="text-xl">🇺🇿</span>
+                </div>
+                <input
+                  type="tel"
+                  id="phone"
+                  value={phone}
+                  onChange={(e) => handlePhoneChange(e.target.value)}
+                  onBlur={(e) => {
+                    // Ensure format is complete
+                    if (e.target.value.length < 17) {
+                      handlePhoneChange(e.target.value);
+                    }
+                  }}
+                  className={`w-full pl-12 pr-4 pt-6 pb-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white transition-all ${
+                    errors.phone ? 'border-red-500' : 'border-gray-300'
+                  } ${phone && phone !== '+998 ' ? 'pt-6 pb-2' : 'pt-4 pb-4'}`}
+                  placeholder=" "
+                  maxLength={17}
+                />
+                <label
+                  htmlFor="phone"
+                  className={`absolute left-12 transition-all duration-200 pointer-events-none ${
+                    phone && phone !== '+998 '
+                      ? 'top-2 text-xs text-gray-500'
+                      : 'top-4 text-base text-gray-400'
+                  }`}
+                >
+                  Telefon raqam
+                </label>
+              </div>
+              {errors.phone && (
+                <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+              )}
+            </div>
+
+            {/* Role Selection */}
+            <div className="floating-input">
+              <div className="relative">
+                <select
+                  id="role"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value as 'PASSENGER' | 'DRIVER' | 'BOTH')}
+                  className="w-full px-4 pt-6 pb-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white appearance-none"
+                >
+                  <option value="PASSENGER">Yo'lovchi</option>
+                  <option value="DRIVER">Haydovchi</option>
+                  <option value="BOTH">Haydovchi & Yo'lovchi</option>
+                </select>
+                <label
+                  htmlFor="role"
+                  className="absolute left-4 top-2 text-xs text-gray-500 pointer-events-none"
+                >
+                  Rol
+                </label>
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Driver-specific fields */}
+            {(role === 'DRIVER' || role === 'BOTH') && (
+              <>
+                {/* Car Number */}
+                <div className="floating-input">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="carNumber"
+                      value={carNumber}
+                      onChange={(e) => handleCarNumberChange(e.target.value)}
+                      className={`w-full px-4 pt-6 pb-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white uppercase transition-all ${
+                        errors.carNumber ? 'border-red-500' : 'border-gray-300'
+                      } ${carNumber ? 'pt-6 pb-2' : 'pt-4 pb-4'}`}
+                      placeholder=" "
+                      maxLength={12}
+                    />
+                    <label
+                      htmlFor="carNumber"
+                      className={`absolute left-4 transition-all duration-200 pointer-events-none ${
+                        carNumber || errors.carNumber
+                          ? 'top-2 text-xs text-gray-500'
+                          : 'top-4 text-base text-gray-400'
+                      }`}
+                    >
+                      Mashina raqami (majburiy)
+                    </label>
+                  </div>
+                  {errors.carNumber && (
+                    <p className="text-red-500 text-xs mt-1">{errors.carNumber}</p>
+                  )}
+                </div>
+
+                {/* Car Model */}
+                <div className="floating-input">
+                  <div className="relative">
+                    <select
+                      id="carModel"
+                      value={carModel}
+                      onChange={(e) => setCarModel(e.target.value)}
+                      className={`w-full px-4 pt-6 pb-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white appearance-none transition-all ${
+                        errors.carModel ? 'border-red-500' : 'border-gray-300'
+                      } ${carModel ? 'pt-6 pb-2' : 'pt-4 pb-4'}`}
+                    >
+                      <option value="">Modelni tanlang</option>
+                      {CAR_MODELS.map((model) => (
+                        <option key={model} value={model}>
+                          {model}
+                        </option>
+                      ))}
+                    </select>
+                    <label
+                      htmlFor="carModel"
+                      className={`absolute left-4 transition-all duration-200 pointer-events-none ${
+                        carModel || errors.carModel
+                          ? 'top-2 text-xs text-gray-500'
+                          : 'top-4 text-base text-gray-400'
+                      }`}
+                    >
+                      Mashina modeli (majburiy)
+                    </label>
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                  {errors.carModel && (
+                    <p className="text-red-500 text-xs mt-1">{errors.carModel}</p>
+                  )}
+                </div>
+
+                {/* Car Color */}
+                <div className="floating-input">
+                  <div className="relative">
+                    <select
+                      id="carColor"
+                      value={carColor}
+                      onChange={(e) => setCarColor(e.target.value)}
+                      className={`w-full px-4 pt-6 pb-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white appearance-none transition-all ${
+                        errors.carColor ? 'border-red-500' : 'border-gray-300'
+                      } ${carColor ? 'pt-6 pb-2' : 'pt-4 pb-4'}`}
+                    >
+                      <option value="">Rangni tanlang</option>
+                      {CAR_COLORS.map((color) => (
+                        <option key={color} value={color}>
+                          {color}
+                        </option>
+                      ))}
+                    </select>
+                    <label
+                      htmlFor="carColor"
+                      className={`absolute left-4 transition-all duration-200 pointer-events-none ${
+                        carColor || errors.carColor
+                          ? 'top-2 text-xs text-gray-500'
+                          : 'top-4 text-base text-gray-400'
+                      }`}
+                    >
+                      Mashina rangi (majburiy)
+                    </label>
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                  {errors.carColor && (
+                    <p className="text-red-500 text-xs mt-1">{errors.carColor}</p>
+                  )}
+                </div>
+              </>
+            )}
+
+            {errors.submit && (
+              <p className="text-red-500 text-xs mt-2">{errors.submit}</p>
+            )}
+          </form>
+        </div>
+
+        <div className="border-t pt-4 mt-4">
           <button
             type="submit"
             id="register-submit-btn"
             disabled={isSubmitting}
+            onClick={handleSubmit}
           >
             {isSubmitting ? 'Saqlanmoqda...' : 'Saqlash'}
           </button>
@@ -403,7 +500,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
           >
             Bekor qilish
           </button>
-        </form>
+        </div>
       </div>
     </div>
   );

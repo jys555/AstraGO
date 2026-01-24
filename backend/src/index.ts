@@ -23,10 +23,67 @@ const io = new SocketIOServer(httpServer, {
 
 const PORT = process.env.PORT || 3001;
 
+// Get frontend URL and normalize it (remove trailing slash)
+const getFrontendUrl = () => {
+  const url = process.env.FRONTEND_URL || 'http://localhost:3000';
+  return url.endsWith('/') ? url.slice(0, -1) : url;
+};
+
+const frontendUrl = getFrontendUrl();
+
+// Get allowed origins (support multiple origins for different deployments)
+const getAllowedOrigins = () => {
+  const origins = [frontendUrl];
+  
+  // Add Vercel deployment URLs
+  if (process.env.VERCEL_URL) {
+    origins.push(`https://${process.env.VERCEL_URL}`);
+  }
+  
+  // Add Telegram Web domains
+  origins.push('https://web.telegram.org');
+  
+  // Add common Vercel patterns
+  if (frontendUrl.includes('vercel.app')) {
+    origins.push('https://*.vercel.app');
+  }
+  
+  return origins;
+};
+
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    const allowedOrigins = getAllowedOrigins();
+    
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      return callback(null, true);
+    }
+    
+    // Check if origin matches (handle wildcard patterns)
+    const isAllowed = allowedOrigins.some(allowed => {
+      if (allowed.includes('*')) {
+        const pattern = allowed.replace('*', '.*');
+        return new RegExp(`^${pattern}$`).test(origin);
+      }
+      return allowed === origin;
+    });
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      // For development, allow all origins
+      if (process.env.NODE_ENV === 'development') {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    }
+  },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-telegram-init-data', 'x-dev-user-id'],
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

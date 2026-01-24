@@ -35,6 +35,8 @@ body {
 /* Register Modal */
 .register-modal {
   padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .register-modal h3 {
@@ -43,10 +45,26 @@ body {
   text-align: center;
   margin-bottom: 28px;
   color: #000;
+  flex-shrink: 0;
 }
 
 .register-modal .floating-input {
   margin-bottom: 20px;
+}
+
+/* Floating label animation */
+.register-modal input:focus + label,
+.register-modal input:not(:placeholder-shown) + label,
+.register-modal select:focus + label,
+.register-modal select:not([value=""]) + label {
+  top: 0.5rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.register-modal input::placeholder,
+.register-modal select::placeholder {
+  color: transparent;
 }
 
 .register-modal #register-submit-btn {
