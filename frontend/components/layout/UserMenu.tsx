@@ -14,6 +14,8 @@ export function UserMenu() {
     queryFn: () => apiClient.getCurrentUser(),
     retry: false,
     refetchOnWindowFocus: false,
+    // Don't throw error on 401 - it's expected for unregistered users
+    throwOnError: false,
   });
 
   const user = data?.user;
