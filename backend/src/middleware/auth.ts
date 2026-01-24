@@ -55,11 +55,12 @@ export async function authenticateTelegram(
         });
         
         if (!user) {
-          // Create user without role - they need to complete registration
+          // Create user with default PASSENGER role - they can change it during registration
           user = await prisma.user.create({
             data: {
               telegramId: String(userData.id),
               username: userData.username, // Store Telegram username, but not name
+              role: 'PASSENGER', // Default role
               isProfileComplete: false, // User needs to complete registration
             },
           });
