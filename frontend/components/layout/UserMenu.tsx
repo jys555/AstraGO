@@ -35,8 +35,8 @@ export function UserMenu() {
     );
   }
 
-  // Show user info if available
-  if (user) {
+  // Show user info only if user is registered (profile complete)
+  if (user && user.isProfileComplete) {
     return (
       <div className="flex items-center gap-3">
         <Link
@@ -63,24 +63,8 @@ export function UserMenu() {
     );
   }
 
-  // Show Telegram user if available but not synced with backend
-  if (telegramUser) {
-    return (
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-semibold">
-          {telegramUser.first_name?.[0] || telegramUser.username?.[0] || 'U'}
-        </div>
-        <Link
-          href="/profile"
-          className="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors"
-        >
-          {telegramUser.first_name || telegramUser.username || 'User'}
-        </Link>
-      </div>
-    );
-  }
-
-  // No user data
+  // User not registered - don't show Telegram data, just show "Profil" link
+  // RegistrationGuard will handle showing registration modal
   return (
     <Link
       href="/profile"

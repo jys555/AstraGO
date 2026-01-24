@@ -33,37 +33,22 @@ export default function ProfilePage() {
     );
   }
 
-  if (error) {
-    return (
-      <main className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-6">
-          <div className="max-w-2xl mx-auto">
-            <Card>
-              <div className="text-center py-12">
-                <p className="text-red-600 mb-4">Failed to load profile</p>
-                <Button onClick={() => router.push('/')} variant="outline">
-                  Go Home
-                </Button>
-              </div>
-            </Card>
-          </div>
-        </div>
-      </main>
-    );
-  }
-
   const user = data?.user;
 
-  if (!user) {
+  // If error or user not found, show registration prompt
+  if (error || !user) {
     return (
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-6">
           <div className="max-w-2xl mx-auto">
             <Card>
               <div className="text-center py-12">
-                <p className="text-gray-600 mb-4">Not authenticated</p>
-                <Button onClick={() => router.push('/')} variant="outline">
-                  Go Home
+                <h2 className="text-2xl font-bold mb-4">Ro'yxatdan O'tish</h2>
+                <p className="text-gray-600 mb-6">
+                  Profil ma'lumotlarini ko'rish uchun avval ro'yxatdan o'ting
+                </p>
+                <Button onClick={() => router.push('/')} variant="primary">
+                  Bosh Sahifaga Qaytish
                 </Button>
               </div>
             </Card>
