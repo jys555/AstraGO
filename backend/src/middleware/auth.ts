@@ -42,19 +42,13 @@ export async function authenticateTelegram(
       const userStr = params.get('user');
       if (userStr) {
         const userData = JSON.parse(userStr);
-        let user = await prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
           where: { telegramId: String(userData.id) },
         });
         
+        // Don't create user automatically - user must register first
         if (!user) {
-          user = await prisma.user.create({
-            data: {
-              telegramId: String(userData.id),
-              firstName: userData.first_name,
-              lastName: userData.last_name,
-              username: userData.username,
-            },
-          });
+          throw new UnauthorizedError('User not registered. Please complete registration first.');
         }
         
         (req as any).user = {
@@ -92,19 +86,13 @@ export async function authenticateTelegram(
       const userStr = urlParams.get('user');
       if (userStr) {
         const userData = JSON.parse(userStr);
-        let user = await prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
           where: { telegramId: String(userData.id) },
         });
         
+        // Don't create user automatically - user must register first
         if (!user) {
-          user = await prisma.user.create({
-            data: {
-              telegramId: String(userData.id),
-              firstName: userData.first_name,
-              lastName: userData.last_name,
-              username: userData.username,
-            },
-          });
+          throw new UnauthorizedError('User not registered. Please complete registration first.');
         }
         
         (req as any).user = {

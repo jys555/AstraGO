@@ -265,7 +265,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                 <div className="absolute left-10 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none text-gray-700 font-medium">
                   +998
                 </div>
-                <div className="absolute left-16 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none text-gray-300">
+                <div className="absolute left-[4.5rem] top-1/2 transform -translate-y-1/2 z-10 pointer-events-none text-gray-300">
                   |
                 </div>
                 <input
@@ -291,12 +291,12 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                   }}
                   onFocus={() => setFocusedField('phone')}
                   onBlur={() => setFocusedField(null)}
-                  className={`pl-20 ${errors.phone ? 'border-red-500' : ''}`}
+                  className={`pl-[5rem] ${errors.phone ? 'border-red-500' : ''}`}
                   placeholder=" "
                 />
                 <label htmlFor="phone" className="left-1">Telefon raqam</label>
                 {focusedField === 'phone' && !phone.replace('+998 ', '').replace(/\s/g, '') && (
-                  <span className="floating-placeholder left-20">00 000 00 00</span>
+                  <span className="floating-placeholder left-[5rem]">00 000 00 00</span>
                 )}
               </div>
               {errors.phone && (
