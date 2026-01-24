@@ -13,49 +13,27 @@ class ApiClient {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
-    // Remove leading slash from endpoint to avoid double slashes
-    const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
-    // Ensure baseUrl doesn't end with slash
-    const cleanBaseUrl = this.baseUrl.endsWith('/') ? this.baseUrl.slice(0, -1) : this.baseUrl;
-    const url = `${cleanBaseUrl}/${cleanEndpoint}`;
+    const url = `${this.baseUrl}${endpoint}`;
     
-    // Get Telegram initData - REQUIRED for authentication
-    let initData: string | null = null;
-    
-    if (typeof window !== 'undefined') {
-      // Try to get initData from Telegram WebApp SDK
-      const tg = (window as any).Telegram?.WebApp;
-      if (tg?.initData) {
-        initData = tg.initData;
-      }
-      
-      // If not available, wait a bit and try again (for web.telegram.org where SDK loads later)
-      if (!initData && window.location.hostname.includes('telegram.org')) {
-        // Wait for SDK to load - this is a synchronous check, so we'll retry in the request
-        // For now, we'll proceed without initData and let backend handle it
-      }
-    }
+    // Get Telegram initData if available
+    const initData = typeof window !== 'undefined' 
+      ? (window as any).Telegram?.WebApp?.initData 
+      : null;
 
-    const headers: Record<string, string> = {
+    const headers: HeadersInit = {
       'Content-Type': 'application/json',
-      ...(options.headers as Record<string, string> || {}),
+      ...options.headers,
     };
 
-    // Always send initData if available (Telegram Mini App)
     if (initData) {
       headers['x-telegram-init-data'] = initData;
-    } else {
-      // If not in Telegram, try to get from localStorage (for web.telegram.org where SDK loads later)
-      // In development, we can allow bypass
-      if (process.env.NODE_ENV === 'development') {
-        const devUserId = localStorage.getItem('dev_user_id');
-        if (devUserId) {
-          headers['x-dev-user-id'] = devUserId;
-        }
-      }
-      // Don't show warning in production if we're in web.telegram.org (SDK might load later)
-      if (typeof window !== 'undefined' && !window.location.hostname.includes('telegram.org')) {
-        console.warn('Not running in Telegram Mini App - authentication may fail');
+    }
+
+    // For development, allow bypassing auth
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+      const devUserId = localStorage.getItem('dev_user_id');
+      if (devUserId) {
+        headers['x-dev-user-id'] = devUserId;
       }
     }
 
@@ -66,10 +44,7 @@ class ApiClient {
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({ error: { message: 'Request failed' } }));
-      const errorMessage = error.error?.message || 'Request failed';
-      const errorWithStatus = new Error(errorMessage) as any;
-      errorWithStatus.status = response.status;
-      throw errorWithStatus;
+      throw new Error(error.error?.message || 'Request failed');
     }
 
     return response.json();
@@ -150,7 +125,7 @@ class ApiClient {
       return await this.request<{ user: User }>('/api/users/me');
     } catch (error: any) {
       // 401 means user not registered - this is normal, return null
-      if (error.status === 401 || error.message?.includes('401') || error.message?.includes('Unauthorized')) {
+      if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
         return null;
       }
       throw error;
@@ -159,7 +134,7 @@ class ApiClient {
 
   async registerUser(data: {
     firstName: string;
-    lastName: string;
+    lastName?: string;
     phone: string;
     role: 'PASSENGER' | 'DRIVER' | 'BOTH';
     carNumber?: string;

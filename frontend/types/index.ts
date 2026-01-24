@@ -6,10 +6,6 @@ export interface User {
   lastName?: string;
   phone?: string;
   role: 'PASSENGER' | 'DRIVER' | 'BOTH';
-  isProfileComplete: boolean;
-  carNumber?: string;
-  carModel?: string;
-  carColor?: string;
   onlineStatus: boolean;
   lastSeen: string;
   driverMetrics?: DriverMetrics;

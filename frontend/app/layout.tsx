@@ -2,8 +2,6 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
-import { Header } from '@/components/layout/Header';
-import { TelegramGuard } from '@/components/telegram/TelegramGuard';
 import Script from 'next/script';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -13,7 +11,6 @@ export const metadata: Metadata = {
   description: 'Intercity and interregional shared taxi services',
 };
 
-// Force all pages to be dynamic (disable static generation)
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 export const runtime = 'nodejs';
@@ -25,9 +22,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="uz">
       <head>
-        {/* Telegram WebApp SDK - Required for Mini App */}
+        {/* Telegram WebApp SDK */}
         <Script
           src="https://telegram.org/js/telegram-web-app.js"
           strategy="beforeInteractive"
@@ -41,12 +38,9 @@ export default function RootLayout({
         )}
       </head>
       <body className={inter.className}>
-        <TelegramGuard>
-          <Providers>
-            <Header />
-            {children}
-          </Providers>
-        </TelegramGuard>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

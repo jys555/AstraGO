@@ -4,11 +4,15 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { RouteSearch } from '@/components/search/RouteSearch';
 import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
+import { AppHeader } from '@/components/layout/AppHeader';
+import { BannerCarousel } from '@/components/home/BannerCarousel';
+import { BenefitsCarousel } from '@/components/home/BenefitsCarousel';
+import { BottomNav } from '@/components/layout/BottomNav';
 
 // Disable SSR for pages that use React Query
 export const dynamic = 'force-dynamic';
 
-function HomePage() {
+export default function HomePage() {
   const router = useRouter();
   const [searchParams, setSearchParams] = useState<{
     from: string;
@@ -23,14 +27,21 @@ function HomePage() {
 
   return (
     <RegistrationGuard>
-      <main className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-12">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
+      <div className="min-h-screen bg-gray-50 pb-20">
+        {/* Header */}
+        <AppHeader />
+        
+        {/* Rounded top corners with banner carousel */}
+        <div className="bg-white rounded-t-3xl -mt-4 relative z-10">
+          <BannerCarousel />
+          
+          {/* Search Section */}
+          <div className="px-4 py-6">
+            <div className="text-center mb-6">
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
                 Safarlarni Qidiring
               </h1>
-              <p className="text-lg text-gray-600">
+              <p className="text-sm text-gray-600">
                 Shaharlararo va mintaqalararo umumiy taksi xizmatlari
               </p>
             </div>
@@ -41,35 +52,28 @@ function HomePage() {
               initialTo={searchParams?.to}
               initialDate={searchParams?.date}
             />
+          </div>
 
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white rounded-lg shadow-md p-6 text-center">
-                <div className="text-4xl mb-4">🚗</div>
-                <h3 className="font-semibold text-lg mb-2">Safarlarni Solishtiring</h3>
-                <p className="text-gray-600 text-sm">
-                  Barcha mavjud safarlarni real vaqtda o'rinlar bilan ko'ring
-                </p>
+          {/* Benefits Carousel */}
+          <BenefitsCarousel />
+
+          {/* Trip Comparison Section */}
+          <div className="px-4 py-4">
+            <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-2xl">🚗</span>
+                <h3 className="font-bold text-lg text-gray-900">Safarlarni Solishtiring</h3>
               </div>
-              <div className="bg-white rounded-lg shadow-md p-6 text-center">
-                <div className="text-4xl mb-4">💬</div>
-                <h3 className="font-semibold text-lg mb-2">Chat & Rezervatsiya</h3>
-                <p className="text-gray-600 text-sm">
-                  10 daqiqalik bepul rezervatsiya orqali haydovchi bilan muzokara qiling
-                </p>
-              </div>
-              <div className="bg-white rounded-lg shadow-md p-6 text-center">
-                <div className="text-4xl mb-4">⭐</div>
-                <h3 className="font-semibold text-lg mb-2">Ishonchli Haydovchilar</h3>
-                <p className="text-gray-600 text-sm">
-                  Javob berish vaqtiga ko'ra reytinglangan haydovchilar
-                </p>
-              </div>
+              <p className="text-sm text-gray-600">
+                Barcha mavjud safarlarni real vaqtda o'rin bilan solishtiring va eng qulay variantni tanlang
+              </p>
             </div>
           </div>
         </div>
-      </main>
+      </div>
+      
+      {/* Bottom Navigation */}
+      <BottomNav />
     </RegistrationGuard>
   );
 }
-
-export default HomePage;

@@ -10,13 +10,8 @@ import { Card } from '@/components/ui/Card';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/Button';
 import { MapView } from '@/components/maps/MapView';
-import { RegistrationModal } from '@/components/auth/RegistrationModal';
-import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 
-// Disable SSR for pages that use React Query
-export const dynamic = 'force-dynamic';
-
-function TripDetailPage() {
+export default function TripDetailPage() {
   const params = useParams();
   const router = useRouter();
   const tripId = params.id as string;
@@ -26,15 +21,6 @@ function TripDetailPage() {
     queryKey: ['trip', tripId],
     queryFn: () => apiClient.getTrip(tripId),
   });
-
-  const { data: userData } = useQuery({
-    queryKey: ['user', 'me'],
-    queryFn: () => apiClient.getCurrentUser(),
-    retry: false,
-    enabled: false, // Don't fetch automatically - only when needed
-  });
-
-  const [showRegistration, setShowRegistration] = useState(false);
 
   const {
     reservation,
@@ -47,28 +33,11 @@ function TripDetailPage() {
   } = useReservation();
 
   const handleReserve = async () => {
-    // Check if user is registered - fetch user data if needed
-    if (!userData) {
-      const currentUser = await apiClient.getCurrentUser();
-      if (!currentUser?.user?.isProfileComplete) {
-        setShowRegistration(true);
-        return;
-      }
-    } else if (!userData.user?.isProfileComplete) {
-      setShowRegistration(true);
-      return;
-    }
-
     try {
       await createReservation(tripId, 1);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to create reservation:', error);
-      // If 401 or profile incomplete error, show registration
-      if (error.response?.status === 401 || error.message?.includes('profile')) {
-        setShowRegistration(true);
-      } else {
-        alert('Rezervatsiya yaratishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
-      }
+      alert('Failed to create reservation. Please try again.');
     }
   };
 
@@ -103,18 +72,16 @@ function TripDetailPage() {
 
   if (!data?.trip) {
     return (
-      <RegistrationGuard>
-        <div className="container mx-auto px-4 py-12 text-center">
-          <p className="text-red-600">Trip not found</p>
-          <Button
-            variant="primary"
-            className="mt-4"
-            onClick={() => router.push('/trips')}
-          >
-            Back to Trips
-          </Button>
-        </div>
-      </RegistrationGuard>
+      <div className="container mx-auto px-4 py-12 text-center">
+        <p className="text-red-600">Trip not found</p>
+        <Button
+          variant="primary"
+          className="mt-4"
+          onClick={() => router.push('/trips')}
+        >
+          Back to Trips
+        </Button>
+      </div>
     );
   }
 
@@ -130,7 +97,6 @@ function TripDetailPage() {
   const isConfirmed = reservation?.status === 'CONFIRMED';
 
   return (
-    <RegistrationGuard requireRegistration={true}>
     <main className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-6">
         {/* Active Reservation Panel */}
@@ -275,20 +241,6 @@ function TripDetailPage() {
           </div>
         </Card>
       </div>
-
-      <RegistrationModal
-        isOpen={showRegistration}
-        onClose={() => setShowRegistration(false)}
-        onSuccess={() => {
-          // After registration, try to create reservation again
-          if (tripId) {
-            handleReserve();
-          }
-        }}
-      />
     </main>
-    </RegistrationGuard>
   );
 }
-
-export default TripDetailPage;

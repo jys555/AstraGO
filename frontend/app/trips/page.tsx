@@ -2,21 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
 import { TripList } from '@/components/trips/TripList';
 import { useTrips } from '@/hooks/useTrips';
 import { useReservation } from '@/hooks/useReservation';
 import { ReservationPanel } from '@/components/trips/ReservationPanel';
 import { TripFilters } from '@/types';
 import { Button } from '@/components/ui/Button';
-import { apiClient } from '@/lib/api';
-import { RegistrationModal } from '@/components/auth/RegistrationModal';
-import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 
-// Disable SSR for pages that use React Query
-export const dynamic = 'force-dynamic';
-
-function TripsPage() {
+export default function TripsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [filters, setFilters] = useState<TripFilters>({
@@ -26,16 +19,6 @@ function TripsPage() {
   });
 
   const { data, isLoading, error } = useTrips(filters);
-  const { data: userData } = useQuery({
-    queryKey: ['user', 'me'],
-    queryFn: () => apiClient.getCurrentUser(),
-    retry: false,
-    enabled: false, // Don't fetch automatically - only when needed
-  });
-
-  const [showRegistration, setShowRegistration] = useState(false);
-  const [pendingTripId, setPendingTripId] = useState<string | null>(null);
-
   const {
     reservation,
     timeRemaining,
@@ -47,31 +30,11 @@ function TripsPage() {
   } = useReservation();
 
   const handleReserve = async (tripId: string) => {
-    // Check if user is registered - fetch user data if needed
-    if (!userData) {
-      const currentUser = await apiClient.getCurrentUser();
-      if (!currentUser?.user?.isProfileComplete) {
-        setPendingTripId(tripId);
-        setShowRegistration(true);
-        return;
-      }
-    } else if (!userData.user?.isProfileComplete) {
-      setPendingTripId(tripId);
-      setShowRegistration(true);
-      return;
-    }
-
     try {
       await createReservation(tripId, 1);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to create reservation:', error);
-      // If 401 or profile incomplete error, show registration
-      if (error.response?.status === 401 || error.message?.includes('profile')) {
-        setPendingTripId(tripId);
-        setShowRegistration(true);
-      } else {
-        alert('Rezervatsiya yaratishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
-      }
+      alert('Failed to create reservation. Please try again.');
     }
   };
 
@@ -113,49 +76,55 @@ function TripsPage() {
 
   return (
     <RegistrationGuard requireRegistration={true}>
-      <main className="min-h-screen bg-gray-50">
-        {/* Active Reservation Panel */}
-        {reservation && timeRemaining !== null && (
-          <div className="bg-yellow-50 border-b border-yellow-200">
-            <div className="container mx-auto px-4 py-4">
-              <ReservationPanel
-                reservation={reservation}
-                timeRemaining={timeRemaining}
-                driverResponded={driverResponded}
-                onConfirm={handleConfirm}
-                onCancel={handleCancel}
-                isLoading={reservationLoading}
-              />
+      <div className="min-h-screen bg-gray-50 pb-20">
+        <AppHeader />
+        
+        <main>
+          {/* Active Reservation Panel */}
+          {reservation && timeRemaining !== null && (
+            <div className="bg-yellow-50 border-b border-yellow-200">
+              <div className="container mx-auto px-4 py-4">
+                <ReservationPanel
+                  reservation={reservation}
+                  timeRemaining={timeRemaining}
+                  driverResponded={driverResponded}
+                  onConfirm={handleConfirm}
+                  onCancel={handleCancel}
+                  isLoading={reservationLoading}
+                />
+              </div>
             </div>
+          )}
+
+          {/* Trip List */}
+          <div className="px-4 py-4">
+            <TripList
+              trips={data?.trips || []}
+              onReserve={handleReserve}
+              isLoading={isLoading || reservationLoading}
+              filters={filters}
+              onFiltersChange={setFilters}
+            />
           </div>
-        )}
 
-        {/* Trip List */}
-        <TripList
-          trips={data?.trips || []}
-          onReserve={handleReserve}
-          isLoading={isLoading || reservationLoading}
-          filters={filters}
-          onFiltersChange={setFilters}
-        />
-
-        <RegistrationModal
-          isOpen={showRegistration}
-          onClose={() => {
-            setShowRegistration(false);
-            setPendingTripId(null);
-          }}
-          onSuccess={() => {
-            // After registration, try to create reservation again
-            if (pendingTripId) {
-              handleReserve(pendingTripId);
+          <RegistrationModal
+            isOpen={showRegistration}
+            onClose={() => {
+              setShowRegistration(false);
               setPendingTripId(null);
-            }
-          }}
-        />
-      </main>
+            }}
+            onSuccess={() => {
+              // After registration, try to create reservation again
+              if (pendingTripId) {
+                handleReserve(pendingTripId);
+                setPendingTripId(null);
+              }
+            }}
+          />
+        </main>
+      </div>
+      
+      <BottomNav />
     </RegistrationGuard>
   );
 }
-
-export default TripsPage;

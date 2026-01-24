@@ -8,20 +8,22 @@
   --background-end-rgb: 255, 255, 255;
 }
 
-/* Force light mode - disable dark mode for now */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
 body {
-  color: #1f2937;
-  background: #f9fafb;
-}
-
-/* Ensure inputs have visible text */
-input, textarea, select {
-  color: #1f2937 !important;
-  background-color: #ffffff !important;
-}
-
-input::placeholder, textarea::placeholder {
-  color: #9ca3af !important;
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
 }
 
 @layer utilities {
@@ -58,6 +60,16 @@ input::placeholder, textarea::placeholder {
   font-weight: 600;
   cursor: pointer;
   margin-top: 8px;
+  transition: background-color 0.2s;
+}
+
+.register-modal #register-submit-btn:hover:not(:disabled) {
+  background-color: #0051d5;
+}
+
+.register-modal #register-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .register-modal #register-cancel-btn {
@@ -73,4 +85,24 @@ input::placeholder, textarea::placeholder {
 
 .register-modal #register-cancel-btn:hover {
   color: #666;
+}
+
+/* Input text color fix */
+input, textarea, select {
+  color: #1f2937 !important;
+}
+
+/* Hide scrollbar for carousel */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Safe area for bottom navigation */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
 }

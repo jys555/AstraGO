@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
 import { openTelegramChat } from '@/lib/telegram';
 import { useReservation } from '@/hooks/useReservation';
-import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 
 // Disable SSR for pages that use React Query
 export const dynamic = 'force-dynamic';
@@ -18,7 +17,6 @@ export default function MyTripsPage() {
   const { data: userData } = useQuery({
     queryKey: ['user', 'me'],
     queryFn: () => apiClient.getCurrentUser(),
-    retry: false,
   });
 
   // Get active reservation
@@ -59,10 +57,9 @@ export default function MyTripsPage() {
   };
 
   return (
-    <RegistrationGuard>
-      <main className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-6">
-          <h1 className="text-2xl font-bold mb-6">My Trips</h1>
+    <main className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-6">
+        <h1 className="text-2xl font-bold mb-6">My Trips</h1>
 
         {reservations.length === 0 ? (
           <Card>
@@ -154,6 +151,5 @@ export default function MyTripsPage() {
         )}
       </div>
       </main>
-    </RegistrationGuard>
-  );
+    );
 }

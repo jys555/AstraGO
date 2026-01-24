@@ -24,37 +24,9 @@ const io = new SocketIOServer(httpServer, {
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:3000',
-  'https://astra-go-navy.vercel.app',
-  'https://*.vercel.app',
-].filter(Boolean);
-
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, Postman, etc.)
-    if (!origin) return callback(null, true);
-    
-    // Check if origin matches allowed origins
-    if (allowedOrigins.some(allowed => {
-      if (allowed.includes('*')) {
-        return origin.includes(allowed.replace('*', ''));
-      }
-      return origin === allowed;
-    })) {
-      return callback(null, true);
-    }
-    
-    // For development, allow all origins
-    if (process.env.NODE_ENV === 'development') {
-      return callback(null, true);
-    }
-    
-    callback(new Error('Not allowed by CORS'));
-  },
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-telegram-init-data', 'x-dev-user-id'],
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

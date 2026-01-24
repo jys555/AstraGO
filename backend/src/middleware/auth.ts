@@ -26,18 +26,10 @@ export async function authenticateTelegram(
             id: user.id,
             telegramId: user.telegramId,
             role: user.role,
-            isProfileComplete: user.isProfileComplete,
           };
           return next();
         }
       }
-      
-      // Log for debugging
-      console.warn('Missing Telegram initData', {
-        headers: Object.keys(req.headers),
-        userAgent: req.headers['user-agent'],
-      });
-      
       throw new UnauthorizedError('Telegram initData required');
     }
 
@@ -50,20 +42,25 @@ export async function authenticateTelegram(
       const userStr = params.get('user');
       if (userStr) {
         const userData = JSON.parse(userStr);
-        const user = await prisma.user.findUnique({
+        let user = await prisma.user.findUnique({
           where: { telegramId: String(userData.id) },
         });
         
-        // User must be registered first - don't create automatically
         if (!user) {
-          throw new UnauthorizedError('User not registered. Please complete registration first.');
+          user = await prisma.user.create({
+            data: {
+              telegramId: String(userData.id),
+              firstName: userData.first_name,
+              lastName: userData.last_name,
+              username: userData.username,
+            },
+          });
         }
         
         (req as any).user = {
           id: user.id,
           telegramId: user.telegramId,
           role: user.role,
-          isProfileComplete: user.isProfileComplete,
         };
         return next();
       }
@@ -95,20 +92,25 @@ export async function authenticateTelegram(
       const userStr = urlParams.get('user');
       if (userStr) {
         const userData = JSON.parse(userStr);
-        const user = await prisma.user.findUnique({
+        let user = await prisma.user.findUnique({
           where: { telegramId: String(userData.id) },
         });
         
-        // User must be registered first - don't create automatically
         if (!user) {
-          throw new UnauthorizedError('User not registered. Please complete registration first.');
+          user = await prisma.user.create({
+            data: {
+              telegramId: String(userData.id),
+              firstName: userData.first_name,
+              lastName: userData.last_name,
+              username: userData.username,
+            },
+          });
         }
         
         (req as any).user = {
           id: user.id,
           telegramId: user.telegramId,
           role: user.role,
-          isProfileComplete: user.isProfileComplete,
         };
       }
     }
