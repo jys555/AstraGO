@@ -294,7 +294,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                   className={`pl-20 ${errors.phone ? 'border-red-500' : ''}`}
                   placeholder=" "
                 />
-                <label htmlFor="phone" className="left-20">Telefon raqam</label>
+                <label htmlFor="phone" className="left-1">Telefon raqam</label>
                 {focusedField === 'phone' && !phone.replace('+998 ', '').replace(/\s/g, '') && (
                   <span className="floating-placeholder left-20">00 000 00 00</span>
                 )}

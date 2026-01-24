@@ -43,7 +43,7 @@ body {
   font-size: 20px;
   font-weight: 600;
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
   color: #000;
   flex-shrink: 0;
   padding-top: 0;
@@ -79,6 +79,12 @@ body {
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
+/* Label color matches border when focused */
+.register-modal .floating-input input:focus ~ label,
+.register-modal .floating-input select:focus ~ label {
+  color: #3b82f6;
+}
+
 .register-modal .floating-input label {
   position: absolute;
   left: 1rem;
@@ -102,8 +108,20 @@ body {
   top: -8px;
   transform: translateY(0);
   font-size: 12px;
-  color: #6b7280;
   background-color: white;
+}
+
+/* Label color when focused - matches border */
+.register-modal .floating-input input:focus ~ label,
+.register-modal .floating-input select:focus ~ label {
+  color: #3b82f6;
+}
+
+/* Label color when has value but not focused */
+.register-modal .floating-input input:not(:focus):not(:placeholder-shown) ~ label,
+.register-modal .floating-input input:not(:focus)[value]:not([value=""]) ~ label,
+.register-modal .floating-input select:not(:focus):not([value=""]) ~ label {
+  color: #6b7280;
 }
 
 /* Placeholder example text - shows when label is up */
