@@ -103,16 +103,18 @@ function TripDetailPage() {
 
   if (!data?.trip) {
     return (
-      <div className="container mx-auto px-4 py-12 text-center">
-        <p className="text-red-600">Trip not found</p>
-        <Button
-          variant="primary"
-          className="mt-4"
-          onClick={() => router.push('/trips')}
-        >
-          Back to Trips
-        </Button>
-      </div>
+      <RegistrationGuard>
+        <div className="container mx-auto px-4 py-12 text-center">
+          <p className="text-red-600">Trip not found</p>
+          <Button
+            variant="primary"
+            className="mt-4"
+            onClick={() => router.push('/trips')}
+          >
+            Back to Trips
+          </Button>
+        </div>
+      </RegistrationGuard>
     );
   }
 
