@@ -142,8 +142,16 @@ class ApiClient {
   }
 
   // Users
-  async getCurrentUser(): Promise<{ user: User }> {
-    return this.request<{ user: User }>('/api/users/me');
+  async getCurrentUser(): Promise<{ user: User } | null> {
+    try {
+      return await this.request<{ user: User }>('/api/users/me');
+    } catch (error: any) {
+      // 401 means user not registered - this is normal, return null
+      if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
+        return null;
+      }
+      throw error;
+    }
   }
 
   async registerUser(data: {

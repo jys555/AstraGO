@@ -18,20 +18,18 @@ interface RegistrationGuardProps {
 export function RegistrationGuard({ children, requireRegistration = false }: RegistrationGuardProps) {
   const [showRegistration, setShowRegistration] = useState(false);
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['user', 'me'],
     queryFn: () => apiClient.getCurrentUser(),
     retry: false, // Don't retry on 401
-    // Don't throw error on 401 - it's expected for unregistered users
-    throwOnError: false,
   });
 
   const user = data?.user;
   const isProfileComplete = user?.isProfileComplete ?? false;
 
-  // If user is not registered (error 401 or user not complete), show guest welcome
-  // 401 error means user doesn't exist yet - this is normal for first-time users
-  if (!isLoading && (error || !user || !isProfileComplete)) {
+  // If user is not registered (null or not complete), show guest welcome
+  // null means user doesn't exist yet - this is normal for first-time users
+  if (!isLoading && (!user || !isProfileComplete)) {
     if (requireRegistration) {
       return (
         <>
