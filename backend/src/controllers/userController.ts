@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import * as crypto from 'crypto';
 import prisma from '../config/database';
 import { getDriverRanking } from '../services/driverRankingService';
 import { registerUserSchema } from '../utils/validators';
