@@ -245,28 +245,17 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
           <form onSubmit={handleSubmit} id="registration-form" className="pb-4">
             {/* First Name */}
             <div className="floating-input">
-              <div className="relative">
-                <input
-                  type="text"
-                  id="firstName"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  className={`w-full px-4 pt-6 pb-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white transition-all ${
-                    errors.firstName ? 'border-red-500' : 'border-gray-300'
-                  } ${firstName ? 'pt-6 pb-2' : 'pt-4 pb-4'}`}
-                  placeholder=" "
-                />
-                <label
-                  htmlFor="firstName"
-                  className={`absolute left-4 transition-all duration-200 pointer-events-none ${
-                    firstName || errors.firstName
-                      ? 'top-2 text-xs text-gray-500'
-                      : 'top-4 text-base text-gray-400'
-                  }`}
-                >
-                  Ism (majburiy)
-                </label>
-              </div>
+              <input
+                type="text"
+                id="firstName"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className={errors.firstName ? 'border-red-500' : ''}
+                placeholder=" "
+              />
+              <label htmlFor="firstName">
+                Ism (majburiy)
+              </label>
               {errors.firstName && (
                 <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
               )}
@@ -274,34 +263,22 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
 
             {/* Last Name */}
             <div className="floating-input">
-              <div className="relative">
-                <input
-                  type="text"
-                  id="lastName"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  className={`w-full px-4 pt-6 pb-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white transition-all ${
-                    lastName ? 'pt-6 pb-2' : 'pt-4 pb-4'
-                  } border-gray-300`}
-                  placeholder=" "
-                />
-                <label
-                  htmlFor="lastName"
-                  className={`absolute left-4 transition-all duration-200 pointer-events-none ${
-                    lastName
-                      ? 'top-2 text-xs text-gray-500'
-                      : 'top-4 text-base text-gray-400'
-                  }`}
-                >
-                  Familiya (ixtiyoriy)
-                </label>
-              </div>
+              <input
+                type="text"
+                id="lastName"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder=" "
+              />
+              <label htmlFor="lastName">
+                Familiya (ixtiyoriy)
+              </label>
             </div>
 
             {/* Phone Number */}
             <div className="floating-input">
               <div className="relative">
-                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2 z-10">
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2 z-10 pointer-events-none">
                   <span className="text-xl">🇺🇿</span>
                 </div>
                 <input
@@ -315,20 +292,11 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                       handlePhoneChange(e.target.value);
                     }
                   }}
-                  className={`w-full pl-12 pr-4 pt-6 pb-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white transition-all ${
-                    errors.phone ? 'border-red-500' : 'border-gray-300'
-                  } ${phone && phone !== '+998 ' ? 'pt-6 pb-2' : 'pt-4 pb-4'}`}
+                  className={`pl-12 ${errors.phone ? 'border-red-500' : ''}`}
                   placeholder=" "
                   maxLength={17}
                 />
-                <label
-                  htmlFor="phone"
-                  className={`absolute left-12 transition-all duration-200 pointer-events-none ${
-                    phone && phone !== '+998 '
-                      ? 'top-2 text-xs text-gray-500'
-                      : 'top-4 text-base text-gray-400'
-                  }`}
-                >
+                <label htmlFor="phone" className="left-12">
                   Telefon raqam
                 </label>
               </div>
@@ -344,18 +312,12 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                   id="role"
                   value={role}
                   onChange={(e) => setRole(e.target.value as 'PASSENGER' | 'DRIVER' | 'BOTH')}
-                  className="w-full px-4 pt-6 pb-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white appearance-none"
                 >
                   <option value="PASSENGER">Yo'lovchi</option>
                   <option value="DRIVER">Haydovchi</option>
                   <option value="BOTH">Haydovchi & Yo'lovchi</option>
                 </select>
-                <label
-                  htmlFor="role"
-                  className="absolute left-4 top-2 text-xs text-gray-500 pointer-events-none"
-                >
-                  Rol
-                </label>
+                <label htmlFor="role">Rol</label>
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                   <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -369,29 +331,18 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
               <>
                 {/* Car Number */}
                 <div className="floating-input">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      id="carNumber"
-                      value={carNumber}
-                      onChange={(e) => handleCarNumberChange(e.target.value)}
-                      className={`w-full px-4 pt-6 pb-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white uppercase transition-all ${
-                        errors.carNumber ? 'border-red-500' : 'border-gray-300'
-                      } ${carNumber ? 'pt-6 pb-2' : 'pt-4 pb-4'}`}
-                      placeholder=" "
-                      maxLength={12}
-                    />
-                    <label
-                      htmlFor="carNumber"
-                      className={`absolute left-4 transition-all duration-200 pointer-events-none ${
-                        carNumber || errors.carNumber
-                          ? 'top-2 text-xs text-gray-500'
-                          : 'top-4 text-base text-gray-400'
-                      }`}
-                    >
-                      Mashina raqami (majburiy)
-                    </label>
-                  </div>
+                  <input
+                    type="text"
+                    id="carNumber"
+                    value={carNumber}
+                    onChange={(e) => handleCarNumberChange(e.target.value)}
+                    className={`uppercase ${errors.carNumber ? 'border-red-500' : ''}`}
+                    placeholder=" "
+                    maxLength={12}
+                  />
+                  <label htmlFor="carNumber">
+                    Mashina raqami (majburiy)
+                  </label>
                   {errors.carNumber && (
                     <p className="text-red-500 text-xs mt-1">{errors.carNumber}</p>
                   )}
@@ -404,9 +355,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                       id="carModel"
                       value={carModel}
                       onChange={(e) => setCarModel(e.target.value)}
-                      className={`w-full px-4 pt-6 pb-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white appearance-none transition-all ${
-                        errors.carModel ? 'border-red-500' : 'border-gray-300'
-                      } ${carModel ? 'pt-6 pb-2' : 'pt-4 pb-4'}`}
+                      className={errors.carModel ? 'border-red-500' : ''}
                     >
                       <option value="">Modelni tanlang</option>
                       {CAR_MODELS.map((model) => (
@@ -415,14 +364,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                         </option>
                       ))}
                     </select>
-                    <label
-                      htmlFor="carModel"
-                      className={`absolute left-4 transition-all duration-200 pointer-events-none ${
-                        carModel || errors.carModel
-                          ? 'top-2 text-xs text-gray-500'
-                          : 'top-4 text-base text-gray-400'
-                      }`}
-                    >
+                    <label htmlFor="carModel">
                       Mashina modeli (majburiy)
                     </label>
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
@@ -443,9 +385,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                       id="carColor"
                       value={carColor}
                       onChange={(e) => setCarColor(e.target.value)}
-                      className={`w-full px-4 pt-6 pb-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white appearance-none transition-all ${
-                        errors.carColor ? 'border-red-500' : 'border-gray-300'
-                      } ${carColor ? 'pt-6 pb-2' : 'pt-4 pb-4'}`}
+                      className={errors.carColor ? 'border-red-500' : ''}
                     >
                       <option value="">Rangni tanlang</option>
                       {CAR_COLORS.map((color) => (
@@ -454,14 +394,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                         </option>
                       ))}
                     </select>
-                    <label
-                      htmlFor="carColor"
-                      className={`absolute left-4 transition-all duration-200 pointer-events-none ${
-                        carColor || errors.carColor
-                          ? 'top-2 text-xs text-gray-500'
-                          : 'top-4 text-base text-gray-400'
-                      }`}
-                    >
+                    <label htmlFor="carColor">
                       Mashina rangi (majburiy)
                     </label>
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">

@@ -50,20 +50,66 @@ body {
 
 .register-modal .floating-input {
   margin-bottom: 20px;
+  position: relative;
 }
 
-/* Floating label animation */
-.register-modal input:focus + label,
-.register-modal input:not(:placeholder-shown) + label,
-.register-modal select:focus + label,
-.register-modal select:not([value=""]) + label {
-  top: 0.5rem;
-  font-size: 0.75rem;
+/* Floating label design - labels start inside input, move up on focus/fill */
+.register-modal .floating-input input,
+.register-modal .floating-input select {
+  padding-top: 1.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-size: 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: white;
+  color: #1f2937;
+  transition: all 0.2s ease;
+}
+
+.register-modal .floating-input input:focus,
+.register-modal .floating-input select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.register-modal .floating-input label {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  font-size: 16px;
+  color: #9ca3af;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  background-color: white;
+  padding: 0 4px;
+}
+
+/* Label moves up when input is focused or has value */
+.register-modal .floating-input input:focus ~ label,
+.register-modal .floating-input input:not(:placeholder-shown) ~ label,
+.register-modal .floating-input input[value]:not([value=""]) ~ label,
+.register-modal .floating-input select:focus ~ label,
+.register-modal .floating-input select:not([value=""]) ~ label {
+  top: -0.5rem;
+  font-size: 12px;
   color: #6b7280;
+  background-color: white;
 }
 
-.register-modal input::placeholder,
-.register-modal select::placeholder {
+/* For phone input with flag icon */
+.register-modal .floating-input input[type="tel"] ~ label {
+  left: 3rem;
+}
+
+/* Hide placeholder text */
+.register-modal .floating-input input::placeholder {
+  color: transparent;
+}
+
+.register-modal .floating-input select::placeholder {
   color: transparent;
 }
 

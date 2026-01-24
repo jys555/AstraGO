@@ -54,6 +54,9 @@ model User {
   lastName     String?
   phone        String?
   role         UserRole  @default(PASSENGER)
+  carNumber    String?
+  carModel     String?
+  carColor      String?
   onlineStatus Boolean   @default(false)
   lastSeen     DateTime  @default(now())
   createdAt    DateTime  @default(now())
