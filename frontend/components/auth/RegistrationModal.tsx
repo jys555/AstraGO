@@ -255,12 +255,10 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                 className={errors.firstName ? 'border-red-500' : ''}
                 placeholder=" "
               />
-              <label htmlFor="firstName">
-                Ism
-              </label>
-              <span className="floating-placeholder" data-show={firstName ? 'false' : 'true'}>
-                Ismingizni kiriting
-              </span>
+              <label htmlFor="firstName">Ism</label>
+              {(firstName || focusedField === 'firstName') && (
+                <span className="floating-placeholder">Ismingizni kiriting</span>
+              )}
               {errors.firstName && (
                 <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
               )}
