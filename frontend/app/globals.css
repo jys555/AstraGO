@@ -206,6 +206,17 @@ body {
   color: #3b82f6;
 }
 
+.register-modal .phone-floating-input .phone-placeholder {
+  position: absolute;
+  left: calc(3rem + 4rem + 12px + 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #9ca3af;
+  pointer-events: none;
+  z-index: 1;
+}
+
 /* Remove default select arrow - we use custom */
 .register-modal .floating-input select {
   -webkit-appearance: none;

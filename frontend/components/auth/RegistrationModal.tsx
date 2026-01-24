@@ -289,7 +289,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                   placeholder=" "
                 />
                 {focusedField === 'phone' && !phone.replace('+998 ', '').replace(/\s/g, '') && (
-                  <span className="floating-placeholder" style={{ position: 'absolute', left: 'calc(3rem + 4rem + 12px + 12px)', top: '50%', transform: 'translateY(-50%)', fontSize: '16px', color: '#9ca3af', pointerEvents: 'none' }}>00 000 00 00</span>
+                  <span className="phone-placeholder">00 000 00 00</span>
                 )}
               </div>
               <label htmlFor="phone">Telefon raqam</label>
