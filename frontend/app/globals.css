@@ -58,7 +58,7 @@ body {
 .register-modal .floating-input input,
 .register-modal .floating-input select {
   width: 100%;
-  padding: 20px 16px 8px; /* Yuqorida ko'proq padding (label uchun) */
+  padding: 16px;
   font-size: 16px;
   border: 1.5px solid #e0e0e0;
   border-radius: 12px;
@@ -67,6 +67,9 @@ body {
   transition: all 0.2s ease;
   box-sizing: border-box;
   outline: none;
+  display: flex;
+  align-items: center;
+  min-height: 56px;
 }
 
 .register-modal .floating-input input:focus,
@@ -97,13 +100,13 @@ body {
   z-index: 2;
 }
 
-/* Label moves up when input is focused or has value */
+/* Label moves up when input is focused or has value - on border */
 .register-modal .floating-input input:focus ~ label,
 .register-modal .floating-input input:not(:placeholder-shown) ~ label,
 .register-modal .floating-input input[value]:not([value=""]) ~ label,
 .register-modal .floating-input select:focus ~ label,
 .register-modal .floating-input select:not([value=""]) ~ label {
-  top: 0;
+  top: -8px;
   transform: translateY(0);
   font-size: 13px;
   background-color: white;

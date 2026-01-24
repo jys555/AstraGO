@@ -265,10 +265,11 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                 <input
                   type="tel"
                   id="phone"
-                  value={phone.replace('+998 ', '').replace(/\s/g, '')}
+                  value={phone.replace('+998 ', '')}
                   onChange={(e) => {
+                    // Remove all non-digits
                     const digits = e.target.value.replace(/\D/g, '').slice(0, 9);
-                    // Format: 00 000 00 00
+                    // Format: 00 000 00 00 (avtomatik ajratish)
                     let formatted = '';
                     if (digits.length > 0) {
                       formatted = digits.slice(0, 2);
@@ -288,7 +289,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                   onBlur={() => setFocusedField(null)}
                   placeholder=" "
                 />
-                {focusedField === 'phone' && !phone.replace('+998 ', '').replace(/\s/g, '') && (
+                {focusedField === 'phone' && !phone.replace('+998 ', '').trim() && (
                   <span className="phone-placeholder">00 000 00 00</span>
                 )}
               </div>
