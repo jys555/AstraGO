@@ -27,8 +27,8 @@ export function RegistrationGuard({ children, requireRegistration = false }: Reg
   const user = data?.user;
   const isProfileComplete = user?.isProfileComplete ?? false;
 
-  // If user is not registered, show guest welcome or registration modal
-  if (!isLoading && !error && user && !isProfileComplete) {
+  // If user is not registered (error 401 or user not complete), show guest welcome
+  if (!isLoading && (error || !user || !isProfileComplete)) {
     if (requireRegistration) {
       return (
         <>
@@ -57,6 +57,7 @@ export function RegistrationGuard({ children, requireRegistration = false }: Reg
     );
   }
 
-  // If loading or error, show children (let other components handle loading/error states)
+  // If loading, show children (let other components handle loading states)
+  // If user is registered, show children
   return <>{children}</>;
 }
