@@ -56,6 +56,7 @@ body {
 /* Floating label design - labels start inside input, move up on focus/fill */
 .register-modal .floating-input input,
 .register-modal .floating-input select {
+  width: 100%;
   padding-top: 1.5rem;
   padding-bottom: 0.5rem;
   padding-left: 1rem;
@@ -66,6 +67,7 @@ body {
   background-color: white;
   color: #1f2937;
   transition: all 0.2s ease;
+  min-height: 56px;
 }
 
 .register-modal .floating-input input:focus,
@@ -80,11 +82,12 @@ body {
   left: 1rem;
   top: 1rem;
   font-size: 16px;
-  color: #9ca3af;
+  color: #6b7280;
   pointer-events: none;
   transition: all 0.2s ease;
   background-color: white;
   padding: 0 4px;
+  z-index: 2;
 }
 
 /* Label moves up when input is focused or has value */
@@ -97,6 +100,22 @@ body {
   font-size: 12px;
   color: #6b7280;
   background-color: white;
+}
+
+/* Placeholder example text - shows when label is up */
+.register-modal .floating-placeholder {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  font-size: 16px;
+  color: #9ca3af;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1;
+}
+
+.register-modal .floating-placeholder.left-12 {
+  left: 3rem;
 }
 
 /* For phone input with flag icon */

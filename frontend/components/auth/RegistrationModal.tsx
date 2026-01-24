@@ -250,12 +250,17 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                 id="firstName"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
+                onFocus={() => setFocusedField('firstName')}
+                onBlur={() => setFocusedField(null)}
                 className={errors.firstName ? 'border-red-500' : ''}
                 placeholder=" "
               />
               <label htmlFor="firstName">
-                Ism (majburiy)
+                Ism
               </label>
+              <span className="floating-placeholder" data-show={firstName ? 'false' : 'true'}>
+                Ismingizni kiriting
+              </span>
               {errors.firstName && (
                 <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
               )}
@@ -268,11 +273,14 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                 id="lastName"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
+                onFocus={() => setFocusedField('lastName')}
+                onBlur={() => setFocusedField(null)}
                 placeholder=" "
               />
-              <label htmlFor="lastName">
-                Familiya (ixtiyoriy)
-              </label>
+              <label htmlFor="lastName">Familiya</label>
+              {(lastName || focusedField === 'lastName') && (
+                <span className="floating-placeholder">Familiyangizni kiriting</span>
+              )}
             </div>
 
             {/* Phone Number */}
@@ -286,7 +294,9 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                   id="phone"
                   value={phone}
                   onChange={(e) => handlePhoneChange(e.target.value)}
+                  onFocus={() => setFocusedField('phone')}
                   onBlur={(e) => {
+                    setFocusedField(null);
                     // Ensure format is complete
                     if (e.target.value.length < 17) {
                       handlePhoneChange(e.target.value);
@@ -296,9 +306,10 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                   placeholder=" "
                   maxLength={17}
                 />
-                <label htmlFor="phone" className="left-12">
-                  Telefon raqam
-                </label>
+                <label htmlFor="phone" className="left-12">Telefon raqam</label>
+                {(phone && phone !== '+998 ') || focusedField === 'phone' ? (
+                  <span className="floating-placeholder left-12">+998 00 000 00 00</span>
+                ) : null}
               </div>
               {errors.phone && (
                 <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
@@ -336,13 +347,16 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                     id="carNumber"
                     value={carNumber}
                     onChange={(e) => handleCarNumberChange(e.target.value)}
+                    onFocus={() => setFocusedField('carNumber')}
+                    onBlur={() => setFocusedField(null)}
                     className={`uppercase ${errors.carNumber ? 'border-red-500' : ''}`}
                     placeholder=" "
                     maxLength={12}
                   />
-                  <label htmlFor="carNumber">
-                    Mashina raqami (majburiy)
-                  </label>
+                  <label htmlFor="carNumber">Mashina raqami</label>
+                  {(carNumber || focusedField === 'carNumber') && (
+                    <span className="floating-placeholder">01 A 123 BC</span>
+                  )}
                   {errors.carNumber && (
                     <p className="text-red-500 text-xs mt-1">{errors.carNumber}</p>
                   )}
@@ -365,7 +379,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                       ))}
                     </select>
                     <label htmlFor="carModel">
-                      Mashina modeli (majburiy)
+                      Mashina modeli
                     </label>
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                       <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -395,7 +409,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                       ))}
                     </select>
                     <label htmlFor="carColor">
-                      Mashina rangi (majburiy)
+                      Mashina rangi
                     </label>
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                       <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
