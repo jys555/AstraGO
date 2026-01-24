@@ -19,46 +19,7 @@ export default function ProfilePage() {
     retry: false,
   });
 
-  if (isLoading) {
-    return (
-      <main className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-6">
-          <div className="max-w-2xl mx-auto">
-            <Card>
-              <div className="text-center py-12">
-                <p className="text-gray-600">Loading profile...</p>
-              </div>
-            </Card>
-          </div>
-        </div>
-      </main>
-    );
-  }
-
   const user = data?.user;
-
-  // If user not found (null means not registered), show registration prompt
-  if (!isLoading && !user) {
-    return (
-      <main className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-6">
-          <div className="max-w-2xl mx-auto">
-            <Card>
-              <div className="text-center py-12">
-                <h2 className="text-2xl font-bold mb-4">Ro'yxatdan O'tish</h2>
-                <p className="text-gray-600 mb-6">
-                  Profil ma'lumotlarini ko'rish uchun avval ro'yxatdan o'ting
-                </p>
-                <Button onClick={() => router.push('/')} variant="primary">
-                  Bosh Sahifaga Qaytish
-                </Button>
-              </div>
-            </Card>
-          </div>
-        </div>
-      </main>
-    );
-  }
 
   const roleLabels = {
     PASSENGER: 'Yo\'lovchi',
@@ -67,7 +28,8 @@ export default function ProfilePage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <RegistrationGuard>
+      <main className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-2xl mx-auto">
             <h1 className="text-2xl font-bold mb-6">Mening Profilim</h1>

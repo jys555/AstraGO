@@ -112,47 +112,48 @@ function TripsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      {/* Active Reservation Panel */}
-      {reservation && timeRemaining !== null && (
-        <div className="bg-yellow-50 border-b border-yellow-200">
-          <div className="container mx-auto px-4 py-4">
-            <ReservationPanel
-              reservation={reservation}
-              timeRemaining={timeRemaining}
-              driverResponded={driverResponded}
-              onConfirm={handleConfirm}
-              onCancel={handleCancel}
-              isLoading={reservationLoading}
-            />
+    <RegistrationGuard requireRegistration={true}>
+      <main className="min-h-screen bg-gray-50">
+        {/* Active Reservation Panel */}
+        {reservation && timeRemaining !== null && (
+          <div className="bg-yellow-50 border-b border-yellow-200">
+            <div className="container mx-auto px-4 py-4">
+              <ReservationPanel
+                reservation={reservation}
+                timeRemaining={timeRemaining}
+                driverResponded={driverResponded}
+                onConfirm={handleConfirm}
+                onCancel={handleCancel}
+                isLoading={reservationLoading}
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Trip List */}
-      <TripList
-        trips={data?.trips || []}
-        onReserve={handleReserve}
-        isLoading={isLoading || reservationLoading}
-        filters={filters}
-        onFiltersChange={setFilters}
-      />
+        {/* Trip List */}
+        <TripList
+          trips={data?.trips || []}
+          onReserve={handleReserve}
+          isLoading={isLoading || reservationLoading}
+          filters={filters}
+          onFiltersChange={setFilters}
+        />
 
-      <RegistrationModal
-        isOpen={showRegistration}
-        onClose={() => {
-          setShowRegistration(false);
-          setPendingTripId(null);
-        }}
-        onSuccess={() => {
-          // After registration, try to create reservation again
-          if (pendingTripId) {
-            handleReserve(pendingTripId);
+        <RegistrationModal
+          isOpen={showRegistration}
+          onClose={() => {
+            setShowRegistration(false);
             setPendingTripId(null);
-          }
-        }}
-      />
-    </main>
+          }}
+          onSuccess={() => {
+            // After registration, try to create reservation again
+            if (pendingTripId) {
+              handleReserve(pendingTripId);
+              setPendingTripId(null);
+            }
+          }}
+        />
+      </main>
     </RegistrationGuard>
   );
 }
