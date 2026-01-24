@@ -68,6 +68,9 @@ body {
   color: #1f2937;
   transition: all 0.2s ease;
   min-height: 56px;
+  display: flex;
+  align-items: center;
+  line-height: 1.5;
 }
 
 .register-modal .floating-input input:focus,
@@ -120,7 +123,15 @@ body {
 
 /* For phone input with flag icon */
 .register-modal .floating-input input[type="tel"] ~ label {
-  left: 3rem;
+  left: 5rem;
+}
+
+/* Remove default select arrow - we use custom */
+.register-modal .floating-input select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: none;
 }
 
 /* Hide placeholder text */

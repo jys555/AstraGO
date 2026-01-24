@@ -182,7 +182,8 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
       newErrors.firstName = 'Ism majburiy';
     }
     
-    if (!phone || phone.length < 17) { // +998 00 000 00 00 = 17 chars
+    const phoneDigits = phone.replace('+998 ', '').replace(/\s/g, '');
+    if (!phoneDigits || phoneDigits.length < 9) {
       newErrors.phone = 'Telefon raqami to\'liq kiritilishi kerak';
     }
     
@@ -229,7 +230,8 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
       onClose();
     } catch (error: any) {
       console.error('Registration error:', error);
-      setErrors({ submit: error.message || 'Ro\'yxatdan o\'tishda xatolik yuz berdi' });
+      const errorMessage = error.response?.data?.error?.message || error.message || 'Ro\'yxatdan o\'tishda xatolik yuz berdi';
+      setErrors({ submit: errorMessage });
     } finally {
       setIsSubmitting(false);
     }
@@ -257,7 +259,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                 placeholder=" "
               />
               <label htmlFor="firstName">Ism</label>
-              {(firstName || focusedField === 'firstName') && (
+              {focusedField === 'firstName' && !firstName && (
                 <span className="floating-placeholder">Ismingizni kiriting</span>
               )}
               {errors.firstName && (
@@ -277,7 +279,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                 placeholder=" "
               />
               <label htmlFor="lastName">Familiya</label>
-              {(lastName || focusedField === 'lastName') && (
+              {focusedField === 'lastName' && !lastName && (
                 <span className="floating-placeholder">Familiyangizni kiriting</span>
               )}
             </div>
@@ -285,30 +287,43 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
             {/* Phone Number */}
             <div className="floating-input">
               <div className="relative">
-                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2 z-10 pointer-events-none">
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 flex items-center z-10 pointer-events-none">
                   <span className="text-xl">🇺🇿</span>
+                </div>
+                <div className="absolute left-10 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none text-gray-700 font-medium">
+                  +998
                 </div>
                 <input
                   type="tel"
                   id="phone"
-                  value={phone}
-                  onChange={(e) => handlePhoneChange(e.target.value)}
-                  onFocus={() => setFocusedField('phone')}
-                  onBlur={(e) => {
-                    setFocusedField(null);
-                    // Ensure format is complete
-                    if (e.target.value.length < 17) {
-                      handlePhoneChange(e.target.value);
+                  value={phone.replace('+998 ', '')}
+                  onChange={(e) => {
+                    const digits = e.target.value.replace(/\D/g, '').slice(0, 9);
+                    let formatted = '+998 ';
+                    if (digits.length > 0) {
+                      formatted += digits.slice(0, 2);
+                      if (digits.length > 2) {
+                        formatted += ' ' + digits.slice(2, 5);
+                        if (digits.length > 5) {
+                          formatted += ' ' + digits.slice(5, 7);
+                          if (digits.length > 7) {
+                            formatted += ' ' + digits.slice(7, 9);
+                          }
+                        }
+                      }
                     }
+                    setPhone(formatted);
                   }}
-                  className={`pl-12 ${errors.phone ? 'border-red-500' : ''}`}
+                  onFocus={() => setFocusedField('phone')}
+                  onBlur={() => setFocusedField(null)}
+                  className={`pl-20 ${errors.phone ? 'border-red-500' : ''}`}
                   placeholder=" "
-                  maxLength={17}
+                  maxLength={9}
                 />
-                <label htmlFor="phone" className="left-12">Telefon raqam</label>
-                {(phone && phone !== '+998 ') || focusedField === 'phone' ? (
-                  <span className="floating-placeholder left-12">+998 00 000 00 00</span>
-                ) : null}
+                <label htmlFor="phone" className="left-20">Telefon raqam</label>
+                {focusedField === 'phone' && !phone.replace('+998 ', '').trim() && (
+                  <span className="floating-placeholder left-20">00 000 00 00</span>
+                )}
               </div>
               {errors.phone && (
                 <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
@@ -328,7 +343,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                   <option value="BOTH">Haydovchi & Yo'lovchi</option>
                 </select>
                 <label htmlFor="role">Rol</label>
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none z-10">
                   <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
@@ -353,7 +368,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                     maxLength={12}
                   />
                   <label htmlFor="carNumber">Mashina raqami</label>
-                  {(carNumber || focusedField === 'carNumber') && (
+                  {focusedField === 'carNumber' && !carNumber && (
                     <span className="floating-placeholder">01 A 123 BC</span>
                   )}
                   {errors.carNumber && (
