@@ -257,48 +257,42 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
             </div>
 
             {/* Phone Number */}
-            <div className="floating-input">
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 flex items-center z-10 pointer-events-none">
-                  <span className="text-xl">🇺🇿</span>
-                </div>
-                <div className="absolute left-10 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none text-gray-700 font-medium">
-                  +998
-                </div>
-                <div className="absolute left-[4.5rem] top-1/2 transform -translate-y-1/2 z-10 pointer-events-none text-gray-300">
-                  |
-                </div>
+            <div className="phone-floating-input">
+              <div className={`phone-input-wrapper ${errors.phone ? 'border-red-500' : ''}`}>
+                <span className="text-xl">🇺🇿</span>
+                <span className="country-code">+998</span>
+                <span className="divider">|</span>
                 <input
                   type="tel"
                   id="phone"
                   value={phone.replace('+998 ', '').replace(/\s/g, '')}
                   onChange={(e) => {
                     const digits = e.target.value.replace(/\D/g, '').slice(0, 9);
-                    let formatted = '+998 ';
+                    // Format: 00 000 00 00
+                    let formatted = '';
                     if (digits.length > 0) {
-                      formatted += digits.slice(0, 2);
-                      if (digits.length > 2) {
-                        formatted += ' ' + digits.slice(2, 5);
-                        if (digits.length > 5) {
-                          formatted += ' ' + digits.slice(5, 7);
-                          if (digits.length > 7) {
-                            formatted += ' ' + digits.slice(7, 9);
-                          }
-                        }
-                      }
+                      formatted = digits.slice(0, 2);
                     }
-                    setPhone(formatted);
+                    if (digits.length > 2) {
+                      formatted += ' ' + digits.slice(2, 5);
+                    }
+                    if (digits.length > 5) {
+                      formatted += ' ' + digits.slice(5, 7);
+                    }
+                    if (digits.length > 7) {
+                      formatted += ' ' + digits.slice(7, 9);
+                    }
+                    setPhone('+998 ' + formatted);
                   }}
                   onFocus={() => setFocusedField('phone')}
                   onBlur={() => setFocusedField(null)}
-                  className={`pl-[5rem] ${errors.phone ? 'border-red-500' : ''}`}
                   placeholder=" "
                 />
-                <label htmlFor="phone" className="left-1">Telefon raqam</label>
                 {focusedField === 'phone' && !phone.replace('+998 ', '').replace(/\s/g, '') && (
-                  <span className="floating-placeholder left-[5rem]">00 000 00 00</span>
+                  <span className="floating-placeholder" style={{ position: 'absolute', left: 'calc(3rem + 4rem + 12px + 12px)', top: '50%', transform: 'translateY(-50%)', fontSize: '16px', color: '#9ca3af', pointerEvents: 'none' }}>00 000 00 00</span>
                 )}
               </div>
+              <label htmlFor="phone">Telefon raqam</label>
               {errors.phone && (
                 <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
               )}

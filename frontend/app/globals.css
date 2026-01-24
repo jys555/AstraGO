@@ -58,18 +58,15 @@ body {
 .register-modal .floating-input input,
 .register-modal .floating-input select {
   width: 100%;
-  padding: 1rem;
+  padding: 20px 16px 8px; /* Yuqorida ko'proq padding (label uchun) */
   font-size: 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 12px;
   background-color: white;
   color: #1f2937;
   transition: all 0.2s ease;
-  min-height: 56px;
-  display: flex;
-  align-items: center;
-  line-height: 1.5;
   box-sizing: border-box;
+  outline: none;
 }
 
 .register-modal .floating-input input:focus,
@@ -77,6 +74,7 @@ body {
   outline: none;
   border-color: #3b82f6;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 /* Label color matches border when focused */
@@ -87,11 +85,11 @@ body {
 
 .register-modal .floating-input label {
   position: absolute;
-  left: 1rem;
   top: 50%;
+  left: 16px;
   transform: translateY(-50%);
   font-size: 16px;
-  color: #6b7280;
+  color: #8e8e93;
   pointer-events: none;
   transition: all 0.2s ease;
   background-color: white;
@@ -105,9 +103,9 @@ body {
 .register-modal .floating-input input[value]:not([value=""]) ~ label,
 .register-modal .floating-input select:focus ~ label,
 .register-modal .floating-input select:not([value=""]) ~ label {
-  top: -10px;
+  top: 0;
   transform: translateY(0);
-  font-size: 12px;
+  font-size: 13px;
   background-color: white;
   padding: 0 4px;
 }
@@ -122,7 +120,7 @@ body {
 .register-modal .floating-input input:not(:focus):not(:placeholder-shown) ~ label,
 .register-modal .floating-input input:not(:focus)[value]:not([value=""]) ~ label,
 .register-modal .floating-input select:not(:focus):not([value=""]) ~ label {
-  color: #6b7280;
+  color: #8e8e93;
 }
 
 /* Placeholder example text - shows when label is up */
@@ -146,9 +144,66 @@ body {
   left: 5rem;
 }
 
-/* For phone input with flag icon */
-.register-modal .floating-input input[type="tel"] ~ label {
-  left: 5rem;
+/* Phone field special styling */
+.register-modal .phone-floating-input {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.register-modal .phone-floating-input .phone-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.register-modal .phone-floating-input .phone-input-wrapper:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.register-modal .phone-floating-input .country-code {
+  font-size: 16px;
+  color: #007aff;
+  font-weight: 500;
+  white-space: nowrap;
+  margin-left: 8px;
+}
+
+.register-modal .phone-floating-input .divider {
+  color: #d1d1d6;
+  margin: 0 12px;
+  font-size: 20px;
+}
+
+.register-modal .phone-floating-input .phone-input-wrapper input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  padding: 0;
+  background: transparent;
+  color: #1f2937;
+}
+
+.register-modal .phone-floating-input label {
+  position: absolute;
+  top: -8px;
+  left: 12px;
+  font-size: 13px;
+  color: #8e8e93;
+  background: #fff;
+  padding: 0 4px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.register-modal .phone-floating-input .phone-input-wrapper:focus-within ~ label {
+  color: #3b82f6;
 }
 
 /* Remove default select arrow - we use custom */
