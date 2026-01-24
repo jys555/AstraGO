@@ -211,14 +211,14 @@ body {
 
 .register-modal .phone-floating-input .phone-placeholder {
   position: absolute;
-  left: calc(3rem + 4rem + 12px + 12px);
+  /* Position after: flag (1.5rem) + flag margin (0.5rem) + country code (3rem) + divider margin (0.75rem) + divider (0.5rem) */
+  left: calc(1.5rem + 0.5rem + 3rem + 0.75rem + 0.5rem);
   top: 50%;
   transform: translateY(-50%);
   font-size: 16px;
   color: #9ca3af;
   pointer-events: none;
   z-index: 1;
-  margin-left: 0;
 }
 
 /* Remove default select arrow - we use custom */
