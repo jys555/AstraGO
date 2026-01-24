@@ -43,7 +43,7 @@ body {
   font-size: 20px;
   font-weight: 600;
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 32px; /* Header va birinchi field orasidagi masofa - label to'liq ko'rinishi uchun */
   color: #000;
   flex-shrink: 0;
   padding-top: 0;
