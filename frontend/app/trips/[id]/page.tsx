@@ -283,6 +283,7 @@ function TripDetailPage() {
         }}
       />
     </main>
+    </RegistrationGuard>
   );
 }
 

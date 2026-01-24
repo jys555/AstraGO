@@ -152,5 +152,6 @@ export default function MyTripsPage() {
         )}
       </div>
       </main>
-    );
+    </RegistrationGuard>
+  );
 }
