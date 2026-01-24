@@ -26,6 +26,7 @@ export async function authenticateTelegram(
             id: user.id,
             telegramId: user.telegramId,
             role: user.role,
+            isProfileComplete: user.isProfileComplete,
           };
           return next();
         }
@@ -54,12 +55,12 @@ export async function authenticateTelegram(
         });
         
         if (!user) {
+          // Create user without role - they need to complete registration
           user = await prisma.user.create({
             data: {
               telegramId: String(userData.id),
-              firstName: userData.first_name,
-              lastName: userData.last_name,
-              username: userData.username,
+              username: userData.username, // Store Telegram username, but not name
+              isProfileComplete: false, // User needs to complete registration
             },
           });
         }
@@ -68,6 +69,7 @@ export async function authenticateTelegram(
           id: user.id,
           telegramId: user.telegramId,
           role: user.role,
+          isProfileComplete: user.isProfileComplete,
         };
         return next();
       }
@@ -104,12 +106,12 @@ export async function authenticateTelegram(
         });
         
         if (!user) {
+          // Create user without role - they need to complete registration
           user = await prisma.user.create({
             data: {
               telegramId: String(userData.id),
-              firstName: userData.first_name,
-              lastName: userData.last_name,
-              username: userData.username,
+              username: userData.username, // Store Telegram username, but not name
+              isProfileComplete: false, // User needs to complete registration
             },
           });
         }
@@ -118,6 +120,7 @@ export async function authenticateTelegram(
           id: user.id,
           telegramId: user.telegramId,
           role: user.role,
+          isProfileComplete: user.isProfileComplete,
         };
       }
     }

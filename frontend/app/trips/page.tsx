@@ -2,12 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 import { TripList } from '@/components/trips/TripList';
 import { useTrips } from '@/hooks/useTrips';
 import { useReservation } from '@/hooks/useReservation';
 import { ReservationPanel } from '@/components/trips/ReservationPanel';
 import { TripFilters } from '@/types';
 import { Button } from '@/components/ui/Button';
+import { apiClient } from '@/lib/api';
+import { RegistrationModal } from '@/components/auth/RegistrationModal';
 
 // Disable SSR for pages that use React Query
 export const dynamic = 'force-dynamic';
@@ -22,6 +25,15 @@ function TripsPage() {
   });
 
   const { data, isLoading, error } = useTrips(filters);
+  const { data: userData } = useQuery({
+    queryKey: ['user', 'me'],
+    queryFn: () => apiClient.getCurrentUser(),
+    retry: false,
+  });
+
+  const [showRegistration, setShowRegistration] = useState(false);
+  const [pendingTripId, setPendingTripId] = useState<string | null>(null);
+
   const {
     reservation,
     timeRemaining,
@@ -33,11 +45,24 @@ function TripsPage() {
   } = useReservation();
 
   const handleReserve = async (tripId: string) => {
+    // Check if user is registered
+    if (!userData?.user?.isProfileComplete) {
+      setPendingTripId(tripId);
+      setShowRegistration(true);
+      return;
+    }
+
     try {
       await createReservation(tripId, 1);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to create reservation:', error);
-      alert('Failed to create reservation. Please try again.');
+      // If 401 or profile incomplete error, show registration
+      if (error.response?.status === 401 || error.message?.includes('profile')) {
+        setPendingTripId(tripId);
+        setShowRegistration(true);
+      } else {
+        alert('Rezervatsiya yaratishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
+      }
     }
   };
 
@@ -102,6 +127,21 @@ function TripsPage() {
         isLoading={isLoading || reservationLoading}
         filters={filters}
         onFiltersChange={setFilters}
+      />
+
+      <RegistrationModal
+        isOpen={showRegistration}
+        onClose={() => {
+          setShowRegistration(false);
+          setPendingTripId(null);
+        }}
+        onSuccess={() => {
+          // After registration, try to create reservation again
+          if (pendingTripId) {
+            handleReserve(pendingTripId);
+            setPendingTripId(null);
+          }
+        }}
       />
     </main>
   );

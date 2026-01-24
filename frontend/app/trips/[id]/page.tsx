@@ -10,6 +10,7 @@ import { Card } from '@/components/ui/Card';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/Button';
 import { MapView } from '@/components/maps/MapView';
+import { RegistrationModal } from '@/components/auth/RegistrationModal';
 
 // Disable SSR for pages that use React Query
 export const dynamic = 'force-dynamic';
@@ -25,6 +26,14 @@ function TripDetailPage() {
     queryFn: () => apiClient.getTrip(tripId),
   });
 
+  const { data: userData } = useQuery({
+    queryKey: ['user', 'me'],
+    queryFn: () => apiClient.getCurrentUser(),
+    retry: false,
+  });
+
+  const [showRegistration, setShowRegistration] = useState(false);
+
   const {
     reservation,
     timeRemaining,
@@ -36,11 +45,22 @@ function TripDetailPage() {
   } = useReservation();
 
   const handleReserve = async () => {
+    // Check if user is registered
+    if (!userData?.user?.isProfileComplete) {
+      setShowRegistration(true);
+      return;
+    }
+
     try {
       await createReservation(tripId, 1);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to create reservation:', error);
-      alert('Failed to create reservation. Please try again.');
+      // If 401 or profile incomplete error, show registration
+      if (error.response?.status === 401 || error.message?.includes('profile')) {
+        setShowRegistration(true);
+      } else {
+        alert('Rezervatsiya yaratishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
+      }
     }
   };
 
@@ -244,6 +264,17 @@ function TripDetailPage() {
           </div>
         </Card>
       </div>
+
+      <RegistrationModal
+        isOpen={showRegistration}
+        onClose={() => setShowRegistration(false)}
+        onSuccess={() => {
+          // After registration, try to create reservation again
+          if (tripId) {
+            handleReserve();
+          }
+        }}
+      />
     </main>
   );
 }

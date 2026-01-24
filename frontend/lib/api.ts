@@ -146,6 +146,21 @@ class ApiClient {
     return this.request<{ user: User }>('/api/users/me');
   }
 
+  async registerUser(data: {
+    firstName: string;
+    lastName: string;
+    phone: string;
+    role: 'PASSENGER' | 'DRIVER' | 'BOTH';
+    carNumber?: string;
+    carModel?: string;
+    carColor?: string;
+  }): Promise<{ user: User }> {
+    return this.request<{ user: User }>('/api/users/register', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
   async updateCurrentUser(data: Partial<User>): Promise<{ user: User }> {
     return this.request<{ user: User }>('/api/users/me', {
       method: 'PATCH',

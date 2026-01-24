@@ -98,7 +98,7 @@ export default function ProfilePage() {
                   <p className="text-lg font-semibold text-gray-900">
                     {user.firstName && user.lastName
                       ? `${user.firstName} ${user.lastName}`
-                      : user.firstName || user.lastName || 'Ko\'rsatilmagan'}
+                      : user.firstName || user.lastName || 'Ro\'yxatdan o\'tish kerak'}
                   </p>
                 </div>
 
@@ -142,41 +142,66 @@ export default function ProfilePage() {
               </div>
 
               {user.role === 'DRIVER' || user.role === 'BOTH' ? (
-                <div className="pt-4 border-t">
-                  <h3 className="text-lg font-semibold mb-4">Haydovchi Ko'rsatkichlari</h3>
-                  {user.driverMetrics ? (
-                    <div className="grid grid-cols-2 gap-4">
+                <>
+                  <div className="pt-4 border-t">
+                    <h3 className="text-lg font-semibold mb-4">Mashina Ma'lumotlari</h3>
+                    <div className="grid grid-cols-1 gap-4">
                       <div>
-                        <label className="text-sm font-medium text-gray-600">Javob Berish Darajasi</label>
+                        <label className="text-sm font-medium text-gray-600">Mashina Raqami</label>
                         <p className="text-lg font-semibold text-gray-900">
-                          {user.driverMetrics.responseRate.toFixed(1)}%
+                          {user.carNumber || 'Ko\'rsatilmagan'}
                         </p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-600">O'rtacha Javob Vaqti</label>
+                        <label className="text-sm font-medium text-gray-600">Mashina Modeli</label>
                         <p className="text-lg font-semibold text-gray-900">
-                          {user.driverMetrics.avgResponseTime
-                            ? `${Math.round(user.driverMetrics.avgResponseTime)}s`
-                            : 'N/A'}
+                          {user.carModel || 'Ko\'rsatilmagan'}
                         </p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-600">Jami Safarlar</label>
+                        <label className="text-sm font-medium text-gray-600">Mashina Rangi</label>
                         <p className="text-lg font-semibold text-gray-900">
-                          {user.driverMetrics.totalTrips}
-                        </p>
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium text-gray-600">Reyting</label>
-                        <p className="text-lg font-semibold text-gray-900">
-                          {user.driverMetrics.rankingScore.toFixed(1)}
+                          {user.carColor || 'Ko\'rsatilmagan'}
                         </p>
                       </div>
                     </div>
-                  ) : (
-                    <p className="text-gray-500 text-sm">Hozircha ko'rsatkichlar mavjud emas</p>
-                  )}
-                </div>
+                  </div>
+                  <div className="pt-4 border-t">
+                    <h3 className="text-lg font-semibold mb-4">Haydovchi Ko'rsatkichlari</h3>
+                    {user.driverMetrics ? (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-sm font-medium text-gray-600">Javob Berish Darajasi</label>
+                          <p className="text-lg font-semibold text-gray-900">
+                            {user.driverMetrics.responseRate.toFixed(1)}%
+                          </p>
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium text-gray-600">O'rtacha Javob Vaqti</label>
+                          <p className="text-lg font-semibold text-gray-900">
+                            {user.driverMetrics.avgResponseTime
+                              ? `${Math.round(user.driverMetrics.avgResponseTime)}s`
+                              : 'N/A'}
+                          </p>
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium text-gray-600">Jami Safarlar</label>
+                          <p className="text-lg font-semibold text-gray-900">
+                            {user.driverMetrics.totalTrips}
+                          </p>
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium text-gray-600">Reyting</label>
+                          <p className="text-lg font-semibold text-gray-900">
+                            {user.driverMetrics.rankingScore.toFixed(1)}
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-gray-500 text-sm">Hozircha ko'rsatkichlar mavjud emas</p>
+                    )}
+                  </div>
+                </>
               ) : null}
             </div>
           </Card>

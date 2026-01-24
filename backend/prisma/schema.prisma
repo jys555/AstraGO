@@ -47,17 +47,22 @@ enum DeliveryType {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  telegramId   String    @unique
-  username     String?
-  firstName    String?
-  lastName     String?
-  phone        String?
-  role         UserRole  @default(PASSENGER)
-  onlineStatus Boolean   @default(false)
-  lastSeen     DateTime  @default(now())
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id                String    @id @default(uuid())
+  telegramId       String    @unique
+  username         String?
+  firstName        String?   // Custom name (not from Telegram)
+  lastName         String?   // Custom name (not from Telegram)
+  phone            String?
+  role             UserRole? // Null until user completes registration
+  isProfileComplete Boolean  @default(false) // True after registration
+  // Driver-specific fields
+  carNumber        String?
+  carModel         String?
+  carColor         String?
+  onlineStatus     Boolean   @default(false)
+  lastSeen         DateTime  @default(now())
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   // Relations
   tripsAsDriver     Trip[]
@@ -69,6 +74,7 @@ model User {
   @@index([telegramId])
   @@index([onlineStatus])
   @@index([role])
+  @@index([isProfileComplete])
 }
 
 model Trip {
