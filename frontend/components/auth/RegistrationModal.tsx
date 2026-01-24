@@ -45,7 +45,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
         payload.carColor = data.carColor;
       }
 
-      return apiClient.post('/users/register', payload);
+      return apiClient.registerUser(payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user', 'me'] });
