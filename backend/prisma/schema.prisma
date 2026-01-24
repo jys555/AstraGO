@@ -53,7 +53,7 @@ model User {
   firstName        String?   // Custom name (not from Telegram)
   lastName         String?   // Custom name (not from Telegram)
   phone            String?
-  role             UserRole? // Null until user completes registration
+  role             UserRole  @default(PASSENGER) // Default to PASSENGER, can be changed during registration
   isProfileComplete Boolean  @default(false) // True after registration
   // Driver-specific fields
   carNumber        String?

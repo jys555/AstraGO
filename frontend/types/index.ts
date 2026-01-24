@@ -5,7 +5,7 @@ export interface User {
   firstName?: string;
   lastName?: string;
   phone?: string;
-  role: 'PASSENGER' | 'DRIVER' | 'BOTH' | null;
+  role: 'PASSENGER' | 'DRIVER' | 'BOTH';
   isProfileComplete: boolean;
   carNumber?: string;
   carModel?: string;
