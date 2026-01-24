@@ -81,6 +81,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
   const [carColor, setCarColor] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [focusedField, setFocusedField] = useState<string | null>(null);
   const modalContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
