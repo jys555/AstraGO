@@ -265,6 +265,9 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                 <div className="absolute left-10 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none text-gray-700 font-medium">
                   +998
                 </div>
+                <div className="absolute left-16 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none text-gray-300">
+                  |
+                </div>
                 <input
                   type="tel"
                   id="phone"
@@ -415,7 +418,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
           </form>
         </div>
 
-        <div className="border-t pt-3 mt-3 flex-shrink-0">
+        <div className="border-t pt-2 mt-2 flex-shrink-0">
           <button
             type="submit"
             form="registration-form"
