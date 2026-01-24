@@ -108,8 +108,9 @@ export async function registerUser(
       const hash = urlParams.get('hash');
       urlParams.delete('hash');
       
-      const dataCheckString = Array.from(urlParams.entries())
-        .sort(([a], [b]) => a.localeCompare(b))
+      const entries = Array.from(urlParams.entries()) as [string, string][];
+      const dataCheckString = entries
+        .sort((a, b) => a[0].localeCompare(b[0]))
         .map(([key, value]) => `${key}=${value}`)
         .join('\n');
       
