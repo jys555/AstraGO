@@ -11,6 +11,7 @@ import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/Button';
 import { MapView } from '@/components/maps/MapView';
 import { RegistrationModal } from '@/components/auth/RegistrationModal';
+import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 
 // Disable SSR for pages that use React Query
 export const dynamic = 'force-dynamic';
@@ -127,6 +128,7 @@ function TripDetailPage() {
   const isConfirmed = reservation?.status === 'CONFIRMED';
 
   return (
+    <RegistrationGuard requireRegistration={true}>
     <main className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-6">
         {/* Active Reservation Panel */}

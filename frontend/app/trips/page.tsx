@@ -11,6 +11,7 @@ import { TripFilters } from '@/types';
 import { Button } from '@/components/ui/Button';
 import { apiClient } from '@/lib/api';
 import { RegistrationModal } from '@/components/auth/RegistrationModal';
+import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 
 // Disable SSR for pages that use React Query
 export const dynamic = 'force-dynamic';

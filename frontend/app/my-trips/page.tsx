@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
 import { openTelegramChat } from '@/lib/telegram';
 import { useReservation } from '@/hooks/useReservation';
+import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 
 // Disable SSR for pages that use React Query
 export const dynamic = 'force-dynamic';

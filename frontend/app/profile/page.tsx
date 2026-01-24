@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/Card';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
+import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 
 // Disable SSR for pages that use React Query
 export const dynamic = 'force-dynamic';
