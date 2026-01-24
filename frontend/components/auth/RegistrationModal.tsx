@@ -95,9 +95,8 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <Card className="max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
-          <h2 className="text-2xl font-bold mb-6">Ro'yxatdan O'tish</h2>
+      <Card className="max-w-md w-full max-h-[90vh] overflow-y-auto register-modal">
+        <h3>Ro'yxatdan O'tish</h3>
 
           {errors.general && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
@@ -106,7 +105,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
+            <div className="floating-input">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Ism <span className="text-red-500">*</span>
               </label>
@@ -124,7 +123,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
               )}
             </div>
 
-            <div>
+            <div className="floating-input">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Familiya <span className="text-red-500">*</span>
               </label>
@@ -142,7 +141,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
               )}
             </div>
 
-            <div>
+            <div className="floating-input">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Telefon <span className="text-red-500">*</span>
               </label>
@@ -160,7 +159,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
               )}
             </div>
 
-            <div>
+            <div className="floating-input">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Rol <span className="text-red-500">*</span>
               </label>
@@ -181,7 +180,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                   <h3 className="text-lg font-semibold mb-3">Mashina Ma'lumotlari</h3>
                 </div>
 
-                <div>
+                <div className="floating-input">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Mashina Raqami <span className="text-red-500">*</span>
                   </label>
@@ -199,7 +198,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                   )}
                 </div>
 
-                <div>
+                <div className="floating-input">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Mashina Modeli <span className="text-red-500">*</span>
                   </label>
@@ -217,7 +216,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                   )}
                 </div>
 
-                <div>
+                <div className="floating-input">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Mashina Rangi <span className="text-red-500">*</span>
                   </label>
@@ -237,24 +236,21 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
               </>
             )}
 
-            <div className="flex gap-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-                className="flex-1"
-                disabled={registrationMutation.isPending}
-              >
-                Bekor Qilish
-              </Button>
-              <Button
-                type="submit"
-                className="flex-1"
-                disabled={registrationMutation.isPending}
-              >
-                {registrationMutation.isPending ? 'Yuklanmoqda...' : 'Ro\'yxatdan O\'tish'}
-              </Button>
-            </div>
+            <button
+              type="submit"
+              id="register-submit-btn"
+              disabled={registrationMutation.isPending}
+            >
+              {registrationMutation.isPending ? 'Yuklanmoqda...' : 'Ro\'yxatdan O\'tish'}
+            </button>
+            <button
+              type="button"
+              id="register-cancel-btn"
+              onClick={onClose}
+              disabled={registrationMutation.isPending}
+            >
+              Bekor Qilish
+            </button>
           </form>
         </div>
       </Card>

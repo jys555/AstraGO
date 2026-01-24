@@ -50,20 +50,13 @@ export async function authenticateTelegram(
       const userStr = params.get('user');
       if (userStr) {
         const userData = JSON.parse(userStr);
-        let user = await prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
           where: { telegramId: String(userData.id) },
         });
         
+        // User must be registered first - don't create automatically
         if (!user) {
-          // Create user with default PASSENGER role - they can change it during registration
-          user = await prisma.user.create({
-            data: {
-              telegramId: String(userData.id),
-              username: userData.username, // Store Telegram username, but not name
-              role: 'PASSENGER', // Default role
-              isProfileComplete: false, // User needs to complete registration
-            },
-          });
+          throw new UnauthorizedError('User not registered. Please complete registration first.');
         }
         
         (req as any).user = {
@@ -102,20 +95,13 @@ export async function authenticateTelegram(
       const userStr = urlParams.get('user');
       if (userStr) {
         const userData = JSON.parse(userStr);
-        let user = await prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
           where: { telegramId: String(userData.id) },
         });
         
+        // User must be registered first - don't create automatically
         if (!user) {
-          // Create user with default PASSENGER role - they can change it during registration
-          user = await prisma.user.create({
-            data: {
-              telegramId: String(userData.id),
-              username: userData.username, // Store Telegram username, but not name
-              role: 'PASSENGER', // Default role
-              isProfileComplete: false, // User needs to complete registration
-            },
-          });
+          throw new UnauthorizedError('User not registered. Please complete registration first.');
         }
         
         (req as any).user = {
