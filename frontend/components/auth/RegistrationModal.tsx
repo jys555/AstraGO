@@ -415,7 +415,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
           </form>
         </div>
 
-        <div className="border-t pt-4 mt-4 flex-shrink-0">
+        <div className="border-t pt-3 mt-3 flex-shrink-0">
           <button
             type="submit"
             form="registration-form"
