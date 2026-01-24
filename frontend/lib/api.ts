@@ -66,7 +66,10 @@ class ApiClient {
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({ error: { message: 'Request failed' } }));
-      throw new Error(error.error?.message || 'Request failed');
+      const errorMessage = error.error?.message || 'Request failed';
+      const errorWithStatus = new Error(errorMessage) as any;
+      errorWithStatus.status = response.status;
+      throw errorWithStatus;
     }
 
     return response.json();
@@ -147,7 +150,7 @@ class ApiClient {
       return await this.request<{ user: User }>('/api/users/me');
     } catch (error: any) {
       // 401 means user not registered - this is normal, return null
-      if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
+      if (error.status === 401 || error.message?.includes('401') || error.message?.includes('Unauthorized')) {
         return null;
       }
       throw error;

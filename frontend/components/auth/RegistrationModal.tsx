@@ -48,6 +48,8 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
       return apiClient.registerUser(payload);
     },
     onSuccess: () => {
+      // Invalidate all user-related queries
+      queryClient.invalidateQueries({ queryKey: ['user'] });
       queryClient.invalidateQueries({ queryKey: ['user', 'me'] });
       onSuccess();
       onClose();

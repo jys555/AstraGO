@@ -17,6 +17,7 @@ export default function MyTripsPage() {
   const { data: userData } = useQuery({
     queryKey: ['user', 'me'],
     queryFn: () => apiClient.getCurrentUser(),
+    retry: false,
   });
 
   // Get active reservation

@@ -29,6 +29,7 @@ function TripsPage() {
     queryKey: ['user', 'me'],
     queryFn: () => apiClient.getCurrentUser(),
     retry: false,
+    enabled: false, // Don't fetch automatically - only when needed
   });
 
   const [showRegistration, setShowRegistration] = useState(false);
@@ -45,8 +46,15 @@ function TripsPage() {
   } = useReservation();
 
   const handleReserve = async (tripId: string) => {
-    // Check if user is registered
-    if (!userData?.user?.isProfileComplete) {
+    // Check if user is registered - fetch user data if needed
+    if (!userData) {
+      const currentUser = await apiClient.getCurrentUser();
+      if (!currentUser?.user?.isProfileComplete) {
+        setPendingTripId(tripId);
+        setShowRegistration(true);
+        return;
+      }
+    } else if (!userData.user?.isProfileComplete) {
       setPendingTripId(tripId);
       setShowRegistration(true);
       return;

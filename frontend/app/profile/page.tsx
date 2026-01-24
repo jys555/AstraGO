@@ -12,9 +12,10 @@ export const dynamic = 'force-dynamic';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['user', 'me'],
     queryFn: () => apiClient.getCurrentUser(),
+    retry: false,
   });
 
   if (isLoading) {
@@ -35,8 +36,8 @@ export default function ProfilePage() {
 
   const user = data?.user;
 
-  // If error or user not found, show registration prompt
-  if (error || !user) {
+  // If user not found (null means not registered), show registration prompt
+  if (!isLoading && !user) {
     return (
       <main className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-6">

@@ -22,25 +22,42 @@ export function RegistrationGuard({ children, requireRegistration = false }: Reg
     queryKey: ['user', 'me'],
     queryFn: () => apiClient.getCurrentUser(),
     retry: false, // Don't retry on 401
+    // Don't refetch automatically - wait for user to register
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const user = data?.user;
   const isProfileComplete = user?.isProfileComplete ?? false;
 
+  // Show loading state - don't flash content
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+          <p className="text-gray-600">Yuklanmoqda...</p>
+        </div>
+      </div>
+    );
+  }
+
   // If user is not registered (null or not complete), show guest welcome
   // null means user doesn't exist yet - this is normal for first-time users
-  if (!isLoading && (!user || !isProfileComplete)) {
+  if (!user || !isProfileComplete) {
     if (requireRegistration) {
       return (
         <>
+          {children}
           <RegistrationModal
             isOpen={showRegistration}
             onClose={() => setShowRegistration(false)}
             onSuccess={() => {
-              // Registration successful, component will re-render
+              // Registration successful, invalidate query to refetch
+              window.location.reload(); // Simple reload to ensure fresh state
             }}
           />
-          {children}
         </>
       );
     }
@@ -51,14 +68,14 @@ export function RegistrationGuard({ children, requireRegistration = false }: Reg
           isOpen={showRegistration}
           onClose={() => setShowRegistration(false)}
           onSuccess={() => {
-            // Registration successful, component will re-render
+            // Registration successful, invalidate query to refetch
+            window.location.reload(); // Simple reload to ensure fresh state
           }}
         />
       </>
     );
   }
 
-  // If loading, show children (let other components handle loading states)
-  // If user is registered, show children
+  // User is registered - show children
   return <>{children}</>;
 }

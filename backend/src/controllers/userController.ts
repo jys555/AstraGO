@@ -75,6 +75,7 @@ export async function registerUser(
         const userData = JSON.parse(userStr);
         telegramUserId = String(userData.id);
         telegramUsername = userData.username || null;
+        // Store Telegram user data for reference (but use form data as primary)
       }
     } else {
       // Development mode - parse without validation
