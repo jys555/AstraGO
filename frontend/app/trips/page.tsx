@@ -50,14 +50,15 @@ function TripsPage() {
 
   const handleReserve = async (tripId: string) => {
     // Check if user is registered - fetch user data if needed
+    // User is registered if firstName and phone are present
     if (!userData) {
       const currentUser = await apiClient.getCurrentUser();
-      if (!currentUser || !currentUser.user?.isProfileComplete) {
+      if (!currentUser || !currentUser.user?.firstName || !currentUser.user?.phone) {
         setPendingTripId(tripId);
         setShowRegistration(true);
         return;
       }
-    } else if (!userData.user || !userData.user.isProfileComplete) {
+    } else if (!userData.user || !userData.user.firstName || !userData.user.phone) {
       setPendingTripId(tripId);
       setShowRegistration(true);
       return;

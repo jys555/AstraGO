@@ -29,7 +29,8 @@ export function RegistrationGuard({ children, requireRegistration = false }: Reg
   });
 
   const user = data?.user;
-  const isProfileComplete = user?.isProfileComplete ?? false;
+  // User is registered if firstName and phone are present
+  const isProfileComplete = !!(user?.firstName && user?.phone);
 
   // Show loading state - don't flash content
   if (isLoading) {
