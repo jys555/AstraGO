@@ -268,7 +268,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                 <input
                   type="tel"
                   id="phone"
-                  value={phone.replace('+998 ', '')}
+                  value={phone.replace('+998 ', '').replace(/\s/g, '')}
                   onChange={(e) => {
                     const digits = e.target.value.replace(/\D/g, '').slice(0, 9);
                     let formatted = '+998 ';
@@ -290,10 +290,9 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                   onBlur={() => setFocusedField(null)}
                   className={`pl-20 ${errors.phone ? 'border-red-500' : ''}`}
                   placeholder=" "
-                  maxLength={9}
                 />
                 <label htmlFor="phone" className="left-20">Telefon raqam</label>
-                {focusedField === 'phone' && !phone.replace('+998 ', '').trim() && (
+                {focusedField === 'phone' && !phone.replace('+998 ', '').replace(/\s/g, '') && (
                   <span className="floating-placeholder left-20">00 000 00 00</span>
                 )}
               </div>

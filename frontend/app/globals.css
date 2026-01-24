@@ -34,7 +34,7 @@ body {
 
 /* Register Modal */
 .register-modal {
-  padding: 28px 20px;
+  padding: 20px 20px;
   display: flex;
   flex-direction: column;
 }
@@ -43,7 +43,7 @@ body {
   font-size: 20px;
   font-weight: 600;
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
   color: #000;
   flex-shrink: 0;
 }
@@ -57,10 +57,7 @@ body {
 .register-modal .floating-input input,
 .register-modal .floating-input select {
   width: 100%;
-  padding-top: 1.5rem;
-  padding-bottom: 0.5rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding: 1rem;
   font-size: 16px;
   border: 1px solid #d1d5db;
   border-radius: 8px;
@@ -71,6 +68,7 @@ body {
   display: flex;
   align-items: center;
   line-height: 1.5;
+  box-sizing: border-box;
 }
 
 .register-modal .floating-input input:focus,
@@ -83,7 +81,8 @@ body {
 .register-modal .floating-input label {
   position: absolute;
   left: 1rem;
-  top: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
   font-size: 16px;
   color: #6b7280;
   pointer-events: none;
@@ -99,7 +98,8 @@ body {
 .register-modal .floating-input input[value]:not([value=""]) ~ label,
 .register-modal .floating-input select:focus ~ label,
 .register-modal .floating-input select:not([value=""]) ~ label {
-  top: -0.5rem;
+  top: 0;
+  transform: translateY(-50%);
   font-size: 12px;
   color: #6b7280;
   background-color: white;
@@ -109,7 +109,8 @@ body {
 .register-modal .floating-placeholder {
   position: absolute;
   left: 1rem;
-  top: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
   font-size: 16px;
   color: #9ca3af;
   pointer-events: none;
@@ -119,6 +120,10 @@ body {
 
 .register-modal .floating-placeholder.left-12 {
   left: 3rem;
+}
+
+.register-modal .floating-placeholder.left-20 {
+  left: 5rem;
 }
 
 /* For phone input with flag icon */
