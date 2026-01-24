@@ -121,7 +121,7 @@ export default function ProfilePage() {
                   <div className="mt-1">
                     <StatusBadge 
                       status={user.role === 'DRIVER' ? 'active' : user.role === 'BOTH' ? 'online' : 'inactive'}
-                      label={roleLabels[user.role]}
+                      label={user.role ? roleLabels[user.role] : 'Ro\'yxatdan o\'tish kerak'}
                     />
                   </div>
                 </div>

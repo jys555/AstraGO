@@ -51,14 +51,16 @@ export function UserMenu() {
               {user.firstName || user.username || 'User'}
             </div>
             <div className="text-xs text-gray-500">
-              {roleLabels[user.role]}
+              {user.role ? roleLabels[user.role] : 'Ro\'yxatdan o\'tish kerak'}
             </div>
           </div>
         </Link>
-        <StatusBadge
-          status={user.role === 'DRIVER' ? 'active' : user.role === 'BOTH' ? 'online' : 'inactive'}
-          label={roleLabels[user.role]}
-        />
+        {user.role && (
+          <StatusBadge
+            status={user.role === 'DRIVER' ? 'active' : user.role === 'BOTH' ? 'online' : 'inactive'}
+            label={roleLabels[user.role]}
+          />
+        )}
       </div>
     );
   }
