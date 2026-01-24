@@ -98,36 +98,8 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
     }
   }, [isOpen]);
 
-  // Format phone number: +998 00 000 00 00
-  const handlePhoneChange = (value: string) => {
-    // Remove all non-digits except +
-    let cleaned = value.replace(/[^\d+]/g, '');
-    
-    // Ensure it starts with +998
-    if (!cleaned.startsWith('+998')) {
-      cleaned = '+998' + cleaned.replace(/^\+998/, '');
-    }
-    
-    // Limit to +998 and 9 digits
-    const digits = cleaned.replace('+998', '').slice(0, 9);
-    
-    // Format: +998 00 000 00 00
-    let formatted = '+998 ';
-    if (digits.length > 0) {
-      formatted += digits.slice(0, 2);
-      if (digits.length > 2) {
-        formatted += ' ' + digits.slice(2, 5);
-        if (digits.length > 5) {
-          formatted += ' ' + digits.slice(5, 7);
-          if (digits.length > 7) {
-            formatted += ' ' + digits.slice(7, 9);
-          }
-        }
-      }
-    }
-    
-    setPhone(formatted);
-  };
+  // Phone input now only handles digits (without +998 prefix)
+  // The +998 is displayed separately in the UI
 
   // Format car number: 01 A 123 BC (region number, letter, numbers, letters)
   const handleCarNumberChange = (value: string) => {
