@@ -34,7 +34,7 @@ body {
 
 /* Register Modal */
 .register-modal {
-  padding: 12px 20px 20px 20px; /* Modal padding - top padding yanada kamaytirildi */
+  padding: 8px 20px 20px 20px; /* Modal padding - top padding kamaytirildi, modal oynasi kengaytirildi */
   display: flex;
   flex-direction: column;
   overflow: hidden; /* Horizontal scroll yo'q */
@@ -47,7 +47,7 @@ body {
   font-size: 18px; /* Header font-size kichraytirildi */
   font-weight: 600;
   text-align: center;
-  margin: 0 auto 56px auto; /* Header va birinchi field orasidagi masofa - 1 tab ko'rinadigan bo'sh joy */
+  margin: 0 auto 64px auto; /* Header va birinchi field orasidagi masofa - 2 tab label sig'ishi uchun */
   padding: 0; /* Header padding yo'q */
   color: #000;
   flex-shrink: 0;
