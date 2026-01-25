@@ -100,6 +100,21 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
     }
   }, [isOpen]);
 
+  // Update phone placeholder position when focused
+  useEffect(() => {
+    if (focusedField === 'phone' && phoneInputRef.current && phonePlaceholderRef.current) {
+      const input = phoneInputRef.current;
+      const placeholder = phonePlaceholderRef.current;
+      const wrapper = input.closest('.phone-input-wrapper');
+      if (wrapper) {
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const inputRect = input.getBoundingClientRect();
+        // Position placeholder at the start of input (cursor position)
+        placeholder.style.left = `${inputRect.left - wrapperRect.left}px`;
+      }
+    }
+  }, [focusedField]);
+
   // Phone input now only handles digits (without +998 prefix)
   // The +998 is displayed separately in the UI
 
