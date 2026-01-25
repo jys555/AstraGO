@@ -233,7 +233,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
       <div className="register-modal bg-white rounded-2xl w-full max-w-md shadow-xl max-h-[90vh] flex flex-col">
         <h3>Profilingizni to'ldiring</h3>
         
-        <div className="flex-1 overflow-y-auto" ref={modalContentRef}>
+        <div className="flex-1 overflow-y-auto px-0" ref={modalContentRef} style={{ paddingLeft: 0, paddingRight: 0 }}>
           <form onSubmit={handleSubmit} id="registration-form" className="pb-4">
             {/* First Name */}
             <div className="floating-input">

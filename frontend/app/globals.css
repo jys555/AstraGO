@@ -34,7 +34,7 @@ body {
 
 /* Register Modal */
 .register-modal {
-  padding: 16px 20px 20px 20px; /* Modal padding - top va bottom padding kamaytirildi, scroll oynasi kattalashtirildi */
+  padding: 12px 20px 20px 20px; /* Modal padding - top padding yanada kamaytirildi */
   display: flex;
   flex-direction: column;
 }
@@ -43,11 +43,12 @@ body {
   font-size: 18px; /* Header font-size kichraytirildi */
   font-weight: 600;
   text-align: center;
-  margin: 0 0 44px 0; /* Header va birinchi field orasidagi masofa - label to'liq ko'rinishi uchun */
+  margin: 0 0 48px 0; /* Header va birinchi field orasidagi masofa - label to'liq ko'rinishi uchun */
   padding: 0; /* Header padding yo'q */
   color: #000;
   flex-shrink: 0;
-  line-height: 1.1; /* Header qalinligini yanada kamaytirish */
+  line-height: 1.0; /* Header qalinligini minimal qilish */
+  height: auto; /* Height auto - keraksiz bo'shliq yo'q */
 }
 
 .register-modal .floating-input {
