@@ -214,8 +214,7 @@ body {
 
 .register-modal .phone-floating-input .phone-placeholder {
   position: absolute;
-  /* Position after: wrapper padding-left (16px) + flag (24px) + country-code margin-left (8px) + country-code width (~48px) + divider margin-left (12px) + divider width (~8px) + divider margin-right (12px) */
-  left: calc(16px + 24px + 8px + 48px + 12px + 8px + 12px);
+  /* Position will be set dynamically via JavaScript to match input cursor position */
   top: 50%;
   transform: translateY(-50%);
   font-size: 16px;

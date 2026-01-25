@@ -83,6 +83,8 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const modalContentRef = useRef<HTMLDivElement>(null);
+  const phoneInputRef = useRef<HTMLInputElement>(null);
+  const phonePlaceholderRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -263,6 +265,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                 <span className="country-code">+998</span>
                 <span className="divider">|</span>
                 <input
+                  ref={phoneInputRef}
                   type="tel"
                   id="phone"
                   value={phone.replace('+998 ', '')}
@@ -290,7 +293,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                   placeholder=" "
                 />
                 {focusedField === 'phone' && !phone.replace('+998 ', '').trim() && (
-                  <span className="phone-placeholder">00 000 00 00</span>
+                  <span ref={phonePlaceholderRef} className="phone-placeholder">00 000 00 00</span>
                 )}
               </div>
               <label htmlFor="phone">Telefon raqam</label>
