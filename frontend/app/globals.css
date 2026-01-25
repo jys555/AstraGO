@@ -47,7 +47,7 @@ body {
   font-size: 18px; /* Header font-size kichraytirildi */
   font-weight: 600;
   text-align: center;
-  margin: 0 auto 52px auto; /* Header va birinchi field orasidagi masofa - label to'liq ko'rinishi uchun, center alignment */
+  margin: 0 auto 56px auto; /* Header va birinchi field orasidagi masofa - 1 tab ko'rinadigan bo'sh joy */
   padding: 0; /* Header padding yo'q */
   color: #000;
   flex-shrink: 0;
@@ -55,8 +55,9 @@ body {
   position: relative; /* Position relative - overlay emas */
   z-index: 1; /* Z-index past - field'lar ustida emas */
   width: fit-content; /* Header kengligi faqat yozuv kengligida */
-  max-width: 100%; /* Max width - overflow yo'q */
+  max-width: calc(100% - 40px); /* Max width - padding hisobga olinadi */
   background: transparent; /* Background transparent - overlay emas */
+  display: inline-block; /* Inline-block - width fit-content ishlashi uchun */
 }
 
 .register-modal .floating-input {
