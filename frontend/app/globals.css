@@ -58,7 +58,13 @@ body {
 
 .register-modal .floating-input {
   margin-bottom: 20px;
+  margin-left: 0; /* Chapga surilmasligi uchun */
+  margin-right: 0; /* O'ngga surilmasligi uchun */
   position: relative;
+  width: 100%; /* To'liq kenglik */
+  max-width: 100%; /* Max width - horizontal scroll yo'q */
+  box-sizing: border-box;
+  z-index: 2; /* Z-index yuqori - header ustida */
 }
 
 /* Floating label design - labels start inside input, move up on focus/fill */
