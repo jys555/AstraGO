@@ -243,15 +243,15 @@ body {
 
 .register-modal #register-submit-btn {
   width: 100%;
-  padding: 16px;
+  padding: 12px; /* Button padding kamaytirildi */
   background-color: #007aff;
   color: white;
   border: none;
   border-radius: 12px;
-  font-size: 17px;
+  font-size: 16px; /* Font-size kamaytirildi */
   font-weight: 600;
   cursor: pointer;
-  margin-top: 8px;
+  margin-top: 4px; /* Margin kamaytirildi */
   transition: background-color 0.2s;
 }
 
