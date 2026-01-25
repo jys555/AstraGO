@@ -431,8 +431,8 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
           </form>
         </div>
 
-        <div className="flex-shrink-0" style={{ paddingTop: '8px', marginTop: '8px' }}>
-          <div className="border-t" style={{ width: '100%', maxWidth: '100%', margin: '0 auto' }}></div>
+        <div className="flex-shrink-0" style={{ paddingTop: '8px', marginTop: '8px', width: '100%' }}>
+          <div className="border-t" style={{ width: '100%', maxWidth: '100%', margin: '0 auto', borderColor: '#e0e0e0' }}></div>
           <button
             type="submit"
             form="registration-form"
