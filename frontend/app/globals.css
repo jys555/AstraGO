@@ -37,6 +37,10 @@ body {
   padding: 12px 20px 20px 20px; /* Modal padding - top padding yanada kamaytirildi */
   display: flex;
   flex-direction: column;
+  overflow: hidden; /* Horizontal scroll yo'q */
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .register-modal h3 {
@@ -48,6 +52,8 @@ body {
   color: #000;
   flex-shrink: 0;
   line-height: 1.0; /* Header qalinligini minimal qilish */
+  position: relative; /* Position relative - overlay emas */
+  z-index: 1; /* Z-index past - field'lar ustida emas */
 }
 
 .register-modal .floating-input {

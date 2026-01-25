@@ -229,11 +229,11 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-      <div className="register-modal bg-white rounded-2xl w-full max-w-md shadow-xl max-h-[90vh] flex flex-col">
-        <h3>Profilingizni to'ldiring</h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 overflow-hidden">
+      <div className="register-modal bg-white rounded-2xl w-full max-w-md shadow-xl max-h-[90vh] flex flex-col overflow-hidden">
+        <h3 className="flex-shrink-0">Profilingizni to'ldiring</h3>
         
-        <div className="flex-1 overflow-y-auto px-0" ref={modalContentRef} style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <div className="flex-1 overflow-y-auto overflow-x-hidden" ref={modalContentRef} style={{ paddingLeft: 0, paddingRight: 0 }}>
           <form onSubmit={handleSubmit} id="registration-form" className="pb-4">
             {/* First Name */}
             <div className="floating-input">
