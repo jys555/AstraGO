@@ -34,20 +34,20 @@ body {
 
 /* Register Modal */
 .register-modal {
-  padding: 20px 20px 28px 20px; /* Modal padding - top padding kamaytirildi */
+  padding: 16px 20px 20px 20px; /* Modal padding - top va bottom padding kamaytirildi, scroll oynasi kattalashtirildi */
   display: flex;
   flex-direction: column;
 }
 
 .register-modal h3 {
-  font-size: 20px;
+  font-size: 18px; /* Header font-size kichraytirildi */
   font-weight: 600;
   text-align: center;
-  margin: 0 0 40px 0; /* Header va birinchi field orasidagi masofa - label to'liq ko'rinishi uchun */
+  margin: 0 0 44px 0; /* Header va birinchi field orasidagi masofa - label to'liq ko'rinishi uchun */
   padding: 0; /* Header padding yo'q */
   color: #000;
   flex-shrink: 0;
-  line-height: 1.2; /* Header qalinligini kamaytirish */
+  line-height: 1.1; /* Header qalinligini yanada kamaytirish */
 }
 
 .register-modal .floating-input {
@@ -266,13 +266,13 @@ body {
 
 .register-modal #register-cancel-btn {
   width: 100%;
-  padding: 14px;
+  padding: 10px; /* Button padding kamaytirildi */
   background: transparent;
   color: #8e8e93;
   border: none;
-  font-size: 16px;
+  font-size: 15px; /* Font-size kamaytirildi */
   cursor: pointer;
-  margin-top: 8px;
+  margin-top: 4px; /* Margin kamaytirildi */
 }
 
 .register-modal #register-cancel-btn:hover {
