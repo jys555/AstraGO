@@ -48,7 +48,6 @@ body {
   color: #000;
   flex-shrink: 0;
   line-height: 1.0; /* Header qalinligini minimal qilish */
-  height: auto; /* Height auto - keraksiz bo'shliq yo'q */
 }
 
 .register-modal .floating-input {
