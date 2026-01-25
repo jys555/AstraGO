@@ -72,6 +72,8 @@ body {
   display: flex;
   align-items: center;
   min-height: 48px;
+  margin: 0; /* Margin yo'q - chapga surilmasligi uchun */
+  position: relative; /* Position relative - chapga surilmasligi uchun */
 }
 
 .register-modal .floating-input input:focus,
