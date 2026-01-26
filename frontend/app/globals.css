@@ -47,7 +47,7 @@ body {
   font-size: 18px; /* Header font-size kichraytirildi */
   font-weight: 600;
   text-align: center;
-  margin: 0 auto 64px auto; /* Header va birinchi field orasidagi masofa - 2 tab label sig'ishi uchun */
+  margin: 0 auto 16px auto; /* Header va scroll area orasida kichik bo'sh joy */
   padding: 0; /* Header padding yo'q */
   color: #000;
   flex-shrink: 0;
@@ -58,6 +58,12 @@ body {
   max-width: 100%; /* Max width - submit button kengligi */
   background: transparent; /* Background transparent - overlay emas */
   display: block; /* Block - to'liq kenglik */
+  box-sizing: border-box;
+}
+
+/* Scroll area padding-top - header overlay va birinchi field orasida 2 tab joy */
+.register-modal .flex-1.overflow-y-auto {
+  padding-top: 48px; /* Header overlay va birinchi field border chizig'i orasida 2 tab joy (jami 64px: 16px margin + 48px padding) */
   box-sizing: border-box;
 }
 
