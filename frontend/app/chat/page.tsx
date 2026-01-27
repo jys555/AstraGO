@@ -66,7 +66,7 @@ export default function ChatListPage() {
           ) : (
             <div className="space-y-3">
               {data.chats.map((chat: Chat) => {
-                const currentUserId = currentUser?.user?.id;
+                const currentUserId = currentUserData?.user?.id;
                 const otherUser = chat.driver?.id === currentUserId 
                   ? chat.passenger 
                   : chat.driver;
