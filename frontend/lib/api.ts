@@ -69,6 +69,37 @@ class ApiClient {
     return this.request<{ trips: Trip[] }>(`/api/trips?${params.toString()}`);
   }
 
+  async getMyTripsAsDriver(): Promise<{ trips: Trip[] }> {
+    return this.request<{ trips: Trip[] }>('/api/trips/my-trips/driver');
+  }
+
+  // Chat methods
+  async getMyChats(): Promise<{ chats: Chat[] }> {
+    return this.request<{ chats: Chat[] }>('/api/chats');
+  }
+
+  async getChatById(chatId: string): Promise<{ chat: Chat }> {
+    return this.request<{ chat: Chat }>(`/api/chats/${chatId}`);
+  }
+
+  async getChatByReservation(reservationId: string): Promise<{ chat: Chat }> {
+    return this.request<{ chat: Chat }>(`/api/chats/reservation/${reservationId}`);
+  }
+
+  async getChatMessages(chatId: string): Promise<{ messages: ChatMessage[] }> {
+    return this.request<{ messages: ChatMessage[] }>(`/api/chats/${chatId}/messages`);
+  }
+
+  async sendMessage(chatId: string, content: string): Promise<{ message: ChatMessage }> {
+    return this.request<{ message: ChatMessage }>(`/api/chats/${chatId}/messages`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ content }),
+    });
+  }
+
   async getTrip(id: string): Promise<{ trip: Trip }> {
     return this.request<{ trip: Trip }>(`/api/trips/${id}`);
   }
@@ -139,7 +170,7 @@ class ApiClient {
     firstName: string;
     lastName?: string;
     phone: string;
-    role: 'PASSENGER' | 'DRIVER' | 'BOTH';
+    role: 'PASSENGER' | 'DRIVER';
     carNumber?: string;
     carModel?: string;
     carColor?: string;

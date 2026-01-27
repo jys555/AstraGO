@@ -8,7 +8,6 @@ import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { BannerCarousel } from '@/components/home/BannerCarousel';
 import { BenefitsCarousel } from '@/components/home/BenefitsCarousel';
-import { BottomNav } from '@/components/layout/BottomNav';
 import { GuestHomePage } from '@/components/home/GuestHomePage';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
@@ -52,7 +51,6 @@ export default function HomePage() {
           <AppHeader />
           <GuestHomePage onRegister={() => {}} />
         </div>
-        <BottomNav />
       </RegistrationGuard>
     );
   }
@@ -69,7 +67,7 @@ export default function HomePage() {
           <BannerCarousel />
           
           {/* Role-based content */}
-          {(userRole === 'PASSENGER' || userRole === 'BOTH') && (
+          {userRole === 'PASSENGER' && (
             <>
               {/* Passenger Search Section */}
               <div className="px-4 py-6">
@@ -108,13 +106,13 @@ export default function HomePage() {
             </>
           )}
 
-          {(userRole === 'DRIVER' || userRole === 'BOTH') && (
+          {userRole === 'DRIVER' && (
             <>
               {/* Driver Section */}
               <div className="px-4 py-6">
                 <div className="text-center mb-6">
                   <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                    {userRole === 'BOTH' ? 'Haydovchi Rejimi' : 'Haydovchi Paneli'}
+                    Haydovchi Paneli
                   </h1>
                   <p className="text-sm text-gray-600">
                     Safar yaratish va boshqarish
@@ -143,22 +141,8 @@ export default function HomePage() {
               </div>
             </>
           )}
-
-          {userRole === 'BOTH' && (
-            <div className="px-4 py-4 border-t">
-              <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-xl p-4 border border-gray-200">
-                <h3 className="font-semibold text-gray-900 mb-2">Ikki Rejim</h3>
-                <p className="text-sm text-gray-700">
-                  Siz ham haydovchi, ham yo'lovchi sifatida ishlashingiz mumkin. Yuqorida yo'lovchi rejimi, pastda haydovchi rejimi ko'rsatilgan.
-                </p>
-              </div>
-            </div>
-          )}
         </div>
       </div>
-      
-      {/* Bottom Navigation */}
-      <BottomNav />
     </RegistrationGuard>
   );
 }

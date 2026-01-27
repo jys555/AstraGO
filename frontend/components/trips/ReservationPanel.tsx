@@ -35,10 +35,10 @@ export const ReservationPanel: React.FC<ReservationPanelProps> = ({
       className="bg-white rounded-lg shadow-lg p-6 space-y-4"
     >
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">Reservation Active</h2>
+        <h2 className="text-xl font-bold text-gray-900">Rezervatsiya Faol</h2>
         <StatusBadge
           status={driverResponded ? 'active' : 'inactive'}
-          label={driverResponded ? 'Driver Active' : 'Driver Inactive'}
+          label={driverResponded ? 'Haydovchi Faol' : 'Haydovchi Faol Emas'}
         />
       </div>
 
@@ -48,18 +48,18 @@ export const ReservationPanel: React.FC<ReservationPanelProps> = ({
       {/* Trip Info */}
       <div className="bg-gray-50 rounded-lg p-4 space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-gray-600">Route</span>
-          <span className="font-semibold">
+          <span className="text-gray-600">Yo'nalish</span>
+          <span className="font-semibold text-gray-900">
             {reservation.trip.routeFrom} → {reservation.trip.routeTo}
           </span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-gray-600">Seats</span>
-          <span className="font-semibold">{reservation.seatCount}</span>
+          <span className="text-gray-600">O'rinlar</span>
+          <span className="font-semibold text-gray-900">{reservation.seatCount}</span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-gray-600">Driver</span>
-          <span className="font-semibold">
+          <span className="text-gray-600">Haydovchi</span>
+          <span className="font-semibold text-gray-900">
             {reservation.trip.driver.firstName} {reservation.trip.driver.lastName}
           </span>
         </div>
@@ -72,7 +72,7 @@ export const ReservationPanel: React.FC<ReservationPanelProps> = ({
           className="w-full"
           onClick={handleOpenChat}
         >
-          Open Telegram Chat
+          Telegram Chatga O'tish
         </Button>
 
         {driverResponded ? (
@@ -82,12 +82,12 @@ export const ReservationPanel: React.FC<ReservationPanelProps> = ({
             onClick={onConfirm}
             isLoading={isLoading}
           >
-            Confirm Reservation
+            Rezervatsiyani Tasdiqlash
           </Button>
         ) : (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
             <p className="text-sm text-yellow-800">
-              Driver hasn't responded yet. You can cancel and choose another trip.
+              Haydovchi hali javob bermadi. Bekor qilish va boshqa safarni tanlash mumkin.
             </p>
           </div>
         )}
@@ -98,13 +98,13 @@ export const ReservationPanel: React.FC<ReservationPanelProps> = ({
           onClick={onCancel}
           disabled={isLoading}
         >
-          Cancel Reservation
+          Rezervatsiyani Bekor Qilish
         </Button>
       </div>
 
       {!driverResponded && (
         <p className="text-xs text-gray-500 text-center">
-          If driver doesn't respond within 2 minutes, you can cancel and select another trip.
+          Agar haydovchi 2 daqiqa ichida javob bermasa, bekor qilish va boshqa safarni tanlash mumkin.
         </p>
       )}
     </motion.div>

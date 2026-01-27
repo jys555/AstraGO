@@ -3,12 +3,13 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import Script from 'next/script';
+import { BottomNav } from '@/components/layout/BottomNav';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'AstraGo - Shared Taxi Platform',
-  description: 'Intercity and interregional shared taxi services',
+  title: 'AstraGo - Umumiy Taksi Platformasi',
+  description: 'Shaharlararo va mintaqalararo umumiy taksi xizmatlari',
 };
 
 export const dynamic = 'force-dynamic';
@@ -40,6 +41,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           {children}
+          <BottomNav />
         </Providers>
       </body>
     </html>

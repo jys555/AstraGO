@@ -7,9 +7,9 @@ import { apiClient } from '@/lib/api';
 import { RegistrationModal } from '@/components/auth/RegistrationModal';
 import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 import { AppHeader } from '@/components/layout/AppHeader';
-import { BottomNav } from '@/components/layout/BottomNav';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { STANDARD_ROUTES, VEHICLE_TYPES } from '@/lib/constants';
 
 // Disable SSR for pages that use React Query
 export const dynamic = 'force-dynamic';
@@ -31,7 +31,7 @@ export default function CreateTripPage() {
   const [date, setDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
-  const [vehicleType, setVehicleType] = useState(user?.carModel || 'Umumiy taksi');
+  const [vehicleType, setVehicleType] = useState(user?.carModel || VEHICLE_TYPES[0]);
   const [totalSeats, setTotalSeats] = useState(3);
   const [pickupType, setPickupType] = useState<'STATION_ONLY' | 'HOME_PICKUP'>('STATION_ONLY');
   const [deliveryType, setDeliveryType] = useState<'PASSENGER_ONLY' | 'CARGO_ACCEPTED'>('PASSENGER_ONLY');
@@ -120,7 +120,7 @@ export default function CreateTripPage() {
           {user && user.role === 'PASSENGER' && (
             <div className="mb-4 bg-blue-50 border border-blue-200 text-blue-800 text-sm rounded-xl p-3">
               Hozirda profilingiz roli <strong>yo&apos;lovchi</strong>. Haydovchi sifatida safar yaratish uchun profil sozlamalarida rolni
-              &nbsp;<strong>Haydovchi</strong> yoki <strong>Haydovchi &amp; Yo&apos;lovchi</strong> qilib o&apos;zgartiring.
+              &nbsp;<strong>Haydovchi</strong> qilib o&apos;zgartiring.
             </div>
           )}
 
@@ -128,25 +128,35 @@ export default function CreateTripPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Qayerdan</label>
-                <input
-                  type="text"
+                <select
                   value={routeFrom}
                   onChange={(e) => setRouteFrom(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Masalan: Toshkent"
-                />
+                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                >
+                  <option value="">Manzilni tanlang</option>
+                  {STANDARD_ROUTES.map((route) => (
+                    <option key={route} value={route}>
+                      {route}
+                    </option>
+                  ))}
+                </select>
                 {errors.routeFrom && <p className="text-xs text-red-500 mt-1">{errors.routeFrom}</p>}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Qayerga</label>
-                <input
-                  type="text"
+                <select
                   value={routeTo}
                   onChange={(e) => setRouteTo(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Masalan: Samarqand"
-                />
+                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                >
+                  <option value="">Manzilni tanlang</option>
+                  {STANDARD_ROUTES.map((route) => (
+                    <option key={route} value={route}>
+                      {route}
+                    </option>
+                  ))}
+                </select>
                 {errors.routeTo && <p className="text-xs text-red-500 mt-1">{errors.routeTo}</p>}
               </div>
 
@@ -185,26 +195,30 @@ export default function CreateTripPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Mashina turi / modeli</label>
-                <input
-                  type="text"
+                <select
                   value={vehicleType}
                   onChange={(e) => setVehicleType(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Masalan: Cobalt, Nexia, Malibu"
-                />
+                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                >
+                  {VEHICLE_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
                 {errors.vehicleType && <p className="text-xs text-red-500 mt-1">{errors.vehicleType}</p>}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">O&apos;rinlar soni</label>
-                <input
-                  type="number"
-                  min={1}
-                  max={8}
-                  value={totalSeats}
-                  onChange={(e) => setTotalSeats(Number(e.target.value))}
-                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                  <input
+                    type="number"
+                    min={1}
+                    max={8}
+                    value={totalSeats}
+                    onChange={(e) => setTotalSeats(Number(e.target.value))}
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                  />
                 {errors.totalSeats && <p className="text-xs text-red-500 mt-1">{errors.totalSeats}</p>}
               </div>
 
@@ -249,8 +263,6 @@ export default function CreateTripPage() {
             </form>
           </Card>
         </main>
-
-        <BottomNav />
 
         <RegistrationModal
           isOpen={showRegistration}

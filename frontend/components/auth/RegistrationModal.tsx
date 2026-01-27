@@ -75,7 +75,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('+998 ');
-  const [role, setRole] = useState<'PASSENGER' | 'DRIVER' | 'BOTH'>('PASSENGER');
+  const [role, setRole] = useState<'PASSENGER' | 'DRIVER'>('PASSENGER');
   const [carNumber, setCarNumber] = useState('');
   const [carModel, setCarModel] = useState('');
   const [carColor, setCarColor] = useState('');
@@ -176,7 +176,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
       newErrors.phone = 'Telefon raqami to\'liq kiritilishi kerak';
     }
     
-    if (role === 'DRIVER' || role === 'BOTH') {
+    if (role === 'DRIVER') {
       if (!carNumber || carNumber.length < 10) { // 01 A 123 BC = ~10 chars
         newErrors.carNumber = 'Mashina raqami to\'liq kiritilishi kerak';
       }
@@ -210,9 +210,9 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
         lastName: lastName.trim() || undefined,
         phone: phoneNumber,
         role,
-        carNumber: (role === 'DRIVER' || role === 'BOTH') ? carNumber : undefined,
-        carModel: (role === 'DRIVER' || role === 'BOTH') ? carModel : undefined,
-        carColor: (role === 'DRIVER' || role === 'BOTH') ? carColor : undefined,
+        carNumber: role === 'DRIVER' ? carNumber : undefined,
+        carModel: role === 'DRIVER' ? carModel : undefined,
+        carColor: role === 'DRIVER' ? carColor : undefined,
       });
       
       onSuccess();
@@ -323,11 +323,10 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                 <select
                   id="role"
                   value={role}
-                  onChange={(e) => setRole(e.target.value as 'PASSENGER' | 'DRIVER' | 'BOTH')}
+                  onChange={(e) => setRole(e.target.value as 'PASSENGER' | 'DRIVER')}
                 >
                   <option value="PASSENGER">Yo'lovchi</option>
                   <option value="DRIVER">Haydovchi</option>
-                  <option value="BOTH">Haydovchi & Yo'lovchi</option>
                 </select>
                 <label htmlFor="role">Rol</label>
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none z-10">
@@ -339,7 +338,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
             </div>
 
             {/* Driver-specific fields */}
-            {(role === 'DRIVER' || role === 'BOTH') && (
+            {role === 'DRIVER' && (
               <>
                 {/* Car Number */}
                 <div className="floating-input">

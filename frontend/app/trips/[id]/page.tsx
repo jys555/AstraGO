@@ -114,15 +114,15 @@ export default function TripDetailPage() {
     try {
       await cancelReservation(reservation.id);
     } catch (error) {
-      console.error('Failed to cancel reservation:', error);
-      alert('Failed to cancel reservation. Please try again.');
+      console.error('Rezervatsiyani bekor qilishda xatolik:', error);
+      alert('Rezervatsiyani bekor qilishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
     }
   };
 
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-12 text-center">
-        <p>Loading trip details...</p>
+        <p className="text-gray-600">Safar ma'lumotlari yuklanmoqda...</p>
       </div>
     );
   }
@@ -130,13 +130,13 @@ export default function TripDetailPage() {
   if (!data?.trip) {
     return (
       <div className="container mx-auto px-4 py-12 text-center">
-        <p className="text-red-600">Trip not found</p>
+        <p className="text-red-600">Safar topilmadi</p>
         <Button
           variant="primary"
           className="mt-4"
           onClick={() => router.push('/trips')}
         >
-          Back to Trips
+          Safarlarga Qaytish
         </Button>
       </div>
     );
@@ -175,11 +175,11 @@ export default function TripDetailPage() {
           <Card className="mb-6 bg-green-50 border-green-200">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-green-800">Reservation Confirmed!</h2>
+                <h2 className="text-xl font-bold text-green-800">Rezervatsiya Tasdiqlandi!</h2>
                 <StatusBadge status="confirmed" />
               </div>
               <p className="text-green-700">
-                Your reservation has been confirmed. You can now share your location for home pickup.
+                Rezervatsiyangiz tasdiqlandi. Endi uydan olish uchun joylashuvingizni baham ko'rishingiz mumkin.
               </p>
               {trip.pickupType === 'HOME_PICKUP' && (
                 <div className="space-y-2">

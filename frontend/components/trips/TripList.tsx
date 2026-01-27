@@ -37,7 +37,7 @@ export const TripList: React.FC<TripListProps> = ({
           onClick={() => setShowFilters(!showFilters)}
           className="mb-4"
         >
-          {showFilters ? 'Hide' : 'Show'} Filters
+          {showFilters ? 'Filtrlarni Yashirish' : 'Filtrlarni Ko\'rsatish'}
         </Button>
 
         {showFilters && (
@@ -51,7 +51,7 @@ export const TripList: React.FC<TripListProps> = ({
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
-                Online Only
+                Faqat Onlayn
               </button>
               <button
                 onClick={() => toggleFilter('homePickup')}
@@ -61,7 +61,7 @@ export const TripList: React.FC<TripListProps> = ({
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
-                Home Pickup
+                Uydan Olish
               </button>
               <button
                 onClick={() => toggleFilter('cargoAccepted')}
@@ -71,7 +71,7 @@ export const TripList: React.FC<TripListProps> = ({
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
-                Cargo Accepted
+                Yuk Qabul Qilinadi
               </button>
               <button
                 onClick={() => toggleFilter('earliestDeparture')}
@@ -81,12 +81,12 @@ export const TripList: React.FC<TripListProps> = ({
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
-                Earliest Departure
+                Eng Tezkor Jo'nash
               </button>
             </div>
 
             <div className="flex gap-2">
-              <label className="text-sm font-medium">Sort by:</label>
+              <label className="text-sm font-medium text-gray-700">Saralash:</label>
               <select
                 value={filters.sortBy || 'departure'}
                 onChange={(e) =>
@@ -95,11 +95,11 @@ export const TripList: React.FC<TripListProps> = ({
                     sortBy: e.target.value as 'departure' | 'seats' | 'ranking',
                   })
                 }
-                className="px-3 py-1 border border-gray-300 rounded-lg text-sm"
+                className="px-3 py-1 border border-gray-300 rounded-lg text-sm bg-white text-gray-900"
               >
-                <option value="departure">Departure Time</option>
-                <option value="seats">Available Seats</option>
-                <option value="ranking">Driver Ranking</option>
+                <option value="departure">Jo'nash Vaqti</option>
+                <option value="seats">Bo'sh O'rinlar</option>
+                <option value="ranking">Haydovchi Reytingi</option>
               </select>
               <select
                 value={filters.order || 'asc'}
@@ -109,10 +109,10 @@ export const TripList: React.FC<TripListProps> = ({
                     order: e.target.value as 'asc' | 'desc',
                   })
                 }
-                className="px-3 py-1 border border-gray-300 rounded-lg text-sm"
+                className="px-3 py-1 border border-gray-300 rounded-lg text-sm bg-white text-gray-900"
               >
-                <option value="asc">Ascending</option>
-                <option value="desc">Descending</option>
+                <option value="asc">O'sish</option>
+                <option value="desc">Kamayish</option>
               </select>
             </div>
           </div>
@@ -122,8 +122,8 @@ export const TripList: React.FC<TripListProps> = ({
       {/* Trip Cards */}
       {trips.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-600 text-lg">No trips found</p>
-          <p className="text-gray-500 text-sm mt-2">Try adjusting your filters</p>
+          <p className="text-gray-600 text-lg">Safarlar topilmadi</p>
+          <p className="text-gray-500 text-sm mt-2">Filtrlarni o'zgartirib ko'ring</p>
         </div>
       ) : (
         <div>

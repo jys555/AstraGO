@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
 import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 import { AppHeader } from '@/components/layout/AppHeader';
-import { BottomNav } from '@/components/layout/BottomNav';
 import { EditProfileModal } from '@/components/auth/EditProfileModal';
 
 // Disable SSR for pages that use React Query
@@ -31,7 +30,6 @@ export default function ProfilePage() {
   const roleLabels = {
     PASSENGER: 'Yo\'lovchi',
     DRIVER: 'Haydovchi',
-    BOTH: 'Haydovchi & Yo\'lovchi',
   };
 
   return (
@@ -79,7 +77,7 @@ export default function ProfilePage() {
                       <label className="text-sm font-medium text-gray-600">Rol</label>
                       <div className="mt-1">
                         <StatusBadge 
-                          status={user?.role === 'DRIVER' ? 'active' : user?.role === 'BOTH' ? 'online' : 'inactive'}
+                          status={user?.role === 'DRIVER' ? 'active' : 'inactive'}
                           label={user?.role ? roleLabels[user.role] : 'N/A'}
                         />
                       </div>
@@ -100,7 +98,7 @@ export default function ProfilePage() {
                     </div>
                   </div>
 
-                  {user?.role === 'DRIVER' || user?.role === 'BOTH' ? (
+                  {user?.role === 'DRIVER' ? (
                     <>
                       <div className="pt-4 border-t">
                         <h3 className="text-lg font-semibold mb-4">Mashina Ma'lumotlari</h3>
@@ -176,8 +174,6 @@ export default function ProfilePage() {
             </div>
           </div>
         </main>
-        
-        <BottomNav />
         
         {user && (
           <EditProfileModal

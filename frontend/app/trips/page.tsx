@@ -13,7 +13,6 @@ import { apiClient } from '@/lib/api';
 import { RegistrationModal } from '@/components/auth/RegistrationModal';
 import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 import { AppHeader } from '@/components/layout/AppHeader';
-import { BottomNav } from '@/components/layout/BottomNav';
 
 // Disable SSR for pages that use React Query
 export const dynamic = 'force-dynamic';
@@ -32,9 +31,10 @@ function TripsPage() {
     queryKey: ['user', 'me'],
     queryFn: () => apiClient.getCurrentUser(),
     retry: false,
-    enabled: false, // Don't fetch automatically - only when needed
   });
 
+  const user = userData?.user;
+  
   const [showRegistration, setShowRegistration] = useState(false);
   const [pendingTripId, setPendingTripId] = useState<string | null>(null);
 
@@ -84,8 +84,8 @@ function TripsPage() {
       await confirmReservation(reservation.id);
       router.push('/my-trips');
     } catch (error) {
-      console.error('Failed to confirm reservation:', error);
-      alert('Failed to confirm reservation. Please try again.');
+      console.error('Rezervatsiyani tasdiqlashda xatolik:', error);
+      alert('Rezervatsiyani tasdiqlashda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
     }
   };
 
@@ -94,8 +94,8 @@ function TripsPage() {
     try {
       await cancelReservation(reservation.id);
     } catch (error) {
-      console.error('Failed to cancel reservation:', error);
-      alert('Failed to cancel reservation. Please try again.');
+      console.error('Rezervatsiyani bekor qilishda xatolik:', error);
+      alert('Rezervatsiyani bekor qilishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
     }
   };
 
@@ -105,14 +105,48 @@ function TripsPage() {
         <div className="min-h-screen bg-gray-50 pb-20">
           <AppHeader />
           <div className="container mx-auto px-4 py-12 text-center">
-            <p className="text-red-600">Error loading trips. Please try again.</p>
+            <p className="text-red-600">Safarlarni yuklashda xatolik yuz berdi. Iltimos, qayta urinib ko'ring.</p>
             <Button
               variant="primary"
               className="mt-4"
               onClick={() => router.push('/')}
             >
-              Back to Search
+              Qidirishga Qaytish
             </Button>
+          </div>
+        </div>
+        <BottomNav />
+      </RegistrationGuard>
+    );
+  }
+
+  const { data: userData } = useQuery({
+    queryKey: ['user', 'me'],
+    queryFn: () => apiClient.getCurrentUser(),
+    retry: false,
+  });
+
+  const user = userData?.user;
+  
+  // Block drivers from searching trips
+  if (user && user.role === 'DRIVER') {
+    return (
+      <RegistrationGuard>
+        <div className="min-h-screen bg-gray-50 pb-20">
+          <AppHeader />
+          <div className="container mx-auto px-4 py-12 text-center">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 max-w-md mx-auto">
+              <h2 className="text-xl font-bold text-yellow-900 mb-2">Siz haydovchisiz</h2>
+              <p className="text-yellow-800 mb-4">
+                Haydovchilar safarlarni qidira olmaydi va rezervatsiya qila olmaydi. Faqat safar yaratishingiz mumkin.
+              </p>
+              <Button
+                variant="primary"
+                onClick={() => router.push('/trips/create')}
+              >
+                Safar Yaratish
+              </Button>
+            </div>
           </div>
         </div>
         <BottomNav />
@@ -169,8 +203,6 @@ function TripsPage() {
           />
         </main>
       </div>
-      
-      <BottomNav />
     </RegistrationGuard>
   );
 }

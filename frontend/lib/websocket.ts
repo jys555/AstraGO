@@ -105,6 +105,22 @@ class WebSocketClient {
     this.socket.off('driver_status_changed', callback);
   }
 
+  subscribeToChat(chatId: string, callback: (data: any) => void) {
+    if (!this.socket) return;
+
+    this.socket.emit('subscribe:chat', chatId);
+    this.socket.on('chat_message', (data) => {
+      if (data.chatId === chatId) {
+        callback(data);
+      }
+    });
+  }
+
+  unsubscribeFromChat(chatId: string) {
+    if (!this.socket) return;
+    this.socket.emit('unsubscribe:chat', chatId);
+  }
+
   getSocket(): Socket | null {
     return this.socket;
   }

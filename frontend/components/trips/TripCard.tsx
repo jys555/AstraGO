@@ -14,12 +14,12 @@ interface TripCardProps {
 export const TripCard: React.FC<TripCardProps> = ({ trip, onReserve, isLoading }) => {
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' });
   };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return date.toLocaleDateString('uz-UZ', { month: 'short', day: 'numeric' });
   };
 
   const departureStart = formatTime(trip.departureWindowStart);
@@ -48,11 +48,11 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onReserve, isLoading }
             <div className="flex items-center gap-2">
               <span className="text-2xl">{getVehicleIcon(trip.vehicleType)}</span>
               <div>
-                <h3 className="font-semibold text-lg">{trip.vehicleType}</h3>
+                <h3 className="font-semibold text-lg text-gray-900">{trip.vehicleType}</h3>
                 <p className="text-sm text-gray-600">{trip.driver.firstName} {trip.driver.lastName}</p>
               </div>
             </div>
-            <StatusBadge status={trip.driver.onlineStatus ? 'online' : 'offline'} />
+            <StatusBadge status={trip.driver.onlineStatus ? 'online' : 'offline'} label={trip.driver.onlineStatus ? 'Onlayn' : 'Oflayn'} />
           </div>
 
           {/* Route */}
@@ -69,12 +69,12 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onReserve, isLoading }
           {/* Details Grid */}
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-gray-600">Departure</p>
-              <p className="font-semibold">{departureStart} - {departureEnd}</p>
+              <p className="text-gray-600">Jo'nash vaqti</p>
+              <p className="font-semibold text-gray-900">{departureStart} - {departureEnd}</p>
               <p className="text-xs text-gray-500">{date}</p>
             </div>
             <div>
-              <p className="text-gray-600">Available Seats</p>
+              <p className="text-gray-600">Bo'sh o'rinlar</p>
               <p className="font-semibold text-primary-600">{trip.availableSeats} / {trip.totalSeats}</p>
             </div>
           </div>
@@ -82,10 +82,10 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onReserve, isLoading }
           {/* Badges */}
           <div className="flex flex-wrap gap-2">
             {trip.pickupType === 'HOME_PICKUP' && (
-              <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">Home Pickup</span>
+              <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">Uydan olish</span>
             )}
             {trip.deliveryType === 'CARGO_ACCEPTED' && (
-              <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">Cargo Accepted</span>
+              <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">Yuk qabul qilinadi</span>
             )}
             {trip.driver.driverMetrics && (
               <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
@@ -102,7 +102,7 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onReserve, isLoading }
             disabled={trip.availableSeats === 0 || isLoading}
             isLoading={isLoading}
           >
-            {trip.availableSeats === 0 ? 'No Seats Available' : 'Chat & Reserve (10 min)'}
+            {trip.availableSeats === 0 ? 'O\'rinlar yo\'q' : 'Chat va Rezervatsiya (10 daq)'}
           </Button>
         </div>
       </Card>

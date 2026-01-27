@@ -52,7 +52,7 @@ export const Timer: React.FC<TimerProps> = ({ timeRemaining, onExpire }) => {
             transition={{ duration: 1, ease: 'linear' }}
           />
         </div>
-        <p className="text-xs text-gray-600 mt-1">Reservation expires in {minutes}m {seconds}s</p>
+        <p className="text-xs text-gray-600 mt-1">Rezervatsiya {minutes} daq {seconds} soniyadan keyin tugaydi</p>
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ export interface User {
   firstName?: string;
   lastName?: string;
   phone?: string;
-  role: 'PASSENGER' | 'DRIVER' | 'BOTH';
+  role: 'PASSENGER' | 'DRIVER';
   carNumber?: string;
   carModel?: string;
   carColor?: string;
@@ -52,12 +52,36 @@ export interface Reservation {
 export interface Chat {
   id: string;
   reservationId: string;
+  tripId: string;
   driverId: string;
   passengerId: string;
   status: 'ACTIVE' | 'ARCHIVED' | 'READ_ONLY';
   telegramLink?: string;
   createdAt: string;
   archivedAt?: string;
+  driver?: User;
+  passenger?: User;
+  trip?: {
+    id: string;
+    routeFrom: string;
+    routeTo: string;
+    departureWindowStart: string;
+  };
+  reservation?: {
+    id: string;
+    status: string;
+  };
+  messages?: ChatMessage[];
+}
+
+export interface ChatMessage {
+  id: string;
+  chatId: string;
+  senderId: string;
+  content: string;
+  createdAt: string;
+  readAt?: string;
+  sender?: User;
 }
 
 export interface SeatAvailability {
