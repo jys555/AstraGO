@@ -13,9 +13,16 @@ export const dynamic = 'force-dynamic';
 export default function ChatListPage() {
   const router = useRouter();
   
+  const { data: currentUserData } = useQuery({
+    queryKey: ['user', 'me'],
+    queryFn: () => apiClient.getCurrentUser(),
+    retry: false,
+  });
+  
   const { data, isLoading } = useQuery({
     queryKey: ['chats'],
     queryFn: () => apiClient.getMyChats(),
+    refetchInterval: 10000, // Refetch every 10 seconds
   });
 
   const formatDate = (dateString: string) => {
