@@ -238,7 +238,7 @@ export default function MyTripsPage() {
                           <Button
                             variant="primary"
                             size="sm"
-                            onClick={() => router.push(`/chat/${activeReservation.chat.id}`)}
+                            onClick={() => activeReservation.chat && router.push(`/chat/${activeReservation.chat.id}`)}
                           >
                             Chatga o'tish
                           </Button>
