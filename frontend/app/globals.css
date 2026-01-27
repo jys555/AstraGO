@@ -47,23 +47,25 @@ body {
   font-size: 18px; /* Header font-size kichraytirildi */
   font-weight: 600;
   text-align: center;
-  margin: 0 auto 16px auto; /* Header va scroll area orasida kichik bo'sh joy */
+  margin: 0 auto 8px auto; /* Header va scroll area orasida kichik bo'sh joy - 1 tab uchun kamaytirildi */
   padding: 0; /* Header padding yo'q */
   color: #000;
   flex-shrink: 0;
-  line-height: 1.0; /* Header qalinligini minimal qilish */
+  line-height: 1.2; /* Header vertikal markazga joylashtirish uchun */
   position: relative; /* Position relative - overlay emas */
   z-index: 1; /* Z-index past - field'lar ustida emas */
   width: 100%; /* Header kengligi submit button kengligigacha */
   max-width: 100%; /* Max width - submit button kengligi */
   background: transparent; /* Background transparent - overlay emas */
-  display: block; /* Block - to'liq kenglik */
+  display: flex; /* Flex - vertikal markazga joylashtirish uchun */
+  align-items: center; /* Vertikal markazga joylashtirish */
+  justify-content: center; /* Gorizontal markazga joylashtirish */
   box-sizing: border-box;
 }
 
-/* Scroll area padding-top - header overlay va birinchi field orasida 2 tab joy */
+/* Scroll area padding-top - header overlay va birinchi field orasida 1 tab joy */
 .register-modal .flex-1.overflow-y-auto {
-  padding-top: 48px; /* Header overlay va birinchi field border chizig'i orasida 2 tab joy (jami 64px: 16px margin + 48px padding) */
+  padding-top: 24px; /* Header overlay va birinchi field border chizig'i orasida 1 tab joy (jami 32px: 8px margin + 24px padding) - label to'liq ko'rinadigan darajada */
   box-sizing: border-box;
 }
 
