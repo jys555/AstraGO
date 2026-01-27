@@ -157,6 +157,11 @@ class ApiClient {
     });
   }
 
+  async checkActiveSessions(): Promise<boolean> {
+    const response = await this.request<{ hasActiveSessions: boolean }>('/api/users/me/active-sessions');
+    return response.hasActiveSessions;
+  }
+
   async getDriverMetrics(driverId: string): Promise<{ metrics: DriverMetrics }> {
     return this.request<{ metrics: DriverMetrics }>(`/api/users/drivers/${driverId}/metrics`);
   }

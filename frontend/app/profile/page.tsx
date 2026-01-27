@@ -1,6 +1,7 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 import { Card } from '@/components/ui/Card';
 import { StatusBadge } from '@/components/ui/StatusBadge';
@@ -9,12 +10,16 @@ import { useRouter } from 'next/navigation';
 import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { BottomNav } from '@/components/layout/BottomNav';
+import { EditProfileModal } from '@/components/auth/EditProfileModal';
 
 // Disable SSR for pages that use React Query
 export const dynamic = 'force-dynamic';
 
 export default function ProfilePage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const [showEditModal, setShowEditModal] = useState(false);
+  
   const { data, isLoading } = useQuery({
     queryKey: ['user', 'me'],
     queryFn: () => apiClient.getCurrentUser(),
@@ -160,7 +165,10 @@ export default function ProfilePage() {
                 </div>
               </Card>
 
-              <div className="mt-4">
+              <div className="mt-4 space-y-2">
+                <Button onClick={() => setShowEditModal(true)} variant="primary" className="w-full">
+                  Profilni Tahrirlash
+                </Button>
                 <Button onClick={() => router.push('/')} variant="outline" className="w-full">
                   Bosh Sahifaga Qaytish
                 </Button>
@@ -170,6 +178,18 @@ export default function ProfilePage() {
         </main>
         
         <BottomNav />
+        
+        {user && (
+          <EditProfileModal
+            isOpen={showEditModal}
+            onClose={() => setShowEditModal(false)}
+            onSuccess={() => {
+              queryClient.invalidateQueries({ queryKey: ['user', 'me'] });
+              setShowEditModal(false);
+            }}
+            user={user}
+          />
+        )}
       </div>
     </RegistrationGuard>
   );

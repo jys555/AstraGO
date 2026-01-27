@@ -3,17 +3,16 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
-import { GuestWelcome } from './GuestWelcome';
 import { RegistrationModal } from './RegistrationModal';
 
 interface RegistrationGuardProps {
   children: React.ReactNode;
-  requireRegistration?: boolean; // If true, show registration modal instead of guest welcome
+  requireRegistration?: boolean; // If true, show registration modal instead of app
 }
 
 /**
- * Guard component that shows guest welcome or registration modal
- * for users who haven't completed registration
+ * Guard component that shows app directly for new users
+ * Registration modal appears when user tries to interact
  */
 export function RegistrationGuard({ children, requireRegistration = false }: RegistrationGuardProps) {
   const [showRegistration, setShowRegistration] = useState(false);
@@ -44,30 +43,17 @@ export function RegistrationGuard({ children, requireRegistration = false }: Reg
     );
   }
 
-  // If user is not registered (null or not complete), show guest welcome
-  // null means user doesn't exist yet - this is normal for first-time users
+  // If user is not registered (null or not complete), show app without auto-opening modal
+  // Registration modal will open when user tries to reserve/confirm/create trip
   if (!user || !isProfileComplete) {
-    if (requireRegistration) {
-      return (
-        <>
-          {children}
-          <RegistrationModal
-            isOpen={showRegistration}
-            onClose={() => setShowRegistration(false)}
-            onSuccess={() => {
-              // Registration successful, invalidate query to refetch
-              window.location.reload(); // Simple reload to ensure fresh state
-            }}
-          />
-        </>
-      );
-    }
     return (
       <>
-        <GuestWelcome onRegister={() => setShowRegistration(true)} />
+        {children}
         <RegistrationModal
           isOpen={showRegistration}
-          onClose={() => setShowRegistration(false)}
+          onClose={() => {
+            setShowRegistration(false);
+          }}
           onSuccess={() => {
             // Registration successful, invalidate query to refetch
             window.location.reload(); // Simple reload to ensure fresh state

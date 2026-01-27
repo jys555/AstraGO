@@ -10,16 +10,24 @@ import { Card } from '@/components/ui/Card';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/Button';
 import { MapView } from '@/components/maps/MapView';
+import { RegistrationModal } from '@/components/auth/RegistrationModal';
 
 export default function TripDetailPage() {
   const params = useParams();
   const router = useRouter();
   const tripId = params.id as string;
   const [showLocationShare, setShowLocationShare] = useState(false);
+  const [showRegistration, setShowRegistration] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ['trip', tripId],
     queryFn: () => apiClient.getTrip(tripId),
+  });
+
+  const { data: userData } = useQuery({
+    queryKey: ['user', 'me'],
+    queryFn: () => apiClient.getCurrentUser(),
+    retry: false,
   });
 
   const {
@@ -33,22 +41,71 @@ export default function TripDetailPage() {
   } = useReservation();
 
   const handleReserve = async () => {
+    // Check if user is registered
+    if (!userData || !userData.user?.firstName || !userData.user?.phone) {
+      // Store trip ID for after registration
+      sessionStorage.setItem('pendingReservationTripId', tripId);
+      setShowRegistration(true);
+      return;
+    }
+
     try {
       await createReservation(tripId, 1);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to create reservation:', error);
-      alert('Failed to create reservation. Please try again.');
+      // If 401 or profile incomplete error, show registration
+      if (error.message?.includes('401') || error.message?.includes('Unauthorized') || error.message?.includes('profile')) {
+        sessionStorage.setItem('pendingReservationTripId', tripId);
+        setShowRegistration(true);
+      } else {
+        alert('Rezervatsiya yaratishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
+      }
     }
   };
 
   const handleConfirm = async () => {
     if (!reservation) return;
+    
+    // Check if user is registered
+    if (!userData || !userData.user?.firstName || !userData.user?.phone) {
+      // Store reservation ID for after registration
+      sessionStorage.setItem('pendingConfirmReservationId', reservation.id);
+      setShowRegistration(true);
+      return;
+    }
+
     try {
       await confirmReservation(reservation.id);
       setShowLocationShare(true);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to confirm reservation:', error);
-      alert('Failed to confirm reservation. Please try again.');
+      // If 401 or profile incomplete error, show registration
+      if (error.message?.includes('401') || error.message?.includes('Unauthorized') || error.message?.includes('profile')) {
+        if (reservation) {
+          sessionStorage.setItem('pendingConfirmReservationId', reservation.id);
+          setShowRegistration(true);
+        }
+      } else {
+        alert('Rezervatsiyani tasdiqlashda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
+      }
+    }
+  };
+
+  const handleRegistrationSuccess = () => {
+    // After registration, continue from where user left off
+    const pendingReservationTripId = sessionStorage.getItem('pendingReservationTripId');
+    const pendingConfirmReservationId = sessionStorage.getItem('pendingConfirmReservationId');
+    
+    if (pendingReservationTripId) {
+      sessionStorage.removeItem('pendingReservationTripId');
+      // Reload page to retry reservation
+      window.location.reload();
+    } else if (pendingConfirmReservationId) {
+      sessionStorage.removeItem('pendingConfirmReservationId');
+      // Reload page to retry confirm
+      window.location.reload();
+    } else {
+      window.location.reload();
     }
   };
 
@@ -241,6 +298,12 @@ export default function TripDetailPage() {
           </div>
         </Card>
       </div>
+      
+      <RegistrationModal
+        isOpen={showRegistration}
+        onClose={() => setShowRegistration(false)}
+        onSuccess={handleRegistrationSuccess}
+      />
     </main>
   );
 }

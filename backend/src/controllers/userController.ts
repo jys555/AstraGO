@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import * as crypto from 'crypto';
 import prisma from '../config/database';
 import { getDriverRanking } from '../services/driverRankingService';
-import { UnauthorizedError } from '../utils/errors';
+import { UnauthorizedError, ValidationError } from '../utils/errors';
 
 export async function getCurrentUser(
   req: Request,
@@ -32,13 +32,35 @@ export async function updateCurrentUser(
 ) {
   try {
     const user = (req as any).user;
-    const { firstName, lastName, phone, role, onlineStatus } = req.body;
+    const { firstName, lastName, phone, role, onlineStatus, carNumber, carModel, carColor } = req.body;
+
+    // Get current user to check role change
+    const currentUser = await prisma.user.findUnique({
+      where: { id: user.id },
+    });
+
+    if (!currentUser) {
+      throw new UnauthorizedError('User not found');
+    }
+
+    // Check if role is being changed
+    if (role !== undefined && role !== currentUser.role) {
+      // Check for active sessions
+      const hasActiveSessions = await checkUserActiveSessions(user.id, currentUser.role);
+      
+      if (hasActiveSessions) {
+        throw new ValidationError('Faol seanslar mavjud bo\'lganda rol o\'zgartirib bo\'lmaydi. Iltimos, avval barcha faol seanslarni yakunlang.');
+      }
+    }
 
     const updateData: any = {};
     if (firstName !== undefined) updateData.firstName = firstName;
     if (lastName !== undefined) updateData.lastName = lastName;
     if (phone !== undefined) updateData.phone = phone;
     if (role !== undefined) updateData.role = role;
+    if (carNumber !== undefined) updateData.carNumber = carNumber;
+    if (carModel !== undefined) updateData.carModel = carModel;
+    if (carColor !== undefined) updateData.carColor = carColor;
     if (onlineStatus !== undefined) {
       updateData.onlineStatus = onlineStatus;
       updateData.lastSeen = new Date();
@@ -53,6 +75,72 @@ export async function updateCurrentUser(
     });
 
     res.json({ user: updated });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Check if user has active sessions
+ * For drivers: check for ACTIVE trips
+ * For passengers: check for PENDING or CONFIRMED reservations
+ */
+async function checkUserActiveSessions(userId: string, currentRole: string): Promise<boolean> {
+  // Check if user is a driver (or BOTH) and has active trips
+  if (currentRole === 'DRIVER' || currentRole === 'BOTH') {
+    const activeTrips = await prisma.trip.findFirst({
+      where: {
+        driverId: userId,
+        status: 'ACTIVE',
+      },
+    });
+    
+    if (activeTrips) {
+      return true;
+    }
+  }
+
+  // Check if user is a passenger (or BOTH) and has active reservations
+  if (currentRole === 'PASSENGER' || currentRole === 'BOTH') {
+    const activeReservation = await prisma.reservation.findFirst({
+      where: {
+        passengerId: userId,
+        status: {
+          in: ['PENDING', 'CONFIRMED'],
+        },
+        expiresAt: {
+          gt: new Date(),
+        },
+      },
+    });
+    
+    if (activeReservation) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+export async function checkActiveSessions(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const user = (req as any).user;
+    
+    const currentUser = await prisma.user.findUnique({
+      where: { id: user.id },
+    });
+
+    if (!currentUser) {
+      throw new UnauthorizedError('User not found');
+    }
+
+    const hasActive = await checkUserActiveSessions(user.id, currentUser.role);
+    
+    res.json({ hasActiveSessions: hasActive });
   } catch (error) {
     next(error);
   }

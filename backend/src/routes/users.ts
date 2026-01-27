@@ -4,6 +4,7 @@ import {
   updateCurrentUser,
   getDriverMetrics,
   registerUser,
+  checkActiveSessions,
 } from '../controllers/userController';
 import { authenticateTelegram } from '../middleware/auth';
 
@@ -31,6 +32,7 @@ router.use(authenticateTelegram);
 
 router.get('/me', getCurrentUser);
 router.patch('/me', updateCurrentUser);
+router.get('/me/active-sessions', checkActiveSessions);
 router.get('/drivers/:id/metrics', getDriverMetrics);
 
 export default router;
