@@ -41,9 +41,7 @@ export default function HomePage() {
   };
 
   const handleCreateTrip = () => {
-    // Trip creation UI/functionality is not implemented yet.
-    // For now, redirect drivers to trips list instead of a non-existent /trips/create page.
-    router.push('/trips');
+    router.push('/trips/create');
   };
 
   // Show guest homepage for unregistered users
