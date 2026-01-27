@@ -1,4 +1,4 @@
-import { Trip, Reservation, User, TripFilters, DriverMetrics } from '@/types';
+import { Trip, Reservation, User, TripFilters, DriverMetrics, Chat, ChatMessage } from '@/types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 

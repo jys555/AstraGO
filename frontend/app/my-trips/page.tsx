@@ -156,7 +156,7 @@ export default function MyTripsPage() {
                                   <Button
                                     variant="primary"
                                     size="sm"
-                                    onClick={() => router.push(`/chat/${reservation.chat.id}`)}
+                                    onClick={() => reservation.chat && router.push(`/chat/${reservation.chat.id}`)}
                                     className="ml-2"
                                   >
                                     Chat
