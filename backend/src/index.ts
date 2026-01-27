@@ -7,6 +7,7 @@ import { errorHandler } from './middleware/errorHandler';
 import tripsRouter from './routes/trips';
 import reservationsRouter from './routes/reservations';
 import usersRouter from './routes/users';
+import chatsRouter from './routes/chats';
 import { setupWebSocketHandlers } from './websocket/handlers';
 
 dotenv.config();
@@ -97,12 +98,18 @@ app.get('/health', (req, res) => {
 app.use('/api/trips', tripsRouter);
 app.use('/api/reservations', reservationsRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/chats', chatsRouter);
 
 // Error handler (must be last)
 app.use(errorHandler);
 
 // Setup WebSocket handlers
 setupWebSocketHandlers(io);
+
+// Export io for use in controllers
+export function getIO() {
+  return io;
+}
 
 httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);

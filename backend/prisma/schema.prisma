@@ -14,7 +14,6 @@ datasource db {
 enum UserRole {
   PASSENGER
   DRIVER
-  BOTH
 }
 
 enum TripStatus {
@@ -67,6 +66,7 @@ model User {
   reservations      Reservation[]
   chatsAsPassenger  Chat[] @relation("PassengerChats")
   chatsAsDriver     Chat[] @relation("DriverChats")
+  sentMessages      ChatMessage[] @relation("SentMessages")
   driverMetrics     DriverMetrics?
 
   @@index([telegramId])
@@ -156,11 +156,29 @@ model Chat {
   trip          Trip        @relation(fields: [tripId], references: [id], onDelete: Cascade)
   driver        User       @relation("DriverChats", fields: [driverId], references: [id], onDelete: Cascade)
   passenger     User       @relation("PassengerChats", fields: [passengerId], references: [id], onDelete: Cascade)
+  messages      ChatMessage[]
 
   @@index([reservationId])
   @@index([tripId])
   @@index([driverId, passengerId])
   @@index([status])
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  chatId    String
+  senderId  String
+  content   String
+  createdAt DateTime @default(now())
+  readAt    DateTime?
+
+  // Relations
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  sender    User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([chatId])
+  @@index([senderId])
+  @@index([createdAt])
 }
 
 model DriverMetrics {

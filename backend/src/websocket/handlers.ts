@@ -44,6 +44,18 @@ export function setupWebSocketHandlers(io: SocketIOServer) {
       console.log(`User ${userId} unsubscribed from reservation ${reservationId}`);
     });
 
+    // Subscribe to chat updates
+    socket.on('subscribe:chat', (chatId: string) => {
+      socket.join(`chat:${chatId}`);
+      console.log(`User ${userId} subscribed to chat ${chatId}`);
+    });
+
+    // Unsubscribe from chat updates
+    socket.on('unsubscribe:chat', (chatId: string) => {
+      socket.leave(`chat:${chatId}`);
+      console.log(`User ${userId} unsubscribed from chat ${chatId}`);
+    });
+
     socket.on('disconnect', () => {
       console.log(`User ${userId} disconnected`);
     });
@@ -132,5 +144,16 @@ export function emitTripUpdated(
   io.to(`trip:${tripId}`).emit('trip_updated', {
     tripId,
     ...data,
+  });
+}
+
+export function emitChatMessage(
+  io: SocketIOServer,
+  chatId: string,
+  message: any
+) {
+  io.to(`chat:${chatId}`).emit('chat_message', {
+    chatId,
+    message,
   });
 }

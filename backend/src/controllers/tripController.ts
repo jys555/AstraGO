@@ -321,3 +321,40 @@ export async function updateTripSeats(
     next(error);
   }
 }
+
+// Get trips created by current driver
+export async function getMyTripsAsDriver(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const user = (req as any).user;
+    
+    const trips = await prisma.trip.findMany({
+      where: {
+        driverId: user.id,
+      },
+      include: {
+        driver: {
+          include: {
+            driverMetrics: true,
+          },
+        },
+        seatAvailability: true,
+        reservations: {
+          include: {
+            passenger: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    res.json({ trips });
+  } catch (error) {
+    next(error);
+  }
+}

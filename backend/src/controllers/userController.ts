@@ -86,8 +86,8 @@ export async function updateCurrentUser(
  * For passengers: check for PENDING or CONFIRMED reservations
  */
 async function checkUserActiveSessions(userId: string, currentRole: string): Promise<boolean> {
-  // Check if user is a driver (or BOTH) and has active trips
-  if (currentRole === 'DRIVER' || currentRole === 'BOTH') {
+    // Check if user is a driver and has active trips
+    if (currentRole === 'DRIVER') {
     const activeTrips = await prisma.trip.findFirst({
       where: {
         driverId: userId,
@@ -100,8 +100,8 @@ async function checkUserActiveSessions(userId: string, currentRole: string): Pro
     }
   }
 
-  // Check if user is a passenger (or BOTH) and has active reservations
-  if (currentRole === 'PASSENGER' || currentRole === 'BOTH') {
+    // Check if user is a passenger and has active reservations
+    if (currentRole === 'PASSENGER') {
     const activeReservation = await prisma.reservation.findFirst({
       where: {
         passengerId: userId,
@@ -248,9 +248,9 @@ export async function registerUser(
           phone,
           role: role || 'PASSENGER',
           username: userData.username || null,
-          carNumber: (role === 'DRIVER' || role === 'BOTH') ? carNumber : null,
-          carModel: (role === 'DRIVER' || role === 'BOTH') ? carModel : null,
-          carColor: (role === 'DRIVER' || role === 'BOTH') ? carColor : null,
+          carNumber: role === 'DRIVER' ? carNumber : null,
+          carModel: role === 'DRIVER' ? carModel : null,
+          carColor: role === 'DRIVER' ? carColor : null,
         },
         include: {
           driverMetrics: true,

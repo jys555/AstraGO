@@ -5,6 +5,7 @@ import {
   createTrip,
   updateTrip,
   updateTripSeats,
+  getMyTripsAsDriver,
 } from '../controllers/tripController';
 import { authenticateTelegram } from '../middleware/auth';
 import { createTripSchema, updateTripSchema, updateSeatsSchema } from '../utils/validators';
@@ -37,6 +38,7 @@ router.get('/', getTrips);
 router.get('/:id', getTripById);
 
 // Protected routes (require authentication)
+router.get('/my-trips/driver', authenticateTelegram, getMyTripsAsDriver);
 router.post('/', authenticateTelegram, validate(createTripSchema), createTrip);
 router.patch('/:id', authenticateTelegram, validate(updateTripSchema), updateTrip);
 router.patch('/:id/seats', authenticateTelegram, validate(updateSeatsSchema), updateTripSeats);
