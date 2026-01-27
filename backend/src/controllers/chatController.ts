@@ -71,6 +71,63 @@ export async function getMyChats(
   }
 }
 
+// Get chat by ID
+export async function getChatById(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const user = (req as any).user;
+    const { chatId } = req.params;
+
+    const chat = await prisma.chat.findUnique({
+      where: { id: chatId },
+      include: {
+        driver: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            username: true,
+            phone: true,
+          },
+        },
+        passenger: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            username: true,
+            phone: true,
+          },
+        },
+        trip: {
+          select: {
+            id: true,
+            routeFrom: true,
+            routeTo: true,
+            departureWindowStart: true,
+          },
+        },
+      },
+    });
+
+    if (!chat) {
+      throw new NotFoundError('Chat');
+    }
+
+    // Verify user has access to this chat
+    if (chat.driverId !== user.id && chat.passengerId !== user.id) {
+      throw new ValidationError('Not authorized to access this chat');
+    }
+
+    res.json({ chat });
+  } catch (error) {
+    next(error);
+  }
+}
+
 // Get messages for a specific chat
 export async function getChatMessages(
   req: Request,

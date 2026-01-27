@@ -27,13 +27,6 @@ function TripsPage() {
   });
 
   const { data, isLoading, error } = useTrips(filters);
-  const { data: userData } = useQuery({
-    queryKey: ['user', 'me'],
-    queryFn: () => apiClient.getCurrentUser(),
-    retry: false,
-  });
-
-  const user = userData?.user;
   
   const [showRegistration, setShowRegistration] = useState(false);
   const [pendingTripId, setPendingTripId] = useState<string | null>(null);
@@ -115,7 +108,6 @@ function TripsPage() {
             </Button>
           </div>
         </div>
-        <BottomNav />
       </RegistrationGuard>
     );
   }
@@ -149,7 +141,6 @@ function TripsPage() {
             </div>
           </div>
         </div>
-        <BottomNav />
       </RegistrationGuard>
     );
   }
