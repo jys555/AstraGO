@@ -31,6 +31,7 @@ export interface Trip {
   updatedAt: string;
   driver: User;
   seatAvailability?: SeatAvailability;
+  reservations?: Reservation[];
 }
 
 export interface Reservation {

@@ -345,6 +345,7 @@ export async function getMyTripsAsDriver(
         reservations: {
           include: {
             passenger: true,
+            chat: true,
           },
         },
       },
