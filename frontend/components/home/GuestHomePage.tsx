@@ -49,8 +49,10 @@ export function GuestHomePage({ onRegister }: GuestHomePageProps) {
       sessionStorage.removeItem('pendingSearch');
       router.push(`/trips?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&date=${encodeURIComponent(date)}`);
     } else if (pendingCreateTrip) {
+      // Trip creation UI/functionality is not implemented yet.
+      // After registration, redirect driver to trips list instead of a non-existent /trips/create page.
       sessionStorage.removeItem('pendingCreateTrip');
-      router.push('/trips/create');
+      router.push('/trips');
     } else {
       window.location.reload();
     }
