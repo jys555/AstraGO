@@ -11,6 +11,8 @@ export interface User {
   carColor?: string;
   onlineStatus: boolean;
   lastSeen: string;
+  createdAt: string;
+  updatedAt: string;
   driverMetrics?: DriverMetrics;
 }
 
