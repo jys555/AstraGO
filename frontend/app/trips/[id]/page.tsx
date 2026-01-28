@@ -6,9 +6,9 @@ import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 import { ReservationPanel } from '@/components/trips/ReservationPanel';
 import { useReservation } from '@/hooks/useReservation';
-import { Card } from '@/components/ui/Card';
+import { Card } from '@/components/ui/card';
 import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { MapView } from '@/components/maps/MapView';
 import { RegistrationModal } from '@/components/auth/RegistrationModal';
 

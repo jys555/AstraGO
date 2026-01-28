@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TripCard } from './TripCard';
 import { Trip, TripFilters } from '@/types';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 
 interface TripListProps {
   trips: Trip[];

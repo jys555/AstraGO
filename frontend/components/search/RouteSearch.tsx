@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 import { STANDARD_ROUTES } from '@/lib/constants';
 
 interface RouteSearchProps {

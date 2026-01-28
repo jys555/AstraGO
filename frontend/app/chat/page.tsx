@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 import { AppHeader } from '@/components/layout/AppHeader';
-import { Card } from '@/components/ui/Card';
+import { Card } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
 import { Chat } from '@/types';
 

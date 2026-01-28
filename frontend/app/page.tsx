@@ -10,7 +10,7 @@ import { BannerCarousel } from '@/components/home/BannerCarousel';
 import { BenefitsCarousel } from '@/components/home/BenefitsCarousel';
 import { GuestHomePage } from '@/components/home/GuestHomePage';
 import { apiClient } from '@/lib/api';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 
 // Disable SSR for pages that use React Query
 export const dynamic = 'force-dynamic';

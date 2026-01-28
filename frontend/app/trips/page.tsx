@@ -8,7 +8,7 @@ import { useTrips } from '@/hooks/useTrips';
 import { useReservation } from '@/hooks/useReservation';
 import { ReservationPanel } from '@/components/trips/ReservationPanel';
 import { TripFilters } from '@/types';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { apiClient } from '@/lib/api';
 import { RegistrationModal } from '@/components/auth/RegistrationModal';
 import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
@@ -145,38 +145,68 @@ function TripsPage() {
     );
   }
 
+  const routeFrom = filters.routeFrom || '';
+  const routeTo = filters.routeTo || '';
+
   return (
     <RegistrationGuard requireRegistration={true}>
       <div className="min-h-screen bg-gray-50 pb-20">
-        <AppHeader />
+        {/* Header */}
+        <header className="border-b border-gray-200 bg-white sticky top-0 z-50 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push('/')}
+                className="hover:bg-gray-100"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </Button>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">Mavjud Safarlar</h1>
+                {routeFrom && routeTo && (
+                  <p className="text-sm text-gray-500">{routeFrom} → {routeTo}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </header>
         
-        <main>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {/* Active Reservation Panel */}
           {reservation && timeRemaining !== null && (
-            <div className="bg-yellow-50 border-b border-yellow-200">
-              <div className="container mx-auto px-4 py-4">
-                <ReservationPanel
-                  reservation={reservation}
-                  timeRemaining={timeRemaining}
-                  driverResponded={driverResponded}
-                  onConfirm={handleConfirm}
-                  onCancel={handleCancel}
-                  isLoading={reservationLoading}
-                />
-              </div>
+            <div className="mb-6">
+              <ReservationPanel
+                reservation={reservation}
+                timeRemaining={timeRemaining}
+                driverResponded={driverResponded}
+                onConfirm={handleConfirm}
+                onCancel={handleCancel}
+                isLoading={reservationLoading}
+              />
+            </div>
+          )}
+
+          {/* Results Header */}
+          {!isLoading && (
+            <div className="mb-6">
+              <p className="text-sm text-gray-600">
+                Topildi <span className="font-semibold text-gray-900">{data?.trips?.length || 0} ta safar</span> qidiruv natijasiga ko'ra
+              </p>
             </div>
           )}
 
           {/* Trip List */}
-          <div className="px-4 py-4">
-            <TripList
-              trips={data?.trips || []}
-              onReserve={handleReserve}
-              isLoading={isLoading || reservationLoading}
-              filters={filters}
-              onFiltersChange={setFilters}
-            />
-          </div>
+          <TripList
+            trips={data?.trips || []}
+            onReserve={handleReserve}
+            isLoading={isLoading || reservationLoading}
+            filters={filters}
+            onFiltersChange={setFilters}
+          />
 
           <RegistrationModal
             isOpen={showRegistration}

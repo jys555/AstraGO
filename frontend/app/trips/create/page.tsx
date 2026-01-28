@@ -7,8 +7,8 @@ import { apiClient } from '@/lib/api';
 import { RegistrationModal } from '@/components/auth/RegistrationModal';
 import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 import { AppHeader } from '@/components/layout/AppHeader';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { STANDARD_ROUTES, VEHICLE_TYPES } from '@/lib/constants';
 
 // Disable SSR for pages that use React Query

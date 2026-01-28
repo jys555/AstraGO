@@ -1,7 +1,7 @@
 import React from 'react';
 import { Timer } from '../ui/Timer';
 import { StatusBadge } from '../ui/StatusBadge';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 import { Reservation } from '@/types';
 import { openTelegramChat } from '@/lib/telegram';
 import { motion } from 'framer-motion';

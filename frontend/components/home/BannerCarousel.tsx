@@ -1,83 +1,99 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import { ImageWithFallback } from '../common/ImageWithFallback';
 
-interface Banner {
-  id: string;
-  image: string;
-  title: string;
-  description: string;
-  actionText?: string;
-  actionLink?: string;
-}
-
-const banners: Banner[] = [
+const banners = [
   {
-    id: '1',
-    image: '/banner1.jpg',
-    title: 'Qulay va Xavfsiz Safar',
-    description: 'Shaharlararo safarlar uchun eng qulay va xavfsiz transport xizmati',
-    actionText: 'Hoziroq qidirish',
-    actionLink: '/trips',
+    id: 1,
+    image: 'https://images.unsplash.com/photo-1706612625425-3f14f487e548?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjB0cmF2ZWwlMjBhZHZlbnR1cmUlMjByb2FkfGVufDF8fHx8MTc2OTU4MDQyM3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    title: 'Safar Qiling',
+    subtitle: 'AstraGo bilan yangi yo\'nalishlarni kashf eting',
+    color: 'from-blue-500/90 to-purple-500/90'
   },
   {
-    id: '2',
-    image: '/banner2.jpg',
-    title: 'Real Vaqtda Rezervatsiya',
-    description: '10 daqiqalik bepul rezervatsiya bilan haydovchi bilan muzokara qiling',
-    actionText: 'Batafsil',
-    actionLink: '/about',
+    id: 2,
+    image: 'https://images.unsplash.com/photo-1644077580148-6e9de8ca18f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjYXIlMjBzaGFyaW5nJTIwcmlkZXNoYXJlfGVufDF8fHx8MTc2OTU4MDQyM3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    title: 'Safaringizni Ulashing',
+    subtitle: 'Pul tejang va yangi odamlar bilan tanishing',
+    color: 'from-green-500/90 to-teal-500/90'
   },
   {
-    id: '3',
-    image: '/banner3.jpg',
-    title: 'Ishonchli Haydovchilar',
-    description: 'Javob berish tezligi va ishonchliligi bo\'yicha reytinglangan haydovchilar',
-    actionText: 'Qidirish',
-    actionLink: '/trips',
-  },
+    id: 3,
+    image: 'https://images.unsplash.com/photo-1768839721483-c4501b5d6eb3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaXNjb3VudCUyMHByb21vdGlvbiUyMGJhbm5lcnxlbnwxfHx8fDE3Njk1ODA0MjN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+    title: 'Maxsus Taklif',
+    subtitle: 'Birinchi safaringiz uchun 20% chegirma!',
+    color: 'from-orange-500/90 to-red-500/90'
+  }
 ];
 
 export function BannerCarousel() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % banners.length);
-    }, 5000); // Change banner every 5 seconds
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const currentBanner = banners[currentIndex];
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 4000,
+    pauseOnHover: true,
+    arrows: false,
+    cssEase: 'ease-in-out',
+    dotsClass: 'slick-dots custom-dots',
+  };
 
   return (
-    <div className="relative w-full h-48 bg-gradient-to-r from-blue-500 to-blue-600 rounded-b-3xl overflow-hidden">
-      <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-      <div className="relative h-full flex items-center justify-center px-4">
-        <div className="text-center text-white">
-          <h2 className="text-2xl font-bold mb-2">{currentBanner.title}</h2>
-          <p className="text-sm opacity-90 mb-4">{currentBanner.description}</p>
-          {currentBanner.actionText && (
-            <button className="bg-white text-blue-600 px-6 py-2 rounded-full font-semibold text-sm">
-              {currentBanner.actionText}
-            </button>
-          )}
-        </div>
-      </div>
-      
-      {/* Dots indicator */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-        {banners.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentIndex(index)}
-            className={`w-2 h-2 rounded-full transition-all ${
-              index === currentIndex ? 'bg-white' : 'bg-white bg-opacity-50'
-            }`}
-          />
+    <div className="banner-carousel-container" style={{ padding: '0 16px 16px', gap: '10px' }}>
+      <style jsx>{`
+        .banner-carousel-container :global(.slick-dots) {
+          bottom: 20px;
+        }
+        .banner-carousel-container :global(.slick-dots li button:before) {
+          color: white;
+          opacity: 0.5;
+          font-size: 8px;
+        }
+        .banner-carousel-container :global(.slick-dots li.slick-active button:before) {
+          opacity: 1;
+          color: white;
+        }
+        .banner-carousel-container :global(.slick-slide > div) {
+          margin: 0;
+        }
+        .banner-carousel-container :global(.slick-list) {
+          border-radius: 12px;
+        }
+      `}</style>
+      <Slider {...settings}>
+        {banners.map((banner) => (
+          <div key={banner.id} className="outline-none" style={{ flex: '0 0 100%' }}>
+            <div 
+              className="relative overflow-hidden group"
+              style={{ 
+                aspectRatio: '2184 / 927',
+                borderRadius: '12px'
+              }}
+            >
+              <ImageWithFallback
+                src={banner.image}
+                alt={banner.title}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className={`absolute inset-0 bg-gradient-to-r ${banner.color}`} />
+              <div className="absolute inset-0 flex flex-col justify-center items-center text-white p-8 text-center">
+                <h2 className="text-3xl sm:text-4xl font-bold mb-3 drop-shadow-lg">
+                  {banner.title}
+                </h2>
+                <p className="text-lg sm:text-xl drop-shadow-md opacity-95">
+                  {banner.subtitle}
+                </p>
+              </div>
+            </div>
+          </div>
         ))}
-      </div>
+      </Slider>
     </div>
   );
 }
