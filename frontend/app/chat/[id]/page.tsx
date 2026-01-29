@@ -26,7 +26,6 @@ export default function ChatPage() {
   const chatId = params.id as string;
   const [message, setMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const { data: userData } = useQuery({
     queryKey: ['user', 'me'],
@@ -34,15 +33,13 @@ export default function ChatPage() {
     retry: false,
   });
 
-  useEffect(() => {
-    if (userData?.user?.id) {
-      setCurrentUserId(userData.user.id);
-      wsClient.connect(userData.user.id);
-    }
-  }, [userData]);
+  const currentUserIdValue = userData?.user?.id || null;
 
-  // Get current user ID for use in component
-  const currentUserIdValue = currentUserId || userData?.user?.id || null;
+  useEffect(() => {
+    if (currentUserIdValue) {
+      wsClient.connect(currentUserIdValue);
+    }
+  }, [currentUserIdValue]);
 
   const { data: chatData } = useQuery({
     queryKey: ['chat-info', chatId],

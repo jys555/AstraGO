@@ -25,9 +25,7 @@ function TripsPage() {
     routeTo: searchParams.get('to') || undefined,
     date: searchParams.get('date') || undefined,
   });
-  const [passengerCount, setPassengerCount] = useState<number>(
-    parseInt(searchParams.get('passengerCount') || '1') || 1
-  );
+  const passengerCount = parseInt(searchParams.get('passengerCount') || '1') || 1;
 
   const { data, isLoading, error } = useTrips(filters);
   
