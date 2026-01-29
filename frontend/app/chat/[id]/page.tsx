@@ -180,7 +180,7 @@ export default function ChatPage() {
                 <div className="flex items-center gap-3 mt-1">
                   {chat?.trip && (
                     <p className="text-sm text-gray-600">
-                      {chat.trip.vehicleType} • {chat.trip.routeFrom} → {chat.trip.routeTo}
+                      {chat.trip.routeFrom} → {chat.trip.routeTo}
                     </p>
                   )}
                   {chat?.driver?.driverMetrics && (
