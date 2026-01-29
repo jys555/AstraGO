@@ -91,7 +91,7 @@ export const ReservationPanel: React.FC<ReservationPanelProps> = ({
           className="w-full"
           onClick={handleOpenChat}
         >
-          Telegram Chatga O'tish
+          Chat
         </Button>
 
         {driverResponded ? (
