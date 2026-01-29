@@ -1,5 +1,6 @@
 import React from 'react';
 import { Car, Users, Home, Package, Star, MessageCircle } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { Card } from '../ui/card';
 import { StatusBadge } from '../ui/StatusBadge';
 import { Button } from '../ui/button';
@@ -7,6 +8,7 @@ import { Badge } from '../ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Trip } from '@/types';
 import { motion } from 'framer-motion';
+import { apiClient } from '@/lib/api';
 
 interface TripCardProps {
   trip: Trip;
@@ -15,6 +17,14 @@ interface TripCardProps {
 }
 
 export const TripCard: React.FC<TripCardProps> = ({ trip, onReserve, isLoading }) => {
+  const { data: userData } = useQuery({
+    queryKey: ['user', 'me'],
+    queryFn: () => apiClient.getCurrentUser(),
+    retry: false,
+  });
+
+  const currentUser = userData?.user;
+  const isOwnTrip = currentUser?.id === trip.driver.id;
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' });
@@ -117,15 +127,21 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onReserve, isLoading }
           </div>
 
           {/* CTA */}
-          <Button
-            onClick={() => onReserve(trip.id)}
-            disabled={trip.availableSeats === 0 || isLoading}
-            isLoading={isLoading}
-            className="w-full bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 rounded-xl shadow-sm"
-          >
-            <MessageCircle className="h-4 w-4 mr-2" />
-            Chat & Rezervatsiya (10 min)
-          </Button>
+          {isOwnTrip ? (
+            <div className="w-full bg-gray-100 text-gray-500 font-semibold py-3 rounded-xl text-center text-sm">
+              Bu sizning safaringiz
+            </div>
+          ) : (
+            <Button
+              onClick={() => onReserve(trip.id)}
+              disabled={trip.availableSeats === 0 || isLoading}
+              isLoading={isLoading}
+              className="w-full bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 rounded-xl shadow-sm"
+            >
+              <MessageCircle className="h-4 w-4 mr-2" />
+              Chat & Rezervatsiya (10 min)
+            </Button>
+          )}
         </div>
       </Card>
     </motion.div>

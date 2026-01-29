@@ -126,11 +126,12 @@ export default function ChatPage() {
   const messages = messagesData?.messages || [];
   const chat = chatData?.chat;
   const otherUser = chat?.driver?.id === currentUserId ? chat?.passenger : chat?.driver;
+  const isDriver = chat?.driver?.id === currentUserId;
 
-  // Get active reservation for this chat
+  // Get active reservation for this chat (only for passengers)
   const { reservation, timeRemaining, driverResponded, confirmReservation, cancelReservation } = useReservation();
-  const isReservationActive = reservation && reservation.status === 'PENDING' && timeRemaining !== null && timeRemaining > 0;
-  const isReservationExpired = reservation && reservation.status === 'PENDING' && timeRemaining !== null && timeRemaining === 0;
+  const isReservationActive = !isDriver && reservation && reservation.status === 'PENDING' && timeRemaining !== null && timeRemaining > 0;
+  const isReservationExpired = !isDriver && reservation && reservation.status === 'PENDING' && timeRemaining !== null && timeRemaining === 0;
   const isReadOnly = isReservationExpired;
 
   const handleConfirm = async () => {

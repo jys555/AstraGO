@@ -57,6 +57,14 @@ function TripsPage() {
       return;
     }
 
+    // Check if user is trying to reserve their own trip
+    const currentUser = userData?.user || (await apiClient.getCurrentUser()).user;
+    const trip = data?.trips?.find(t => t.id === tripId);
+    if (trip && currentUser?.id === trip.driver.id) {
+      alert('Siz o\'z safaringizga rezervatsiya qila olmaysiz.');
+      return;
+    }
+
     try {
       await createReservation(tripId, 1);
     } catch (error: any) {
@@ -65,6 +73,8 @@ function TripsPage() {
       if (error.response?.status === 401 || error.message?.includes('profile')) {
         setPendingTripId(tripId);
         setShowRegistration(true);
+      } else if (error.message?.includes('own trip') || error.message?.includes('Drivers cannot')) {
+        alert('Siz o\'z safaringizga rezervatsiya qila olmaysiz.');
       } else {
         alert('Rezervatsiya yaratishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
       }

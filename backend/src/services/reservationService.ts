@@ -27,6 +27,11 @@ export async function createReservation(
     throw new NotFoundError('Trip');
   }
 
+  // Prevent driver from reserving their own trip
+  if (trip.driverId === passengerId) {
+    throw new ValidationError('Drivers cannot reserve seats on their own trips');
+  }
+
   if (trip.status !== 'ACTIVE') {
     throw new ValidationError('Trip is not active');
   }
