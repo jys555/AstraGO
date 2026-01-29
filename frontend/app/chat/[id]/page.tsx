@@ -158,8 +158,11 @@ export default function ChatPage() {
                   </h1>
                   {chat?.trip && (
                     <p className="text-sm text-gray-500">
-                      {chat.trip.routeFrom} → {chat.trip.routeTo}
+                      {chat.trip.routeFrom} → {chat.trip.routeTo} • {chat.trip.vehicleType}
                     </p>
+                  )}
+                  {otherUser?.phone && (
+                    <p className="text-xs text-gray-400">Telefon: {otherUser.phone}</p>
                   )}
                 </div>
               </div>
@@ -241,7 +244,7 @@ export default function ChatPage() {
                 onClick={(e) => handleSend(e)}
                 disabled={!message.trim() || sendMessageMutation.isPending}
                 isLoading={sendMessageMutation.isPending}
-                className="flex-shrink-0 h-11 w-11 bg-blue-500 hover:bg-blue-600 text-white p-0"
+                className="flex-shrink-0 h-11 w-11 bg-primary-600 hover:bg-primary-700 text-white p-0"
               >
                 <Send className="h-5 w-5" />
               </Button>

@@ -63,9 +63,14 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onReserve, isLoading }
               </AvatarFallback>
             </Avatar>
             <div>
-              <h3 className="font-semibold text-gray-900">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-gray-900">
                 {trip.driver.firstName} {trip.driver.lastName}
-              </h3>
+                </h3>
+                <StatusBadge
+                  status={trip.driver.onlineStatus ? 'online' : 'offline'}
+                />
+              </div>
               {trip.driver.driverMetrics && (
                 <div className="flex items-center gap-1 mt-1">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -126,7 +131,7 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onReserve, isLoading }
               onClick={() => onReserve(trip.id)}
               disabled={trip.availableSeats === 0 || isLoading}
               isLoading={isLoading}
-              className="bg-blue-500 hover:bg-blue-600 text-white h-11 px-6 transition-all duration-200"
+              className="bg-primary-600 hover:bg-primary-700 text-white h-11 px-6 transition-all duration-200"
             >
               <MessageCircle className="h-4 w-4 mr-2" />
               Chat va Rezervatsiya

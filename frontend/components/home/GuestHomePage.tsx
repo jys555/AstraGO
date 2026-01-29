@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, MapPin, Calendar, Filter, Zap, Clock, Package } from 'lucide-react';
+import { Search, MapPin, Calendar, Filter, Zap, Clock, Package, Home, Users } from 'lucide-react';
 import { RouteSearch } from '@/components/search/RouteSearch';
 import { BannerCarousel } from './BannerCarousel';
 import { BenefitsCarousel } from './BenefitsCarousel';
@@ -24,15 +24,18 @@ export function GuestHomePage({ onRegister }: GuestHomePageProps) {
     from: string;
     to: string;
     date: string;
+    passengers: number;
   } | null>(null);
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [date, setDate] = useState('');
+  const [passengers, setPassengers] = useState(1);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
   const filters = [
     { id: 'online', label: 'Online haydovchilar', icon: Zap },
     { id: 'earliest', label: 'Eng erta jo\'nashlar', icon: Clock },
+    { id: 'home', label: 'Uydan olish', icon: Home },
     { id: 'cargo', label: 'Yuk qabul qiladi', icon: Package },
   ];
 
@@ -44,10 +47,10 @@ export function GuestHomePage({ onRegister }: GuestHomePageProps) {
     );
   };
 
-  const handleSearch = (from: string, to: string, date: string) => {
-    setSearchParams({ from, to, date });
+  const handleSearch = (from: string, to: string, date: string, passengerCount: number) => {
+    setSearchParams({ from, to, date, passengers: passengerCount });
     // Store search params for after registration
-    sessionStorage.setItem('pendingSearch', JSON.stringify({ from, to, date }));
+    sessionStorage.setItem('pendingSearch', JSON.stringify({ from, to, date, passengers: passengerCount }));
     // Open registration modal
     setRegistrationContext('passenger');
     setShowRegistration(true);
@@ -67,9 +70,13 @@ export function GuestHomePage({ onRegister }: GuestHomePageProps) {
     const pendingCreateTrip = sessionStorage.getItem('pendingCreateTrip');
     
     if (pendingSearch) {
-      const { from, to, date } = JSON.parse(pendingSearch);
+      const { from, to, date, passengers: pendingPassengers } = JSON.parse(pendingSearch);
       sessionStorage.removeItem('pendingSearch');
-      router.push(`/trips?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&date=${encodeURIComponent(date)}`);
+      router.push(
+        `/trips?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&date=${encodeURIComponent(
+          date,
+        )}&passengers=${encodeURIComponent(String(pendingPassengers || 1))}`,
+      );
     } else if (pendingCreateTrip) {
       sessionStorage.removeItem('pendingCreateTrip');
       router.push('/trips/create');
@@ -80,7 +87,7 @@ export function GuestHomePage({ onRegister }: GuestHomePageProps) {
 
   return (
     <>
-      <div className="min-h-screen bg-white pb-20">
+      <div className="min-h-screen bg-white pb-24">
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Banner Carousel */}
           <div className="mb-8">
@@ -88,8 +95,16 @@ export function GuestHomePage({ onRegister }: GuestHomePageProps) {
           </div>
 
           {/* Search Section */}
-          <Card className="p-6 sm:p-8 shadow-lg border-0 bg-white mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Safaringizni Toping</h2>
+          <Card className="p-6 sm:p-8 shadow-lg border border-gray-100 bg-white mb-8 rounded-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-semibold text-gray-900">Safaringizni Toping</h2>
+                <p className="text-sm text-gray-500">Aniq yo'nalish, real vaqtli o'rinlar</p>
+              </div>
+              <Badge variant="secondary" className="bg-blue-50 text-blue-700 border border-blue-100">
+                #AstraGo
+              </Badge>
+            </div>
             
             <div className="space-y-4">
               {/* From/To Fields */}
@@ -116,26 +131,42 @@ export function GuestHomePage({ onRegister }: GuestHomePageProps) {
                 </div>
               </div>
 
-              {/* Date Field */}
-              <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <Input
-                  type="date"
-                  placeholder="Sana"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="pl-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                />
+              {/* Date + Passengers */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Input
+                    type="date"
+                    placeholder="Sana"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    className="pl-10 h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="relative">
+                  <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <select
+                    value={passengers}
+                    onChange={(e) => setPassengers(Number(e.target.value))}
+                    className="w-full pl-10 pr-3 h-12 border border-gray-200 rounded-lg text-gray-900 focus:border-blue-500 focus:ring-blue-500 bg-white"
+                  >
+                    {[1, 2, 3, 4].map((count) => (
+                      <option key={count} value={count}>
+                        {count} yo'lovchi
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               {/* Search Button */}
               <Button
                 onClick={() => {
                   if (from && to) {
-                    handleSearch(from, to, date);
+                    handleSearch(from, to, date, passengers);
                   }
                 }}
-                className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white transition-all duration-200"
+                className="w-full h-12 bg-primary-600 hover:bg-primary-700 text-white transition-all duration-200"
               >
                 <Search className="h-5 w-5 mr-2" />
                 Safarlarni Qidirish
@@ -147,13 +178,13 @@ export function GuestHomePage({ onRegister }: GuestHomePageProps) {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Tezkor Filtrlar</h3>
-              <Button variant="ghost" size="sm" className="text-blue-500 hover:text-blue-600">
+              <Button variant="ghost" size="sm" className="text-primary-600 hover:text-primary-700">
                 <Filter className="h-4 w-4 mr-1" />
                 Ko'proq
               </Button>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {filters.map((filter) => {
                 const Icon = filter.icon;
                 const isActive = activeFilters.includes(filter.id);
@@ -165,18 +196,18 @@ export function GuestHomePage({ onRegister }: GuestHomePageProps) {
                     className={`
                       flex items-center gap-3 p-4 rounded-xl border-2 transition-all duration-200
                       ${isActive 
-                        ? 'border-blue-500 bg-blue-50 shadow-sm' 
+                        ? 'border-primary-500 bg-primary-50 shadow-sm' 
                         : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
                       }
                     `}
                   >
                     <div className={`
                       p-2 rounded-lg
-                      ${isActive ? 'bg-blue-500' : 'bg-gray-100'}
+                      ${isActive ? 'bg-primary-600' : 'bg-gray-100'}
                     `}>
                       <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-gray-600'}`} />
                     </div>
-                    <span className={`font-medium ${isActive ? 'text-blue-700' : 'text-gray-700'}`}>
+                    <span className={`font-medium ${isActive ? 'text-primary-700' : 'text-gray-700'}`}>
                       {filter.label}
                     </span>
                   </button>
@@ -200,7 +231,7 @@ export function GuestHomePage({ onRegister }: GuestHomePageProps) {
                   onClick={() => {
                     setFrom(route.from);
                     setTo(route.to);
-                    handleSearch(route.from, route.to, '');
+                    handleSearch(route.from, route.to, '', passengers);
                   }}
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -235,7 +266,7 @@ export function GuestHomePage({ onRegister }: GuestHomePageProps) {
             <Button
               onClick={handleCreateTrip}
               variant="primary"
-              className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white"
+              className="w-full h-12 bg-primary-600 hover:bg-primary-700 text-white"
             >
               🚗 Safar Yaratish
             </Button>
