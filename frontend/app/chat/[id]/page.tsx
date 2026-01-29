@@ -41,16 +41,22 @@ export default function ChatPage() {
     }
   }, [currentUserIdValue]);
 
-  const { data: chatData } = useQuery({
+  const { data: chatData, isLoading: chatLoading } = useQuery({
     queryKey: ['chat-info', chatId],
     queryFn: () => apiClient.getChatById(chatId),
+    enabled: !!chatId,
   });
 
   const { data: messagesData, isLoading: messagesLoading } = useQuery({
     queryKey: ['chat-messages', chatId],
     queryFn: () => apiClient.getChatMessages(chatId),
+    enabled: !!chatId,
     refetchInterval: 5000, // Refetch every 5 seconds
   });
+
+  // Get active reservation for this chat (only for passengers)
+  // Always call useReservation hook (React hooks rules), but only use it if chat has reservation
+  const { reservation, timeRemaining, driverResponded, confirmReservation, cancelReservation } = useReservation();
 
   const sendMessageMutation = useMutation({
     mutationFn: (content: string) => apiClient.sendMessage(chatId, content),
@@ -63,7 +69,7 @@ export default function ChatPage() {
 
   // Subscribe to WebSocket for real-time messages
   useEffect(() => {
-    if (!chatId) return;
+    if (!chatId || !currentUserIdValue) return;
 
     const handleNewMessage = (data: any) => {
       if (data.chatId === chatId) {
@@ -77,7 +83,7 @@ export default function ChatPage() {
     return () => {
       wsClient.unsubscribeFromChat(chatId);
     };
-  }, [chatId, queryClient]);
+  }, [chatId, currentUserIdValue, queryClient]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -109,7 +115,7 @@ export default function ChatPage() {
     }
   };
 
-  if (messagesLoading) {
+  if (chatLoading || messagesLoading) {
     return (
       <RegistrationGuard>
         <div className="min-h-screen bg-gray-50 pb-20">
@@ -148,10 +154,6 @@ export default function ChatPage() {
 
   const otherUser = chat.driver?.id === currentUserIdValue ? chat.passenger : chat.driver;
   const isDriver = chat.driver?.id === currentUserIdValue;
-
-  // Get active reservation for this chat (only for passengers)
-  // Always call useReservation hook (React hooks rules), but only use it if chat has reservation
-  const { reservation, timeRemaining, driverResponded, confirmReservation, cancelReservation } = useReservation();
   
   // Check if reservation belongs to this chat
   const chatReservation = !isDriver && chat.reservationId && reservation && reservation.id === chat.reservationId ? reservation : null;
