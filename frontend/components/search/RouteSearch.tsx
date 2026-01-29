@@ -3,10 +3,11 @@ import { Button } from '../ui/button';
 import { STANDARD_ROUTES } from '@/lib/constants';
 
 interface RouteSearchProps {
-  onSearch: (from: string, to: string, date: string) => void;
+  onSearch: (from: string, to: string, date: string, passengerCount?: number) => void;
   initialFrom?: string;
   initialTo?: string;
   initialDate?: string;
+  initialPassengerCount?: number;
 }
 
 export const RouteSearch: React.FC<RouteSearchProps> = ({
@@ -14,15 +15,17 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
   initialFrom = '',
   initialTo = '',
   initialDate = '',
+  initialPassengerCount = 1,
 }) => {
   const [from, setFrom] = useState(initialFrom);
   const [to, setTo] = useState(initialTo);
   const [date, setDate] = useState(initialDate || new Date().toISOString().split('T')[0]);
+  const [passengerCount, setPassengerCount] = useState(initialPassengerCount || 1);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (from && to) {
-      onSearch(from, to, date);
+      onSearch(from, to, date, passengerCount);
     }
   };
 
@@ -87,7 +90,8 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
               type="number"
               min="1"
               max="10"
-              defaultValue="1"
+              value={passengerCount}
+              onChange={(e) => setPassengerCount(parseInt(e.target.value) || 1)}
               className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
             />
           </div>

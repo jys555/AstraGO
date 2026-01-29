@@ -34,9 +34,15 @@ export default function HomePage() {
   const userRole = user?.role || 'PASSENGER';
   const isProfileComplete = !!(user?.firstName && user?.phone);
 
-  const handleSearch = (from: string, to: string, date: string) => {
-    setSearchParams({ from, to, date });
-    router.push(`/trips?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&date=${encodeURIComponent(date)}`);
+  const handleSearch = (from: string, to: string, date: string, passengerCount?: number) => {
+    setSearchParams({ from, to, date, passengerCount: passengerCount?.toString() });
+    const params = new URLSearchParams({
+      from,
+      to,
+      date,
+      ...(passengerCount && passengerCount > 1 ? { passengerCount: passengerCount.toString() } : {}),
+    });
+    router.push(`/trips?${params.toString()}`);
   };
 
   const handleCreateTrip = () => {

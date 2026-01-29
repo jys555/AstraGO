@@ -23,9 +23,28 @@ export const ReservationPanel: React.FC<ReservationPanelProps> = ({
   onCancel,
   isLoading,
 }) => {
-  const handleOpenChat = () => {
-    const driver = reservation.trip.driver;
-    openTelegramChat(driver.username || undefined, driver.phone || undefined);
+  const handleOpenChat = async () => {
+    try {
+      // Try to get internal chat first
+      if (reservation.chat?.id) {
+        window.location.href = `/chat/${reservation.chat.id}`;
+        return;
+      }
+      
+      // If no chat exists, try to create one
+      const { apiClient } = await import('@/lib/api');
+      const chatData = await apiClient.getChatByReservation(reservation.id);
+      if (chatData?.chat?.id) {
+        window.location.href = `/chat/${chatData.chat.id}`;
+      } else {
+        throw new Error('Chat yaratilmadi');
+      }
+    } catch (error) {
+      console.error('Chat ochishda xatolik:', error);
+      // Fallback to Telegram only if internal chat fails
+      const driver = reservation.trip.driver;
+      openTelegramChat(driver.username || undefined, driver.phone || undefined);
+    }
   };
 
   return (

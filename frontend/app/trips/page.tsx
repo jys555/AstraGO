@@ -25,6 +25,9 @@ function TripsPage() {
     routeTo: searchParams.get('to') || undefined,
     date: searchParams.get('date') || undefined,
   });
+  const [passengerCount, setPassengerCount] = useState<number>(
+    parseInt(searchParams.get('passengerCount') || '1') || 1
+  );
 
   const { data, isLoading, error } = useTrips(filters);
   
@@ -66,7 +69,7 @@ function TripsPage() {
     }
 
     try {
-      await createReservation(tripId, 1);
+      await createReservation(tripId, passengerCount || 1);
     } catch (error: any) {
       console.error('Failed to create reservation:', error);
       // If 401 or profile incomplete error, show registration

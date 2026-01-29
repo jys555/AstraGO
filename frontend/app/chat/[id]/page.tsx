@@ -41,6 +41,9 @@ export default function ChatPage() {
     }
   }, [userData]);
 
+  // Get current user ID for use in component
+  const currentUserIdValue = currentUserId || userData?.user?.id || null;
+
   const { data: chatData } = useQuery({
     queryKey: ['chat-info', chatId],
     queryFn: () => apiClient.getChatById(chatId),
@@ -146,8 +149,8 @@ export default function ChatPage() {
     );
   }
 
-  const otherUser = chat.driver?.id === currentUserId ? chat.passenger : chat.driver;
-  const isDriver = chat.driver?.id === currentUserId;
+  const otherUser = chat.driver?.id === currentUserIdValue ? chat.passenger : chat.driver;
+  const isDriver = chat.driver?.id === currentUserIdValue;
 
   // Get active reservation for this chat (only for passengers)
   // Always call useReservation hook (React hooks rules), but only use it if chat has reservation
@@ -280,7 +283,7 @@ export default function ChatPage() {
               </div>
             ) : (
               messages.map((msg: ChatMessage) => {
-                const isOwn = msg.senderId === currentUserId;
+                const isOwn = msg.senderId === currentUserIdValue;
                 return (
                   <div
                     key={msg.id}
