@@ -125,19 +125,39 @@ export default function ChatPage() {
 
   const messages = messagesData?.messages || [];
   const chat = chatData?.chat;
-  const otherUser = chat?.driver?.id === currentUserId ? chat?.passenger : chat?.driver;
-  const isDriver = chat?.driver?.id === currentUserId;
+  
+  if (!chat) {
+    return (
+      <RegistrationGuard>
+        <div className="min-h-screen bg-gray-50 pb-20">
+          <AppHeader />
+          <div className="container mx-auto px-4 py-12 text-center">
+            <p className="text-red-600">Chat topilmadi</p>
+            <Button
+              variant="primary"
+              className="mt-4"
+              onClick={() => router.push('/chat')}
+            >
+              Chatlar ro'yxatiga qaytish
+            </Button>
+          </div>
+        </div>
+      </RegistrationGuard>
+    );
+  }
+
+  const otherUser = chat.driver?.id === currentUserId ? chat.passenger : chat.driver;
+  const isDriver = chat.driver?.id === currentUserId;
 
   // Get active reservation for this chat (only for passengers)
-  // Only use reservation hook if user is passenger and chat has a reservation
-  const shouldUseReservation = !isDriver && chat?.reservationId;
+  // Always call useReservation hook (React hooks rules), but only use it if chat has reservation
   const { reservation, timeRemaining, driverResponded, confirmReservation, cancelReservation } = useReservation();
   
   // Check if reservation belongs to this chat
-  const chatReservation = shouldUseReservation && reservation && reservation.id === chat?.reservationId ? reservation : null;
+  const chatReservation = !isDriver && chat.reservationId && reservation && reservation.id === chat.reservationId ? reservation : null;
   const isReservationActive = chatReservation && chatReservation.status === 'PENDING' && timeRemaining !== null && timeRemaining > 0;
   const isReservationExpired = chatReservation && chatReservation.status === 'PENDING' && timeRemaining !== null && timeRemaining === 0;
-  const isReadOnly = isReservationExpired || (chat?.status === 'READ_ONLY');
+  const isReadOnly = isReservationExpired || (chat.status === 'READ_ONLY');
 
   const handleConfirm = async () => {
     if (!chatReservation) return;

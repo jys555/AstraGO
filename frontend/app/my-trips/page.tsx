@@ -220,9 +220,14 @@ export default function MyTripsPage() {
                                     onClick={async () => {
                                       try {
                                         const chatData = await apiClient.getChatByReservation(reservation.id);
-                                        router.push(`/chat/${chatData.chat.id}`);
+                                        if (chatData?.chat?.id) {
+                                          router.push(`/chat/${chatData.chat.id}`);
+                                        } else {
+                                          throw new Error('Chat yaratilmadi');
+                                        }
                                       } catch (error) {
                                         console.error('Chat yaratishda xatolik:', error);
+                                        alert('Chat yaratishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
                                       }
                                     }}
                                     className="ml-2"
@@ -333,13 +338,14 @@ export default function MyTripsPage() {
                             onClick={async () => {
                               try {
                                 const chatData = await apiClient.getChatByReservation(activeReservation.id);
-                                router.push(`/chat/${chatData.chat.id}`);
+                                if (chatData?.chat?.id) {
+                                  router.push(`/chat/${chatData.chat.id}`);
+                                } else {
+                                  throw new Error('Chat yaratilmadi');
+                                }
                               } catch (error) {
                                 console.error('Chat yaratishda xatolik:', error);
-                                openTelegramChat(
-                                  activeReservation.trip.driver.username,
-                                  activeReservation.trip.driver.phone
-                                );
+                                alert('Chat yaratishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
                               }
                             }}
                             className="flex-1 border-gray-200 hover:bg-gray-50 font-semibold py-2.5 rounded-xl"
