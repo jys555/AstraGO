@@ -35,14 +35,17 @@ export default function HomePage() {
   const isProfileComplete = !!(user?.firstName && user?.phone);
 
   const handleSearch = (from: string, to: string, date: string, passengerCount?: number) => {
-    const params = new URLSearchParams({
+    const params: Record<string, string> = {
       from,
       to,
       date,
-      ...(passengerCount && passengerCount > 1 ? { passengerCount: passengerCount.toString() } : {}),
-    });
+    };
+    if (passengerCount && passengerCount > 1) {
+      params.passengerCount = passengerCount.toString();
+    }
     setSearchParams(params);
-    router.push(`/trips?${params.toString()}`);
+    const urlParams = new URLSearchParams(params);
+    router.push(`/trips?${urlParams.toString()}`);
   };
 
   const handleCreateTrip = () => {
