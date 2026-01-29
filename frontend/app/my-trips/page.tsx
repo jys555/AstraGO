@@ -253,37 +253,35 @@ export default function MyTripsPage() {
           ) : (
             // Passenger view: Show reservations
             <Tabs defaultValue="upcoming" className="w-full">
-              <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
-                <TabsTrigger value="upcoming" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+              <TabsList className="grid w-full max-w-md grid-cols-2 mb-6 bg-gray-100 rounded-xl p-1">
+                <TabsTrigger value="upcoming" className="data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm rounded-lg font-semibold">
                   Faol ({activeReservation ? 1 : 0})
                 </TabsTrigger>
-                <TabsTrigger value="past" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+                <TabsTrigger value="past" className="data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm rounded-lg font-semibold">
                   Tarix (0)
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="upcoming" className="space-y-4">
                 {activeReservation ? (
-                  <Card className="p-6 hover:shadow-md transition-shadow duration-200 border border-gray-200 bg-white">
-                    <div className="flex flex-col lg:flex-row gap-6">
+                  <Card className="p-5 hover:shadow-md transition-shadow duration-200 border border-gray-100 bg-white rounded-2xl">
+                    <div className="space-y-4">
                       {/* Driver Info */}
                       <div className="flex items-start gap-4">
-                        <Avatar className="h-14 w-14 border-2 border-gray-100">
-                          <AvatarFallback className="bg-blue-100 text-blue-700">
+                        <Avatar className="h-12 w-12 border-2 border-gray-100">
+                          <AvatarFallback className="bg-primary-100 text-primary-700 font-semibold">
                             {activeReservation.trip.driver.firstName?.[0] || '?'}{activeReservation.trip.driver.lastName?.[0] || ''}
                           </AvatarFallback>
                         </Avatar>
-                        <div>
-                          <h3 className="font-semibold text-gray-900">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900 text-base">
                             {activeReservation.trip.driver.firstName} {activeReservation.trip.driver.lastName}
                           </h3>
                           <p className="text-sm text-gray-500">Haydovchi</p>
+                          {activeReservation.trip.driver.phone && (
+                            <p className="text-sm text-gray-600 mt-1">{activeReservation.trip.driver.phone}</p>
+                          )}
                         </div>
-                      </div>
-
-                      {/* Trip Details */}
-                      <div className="flex-1 space-y-3">
-                        {/* Status Badge */}
                         {(() => {
                           const statusInfo = statusConfig[activeReservation.status as keyof typeof statusConfig];
                           const StatusIcon = statusInfo?.icon || Clock;
@@ -294,39 +292,37 @@ export default function MyTripsPage() {
                             </Badge>
                           );
                         })()}
+                      </div>
 
-                        {/* Route */}
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                          <span className="font-medium text-gray-900">{activeReservation.trip.routeFrom}</span>
-                          <span className="text-gray-400">→</span>
-                          <span className="font-medium text-gray-900">{activeReservation.trip.routeTo}</span>
-                        </div>
+                      {/* Route */}
+                      <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
+                        <MapPin className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                        <span className="font-semibold text-gray-900">{activeReservation.trip.routeFrom}</span>
+                        <span className="text-gray-400">→</span>
+                        <span className="font-semibold text-gray-900">{activeReservation.trip.routeTo}</span>
+                      </div>
 
-                        {/* Date & Time */}
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <Calendar className="h-4 w-4 text-gray-400" />
-                          <span>
-                            {formatDate(activeReservation.trip.departureWindowStart)} •{' '}
-                            {formatTime(activeReservation.trip.departureWindowStart)} -{' '}
-                            {formatTime(activeReservation.trip.departureWindowEnd)}
-                          </span>
-                        </div>
+                      {/* Date & Time */}
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Calendar className="h-4 w-4 text-gray-400" />
+                        <span>
+                          {formatDate(activeReservation.trip.departureWindowStart)} •{' '}
+                          {formatTime(activeReservation.trip.departureWindowStart)} -{' '}
+                          {formatTime(activeReservation.trip.departureWindowEnd)}
+                        </span>
+                      </div>
 
-                        {/* Booking Info */}
-                        <div className="flex items-center gap-4 text-sm">
-                          <span className="text-gray-600">
-                            <span className="font-medium text-gray-900">{activeReservation.seatCount}</span> o'rin rezervatsiya qilingan
-                          </span>
-                        </div>
+                      {/* Booking Info */}
+                      <div className="text-sm text-gray-600">
+                        <span className="font-medium text-gray-900">{activeReservation.seatCount}</span> o'rin rezervatsiya qilingan
                       </div>
 
                       {/* Actions */}
-                      <div className="flex lg:flex-col gap-3 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-gray-100 lg:pl-6">
+                      <div className="flex gap-3 pt-2">
                         {activeReservation.chat ? (
                           <Button
                             onClick={() => activeReservation.chat && router.push(`/chat/${activeReservation.chat.id}`)}
-                            className="bg-blue-500 hover:bg-blue-600 text-white flex-1 lg:flex-initial"
+                            className="flex-1 bg-primary-500 hover:bg-primary-600 text-white font-semibold py-2.5 rounded-xl"
                           >
                             <MessageCircle className="h-4 w-4 mr-2" />
                             Chat
@@ -346,7 +342,7 @@ export default function MyTripsPage() {
                                 );
                               }
                             }}
-                            className="flex-1 lg:flex-initial border-gray-300"
+                            className="flex-1 border-gray-200 hover:bg-gray-50 font-semibold py-2.5 rounded-xl"
                           >
                             <MessageCircle className="h-4 w-4 mr-2" />
                             Chat yaratish
@@ -356,26 +352,26 @@ export default function MyTripsPage() {
                           <Button
                             variant="outline"
                             onClick={() => router.push(`/trips/${activeReservation.tripId}`)}
-                            className="flex-1 lg:flex-initial border-gray-300 hover:bg-gray-50"
+                            className="border-gray-200 hover:bg-gray-50 font-semibold py-2.5 rounded-xl"
                           >
-                            Batafsil ko'rish
+                            Batafsil
                           </Button>
                         )}
                       </div>
                     </div>
                   </Card>
                 ) : (
-                  <Card className="p-12 text-center border border-gray-200">
+                  <Card className="p-12 text-center border border-gray-100 bg-white rounded-2xl">
                     <div className="flex flex-col items-center gap-4">
-                      <div className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center">
-                        <Calendar className="h-10 w-10 text-gray-400" />
+                      <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center">
+                        <Calendar className="h-8 w-8 text-gray-400" />
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900 mb-2">Faol rezervatsiyalar yo'q</h3>
-                        <p className="text-gray-600">Safar qidirishni boshlang va rezervatsiya qiling</p>
+                        <p className="text-gray-600 text-sm">Safar qidirishni boshlang va rezervatsiya qiling</p>
                       </div>
                       <Button
-                        className="bg-blue-500 hover:bg-blue-600 text-white mt-4"
+                        className="bg-primary-500 hover:bg-primary-600 text-white mt-4 font-semibold py-2.5 px-6 rounded-xl"
                         onClick={() => router.push('/')}
                       >
                         Safarlarni Qidirish
@@ -386,14 +382,14 @@ export default function MyTripsPage() {
               </TabsContent>
 
               <TabsContent value="past" className="space-y-4">
-                <Card className="p-12 text-center border border-gray-200">
+                <Card className="p-12 text-center border border-gray-100 bg-white rounded-2xl">
                   <div className="flex flex-col items-center gap-4">
-                    <div className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center">
-                      <Clock className="h-10 w-10 text-gray-400" />
+                    <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center">
+                      <Clock className="h-8 w-8 text-gray-400" />
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">Tarix yo'q</h3>
-                      <p className="text-gray-600">Yakunlangan va bekor qilingan rezervatsiyalar shu yerda ko'rinadi</p>
+                      <p className="text-gray-600 text-sm">Yakunlangan va bekor qilingan rezervatsiyalar shu yerda ko'rinadi</p>
                     </div>
                   </div>
                 </Card>

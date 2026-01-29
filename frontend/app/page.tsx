@@ -70,37 +70,31 @@ export default function HomePage() {
           {userRole === 'PASSENGER' && (
             <>
               {/* Passenger Search Section */}
-              <div className="px-4 py-6">
-                <div className="text-center mb-6">
-                  <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                    Safarlarni Qidiring
-                  </h1>
-                  <p className="text-sm text-gray-600">
-                    Shaharlararo va mintaqalararo umumiy taksi xizmatlari
-                  </p>
-                </div>
-
+              <div className="px-4 py-6 space-y-6">
                 <RouteSearch
                   onSearch={handleSearch}
                   initialFrom={searchParams?.from}
                   initialTo={searchParams?.to}
                   initialDate={searchParams?.date}
                 />
-              </div>
 
-              {/* Benefits Carousel */}
-              <BenefitsCarousel />
-
-              {/* Trip Comparison Section */}
-              <div className="px-4 py-4">
-                <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-2xl">🚗</span>
-                    <h3 className="font-bold text-lg text-gray-900">Safarlarni Solishtiring</h3>
+                {/* Quick Filters */}
+                <div className="space-y-3">
+                  <h3 className="text-sm font-semibold text-gray-700">Tezkor Filtrlar</h3>
+                  <div className="flex flex-wrap gap-2">
+                    <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-primary-300 transition-all">
+                      ✓ Onlayn haydovchilar
+                    </button>
+                    <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-primary-300 transition-all">
+                      ⏰ Eng tezkor jo'nash
+                    </button>
+                    <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-primary-300 transition-all">
+                      🏠 Uydan olish
+                    </button>
+                    <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-primary-300 transition-all">
+                      📦 Yuk qabul qiladi
+                    </button>
                   </div>
-                  <p className="text-sm text-gray-600">
-                    Barcha mavjud safarlarni real vaqtda o'rin bilan solishtiring va eng qulay variantni tanlang
-                  </p>
                 </div>
               </div>
             </>

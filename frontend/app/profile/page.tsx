@@ -61,36 +61,37 @@ export default function ProfilePage() {
           </div>
         </header>
 
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-5">
           {/* Profile Overview */}
-          <Card className="p-6 border border-gray-200 bg-white">
+          <Card className="p-6 border border-gray-100 bg-white rounded-2xl">
             <div className="flex flex-col sm:flex-row items-center gap-6">
-              <Avatar className="h-24 w-24 border-4 border-gray-100">
-                <AvatarFallback className="bg-blue-100 text-blue-700 text-2xl">
+              <Avatar className="h-20 w-20 border-3 border-gray-100">
+                <AvatarFallback className="bg-primary-100 text-primary-700 text-xl font-semibold">
                   {user?.firstName?.[0] || '?'}{user?.lastName?.[0] || ''}
                 </AvatarFallback>
               </Avatar>
               
               <div className="flex-1 text-center sm:text-left">
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-xl font-bold text-gray-900">
                   {user?.firstName && user?.lastName
                     ? `${user.firstName} ${user.lastName}`
                     : user?.firstName || user?.lastName || 'Foydalanuvchi'}
                 </h2>
+                <p className="text-sm text-gray-600 mt-1">{roleLabels[user?.role || 'PASSENGER']}</p>
                 {memberSince && (
-                  <p className="text-gray-600 mt-1">A'zo bo'lgan: {memberSince}</p>
+                  <p className="text-xs text-gray-500 mt-1">A'zo bo'lgan: {memberSince}</p>
                 )}
                 
-                <div className="flex items-center justify-center sm:justify-start gap-4 mt-4">
+                <div className="flex items-center justify-center sm:justify-start gap-3 mt-3">
                   {user?.driverMetrics && (
-                    <div className="flex items-center gap-2">
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold text-gray-900">
+                    <div className="flex items-center gap-1.5">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="font-semibold text-gray-900 text-sm">
                         {user.driverMetrics.rankingScore.toFixed(1)}
                       </span>
                     </div>
                   )}
-                  <Badge className="bg-green-50 text-green-700 border-green-200 border">
+                  <Badge className="bg-secondary-50 text-secondary-700 border-secondary-200 border text-xs">
                     Tasdiqlangan
                   </Badge>
                 </div>
@@ -98,37 +99,37 @@ export default function ProfilePage() {
 
               <Button 
                 variant="outline" 
-                className="border-gray-300 hover:bg-gray-50"
+                className="border-gray-200 hover:bg-gray-50 font-semibold rounded-xl"
                 onClick={() => setShowEditModal(true)}
               >
-                Profilni Tahrirlash
+                Tahrirlash
               </Button>
             </div>
           </Card>
 
           {/* Contact Information */}
-          <Card className="p-6 border border-gray-200 bg-white">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Aloqa Ma'lumotlari</h3>
-            <div className="space-y-4">
+          <Card className="p-5 border border-gray-100 bg-white rounded-2xl">
+            <h3 className="text-base font-semibold text-gray-900 mb-4">Aloqa Ma'lumotlari</h3>
+            <div className="space-y-3">
               {user?.phone && (
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-green-50 flex items-center justify-center">
-                    <Phone className="h-5 w-5 text-green-600" />
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                  <div className="h-9 w-9 rounded-lg bg-secondary-50 flex items-center justify-center flex-shrink-0">
+                    <Phone className="h-4 w-4 text-secondary-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm text-gray-500">Telefon</p>
-                    <p className="font-medium text-gray-900">{user.phone}</p>
+                    <p className="text-xs text-gray-500">Telefon</p>
+                    <p className="font-medium text-gray-900 text-sm">{user.phone}</p>
                   </div>
                 </div>
               )}
               {user?.username && (
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-blue-50 flex items-center justify-center">
-                    <User className="h-5 w-5 text-blue-600" />
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                  <div className="h-9 w-9 rounded-lg bg-primary-50 flex items-center justify-center flex-shrink-0">
+                    <User className="h-4 w-4 text-primary-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm text-gray-500">Username</p>
-                    <p className="font-medium text-gray-900">@{user.username}</p>
+                    <p className="text-xs text-gray-500">Username</p>
+                    <p className="font-medium text-gray-900 text-sm">@{user.username}</p>
                   </div>
                 </div>
               )}
@@ -137,26 +138,26 @@ export default function ProfilePage() {
 
           {/* Trip Statistics */}
           {user?.driverMetrics && (
-            <Card className="p-6 border border-gray-200 bg-white">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Safar Statistikalari</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="text-center p-4 bg-blue-50 rounded-xl">
-                  <div className="text-3xl font-bold text-blue-600">{user.driverMetrics.totalTrips}</div>
-                  <div className="text-sm text-gray-600 mt-1">Jami Safarlar</div>
+            <Card className="p-5 border border-gray-100 bg-white rounded-2xl">
+              <h3 className="text-base font-semibold text-gray-900 mb-4">Safar Statistikalari</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="text-center p-4 bg-primary-50 rounded-xl">
+                  <div className="text-2xl font-bold text-primary-600">{user.driverMetrics.totalTrips}</div>
+                  <div className="text-xs text-gray-600 mt-1">Jami Safarlar</div>
                 </div>
-                <div className="text-center p-4 bg-green-50 rounded-xl">
-                  <div className="text-3xl font-bold text-green-600">{user.driverMetrics.responseRate.toFixed(0)}%</div>
-                  <div className="text-sm text-gray-600 mt-1">Javob Berish</div>
+                <div className="text-center p-4 bg-secondary-50 rounded-xl">
+                  <div className="text-2xl font-bold text-secondary-600">{user.driverMetrics.responseRate.toFixed(0)}%</div>
+                  <div className="text-xs text-gray-600 mt-1">Javob Berish</div>
                 </div>
-                <div className="text-center p-4 bg-purple-50 rounded-xl">
-                  <div className="text-3xl font-bold text-purple-600">
+                <div className="text-center p-4 bg-gray-50 rounded-xl">
+                  <div className="text-2xl font-bold text-gray-700">
                     {user.driverMetrics.avgResponseTime ? Math.round(user.driverMetrics.avgResponseTime) : 0}s
                   </div>
-                  <div className="text-sm text-gray-600 mt-1">O'rtacha Vaqt</div>
+                  <div className="text-xs text-gray-600 mt-1">O'rtacha Vaqt</div>
                 </div>
-                <div className="text-center p-4 bg-orange-50 rounded-xl">
-                  <div className="text-3xl font-bold text-orange-600">{user.driverMetrics.rankingScore.toFixed(1)}</div>
-                  <div className="text-sm text-gray-600 mt-1">Reyting</div>
+                <div className="text-center p-4 bg-yellow-50 rounded-xl">
+                  <div className="text-2xl font-bold text-yellow-600">{user.driverMetrics.rankingScore.toFixed(1)}</div>
+                  <div className="text-xs text-gray-600 mt-1">Reyting</div>
                 </div>
               </div>
             </Card>
@@ -164,25 +165,25 @@ export default function ProfilePage() {
 
           {/* Car Information (for drivers) */}
           {user?.role === 'DRIVER' && (user?.carNumber || user?.carModel || user?.carColor) && (
-            <Card className="p-6 border border-gray-200 bg-white">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Mashina Ma'lumotlari</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Card className="p-5 border border-gray-100 bg-white rounded-2xl">
+              <h3 className="text-base font-semibold text-gray-900 mb-4">Mashina Ma'lumotlari</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {user?.carNumber && (
-                  <div>
-                    <p className="text-sm text-gray-500">Mashina Raqami</p>
-                    <p className="font-medium text-gray-900">{user.carNumber}</p>
+                  <div className="p-3 bg-gray-50 rounded-xl">
+                    <p className="text-xs text-gray-500 mb-1">Mashina Raqami</p>
+                    <p className="font-medium text-gray-900 text-sm">{user.carNumber}</p>
                   </div>
                 )}
                 {user?.carModel && (
-                  <div>
-                    <p className="text-sm text-gray-500">Model</p>
-                    <p className="font-medium text-gray-900">{user.carModel}</p>
+                  <div className="p-3 bg-gray-50 rounded-xl">
+                    <p className="text-xs text-gray-500 mb-1">Model</p>
+                    <p className="font-medium text-gray-900 text-sm">{user.carModel}</p>
                   </div>
                 )}
                 {user?.carColor && (
-                  <div>
-                    <p className="text-sm text-gray-500">Rang</p>
-                    <p className="font-medium text-gray-900">{user.carColor}</p>
+                  <div className="p-3 bg-gray-50 rounded-xl">
+                    <p className="text-xs text-gray-500 mb-1">Rang</p>
+                    <p className="font-medium text-gray-900 text-sm">{user.carColor}</p>
                   </div>
                 )}
               </div>
@@ -190,18 +191,18 @@ export default function ProfilePage() {
           )}
 
           {/* Settings */}
-          <Card className="p-6 border border-gray-200 bg-white">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Sozlamalar</h3>
-            <div className="space-y-4">
+          <Card className="p-5 border border-gray-100 bg-white rounded-2xl">
+            <h3 className="text-base font-semibold text-gray-900 mb-4">Sozlamalar</h3>
+            <div className="space-y-3">
               {/* Notifications */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-yellow-50 flex items-center justify-center">
-                    <Bell className="h-5 w-5 text-yellow-600" />
+                  <div className="h-9 w-9 rounded-lg bg-yellow-50 flex items-center justify-center flex-shrink-0">
+                    <Bell className="h-4 w-4 text-yellow-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Bildirishnomalar</p>
-                    <p className="text-sm text-gray-500">Safar yangilanishlarini olish</p>
+                    <p className="font-medium text-gray-900 text-sm">Bildirishnomalar</p>
+                    <p className="text-xs text-gray-500">Safar yangilanishlarini olish</p>
                   </div>
                 </div>
                 <Switch defaultChecked />
@@ -210,14 +211,14 @@ export default function ProfilePage() {
               <Separator />
 
               {/* Privacy */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-purple-50 flex items-center justify-center">
-                    <Shield className="h-5 w-5 text-purple-600" />
+                  <div className="h-9 w-9 rounded-lg bg-primary-50 flex items-center justify-center flex-shrink-0">
+                    <Shield className="h-4 w-4 text-primary-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Maxfiylik va Xavfsizlik</p>
-                    <p className="text-sm text-gray-500">Maxfiylikni boshqarish</p>
+                    <p className="font-medium text-gray-900 text-sm">Maxfiylik va Xavfsizlik</p>
+                    <p className="text-xs text-gray-500">Maxfiylikni boshqarish</p>
                   </div>
                 </div>
                 <Button variant="ghost" size="sm" className="text-gray-600">
@@ -228,14 +229,14 @@ export default function ProfilePage() {
               <Separator />
 
               {/* Help & Support */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-green-50 flex items-center justify-center">
-                    <HelpCircle className="h-5 w-5 text-green-600" />
+                  <div className="h-9 w-9 rounded-lg bg-secondary-50 flex items-center justify-center flex-shrink-0">
+                    <HelpCircle className="h-4 w-4 text-secondary-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Yordam va Qo'llab-quvvatlash</p>
-                    <p className="text-sm text-gray-500">AstraGo haqida yordam olish</p>
+                    <p className="font-medium text-gray-900 text-sm">Yordam va Qo'llab-quvvatlash</p>
+                    <p className="text-xs text-gray-500">AstraGo haqida yordam olish</p>
                   </div>
                 </div>
                 <Button variant="ghost" size="sm" className="text-gray-600">
@@ -246,10 +247,10 @@ export default function ProfilePage() {
           </Card>
 
           {/* Logout */}
-          <Card className="p-6 border border-red-200 bg-white">
+          <Card className="p-5 border border-gray-100 bg-white rounded-2xl">
             <Button 
               variant="outline" 
-              className="w-full border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700"
+              className="w-full border-gray-200 text-gray-700 hover:bg-gray-50 font-semibold py-3 rounded-xl"
               onClick={() => router.push('/')}
             >
               <LogOut className="h-4 w-4 mr-2" />

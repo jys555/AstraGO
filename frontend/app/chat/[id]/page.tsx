@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Send, MapPin, Clock } from 'lucide-react';
+import { ArrowLeft, Send, MapPin, Clock, Star, CheckCircle2, X } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { wsClient } from '@/lib/websocket';
 import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
@@ -14,6 +14,8 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ChatMessage } from '@/types';
+import { useReservation } from '@/hooks/useReservation';
+import { Timer } from '@/components/ui/Timer';
 
 export const dynamic = 'force-dynamic';
 
@@ -125,51 +127,124 @@ export default function ChatPage() {
   const chat = chatData?.chat;
   const otherUser = chat?.driver?.id === currentUserId ? chat?.passenger : chat?.driver;
 
-  const formatCountdown = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  // Get active reservation for this chat
+  const { reservation, timeRemaining, driverResponded, confirmReservation, cancelReservation } = useReservation();
+  const isReservationActive = reservation && reservation.status === 'PENDING' && timeRemaining !== null && timeRemaining > 0;
+  const isReservationExpired = reservation && reservation.status === 'PENDING' && timeRemaining !== null && timeRemaining === 0;
+  const isReadOnly = isReservationExpired;
+
+  const handleConfirm = async () => {
+    if (!reservation) return;
+    try {
+      await confirmReservation(reservation.id);
+      router.push('/my-trips');
+    } catch (error) {
+      console.error('Rezervatsiyani tasdiqlashda xatolik:', error);
+    }
+  };
+
+  const handleCancel = async () => {
+    if (!reservation) return;
+    try {
+      await cancelReservation(reservation.id);
+      router.push('/trips');
+    } catch (error) {
+      console.error('Rezervatsiyani bekor qilishda xatolik:', error);
+    }
   };
 
   return (
     <RegistrationGuard>
       <div className="flex flex-col h-screen bg-gray-50">
         {/* Header */}
-        <header className="border-b border-gray-200 bg-white shadow-sm">
+        <header className="border-b border-gray-100 bg-white">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => router.back()}
-                  className="hover:bg-gray-100"
-                >
-                  <ArrowLeft className="h-5 w-5" />
-                </Button>
-                <Avatar className="h-10 w-10 border-2 border-gray-100">
-                  <AvatarFallback className="bg-blue-100 text-blue-700">
-                    {otherUser?.firstName?.[0] || '?'}{otherUser?.lastName?.[0] || ''}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <h1 className="text-lg font-semibold text-gray-900">
-                    {otherUser?.firstName} {otherUser?.lastName}
-                  </h1>
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.back()}
+                className="hover:bg-gray-50 -ml-2"
+              >
+                <ArrowLeft className="h-5 w-5 text-gray-600" />
+              </Button>
+              <Avatar className="h-12 w-12 border-2 border-gray-100">
+                <AvatarFallback className="bg-primary-100 text-primary-700 font-semibold">
+                  {otherUser?.firstName?.[0] || '?'}{otherUser?.lastName?.[0] || ''}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <h1 className="text-lg font-semibold text-gray-900">
+                  {otherUser?.firstName} {otherUser?.lastName}
+                </h1>
+                <div className="flex items-center gap-3 mt-1">
                   {chat?.trip && (
-                    <p className="text-sm text-gray-500">
-                      {chat.trip.routeFrom} → {chat.trip.routeTo}
+                    <p className="text-sm text-gray-600">
+                      {chat.trip.vehicleType} • {chat.trip.routeFrom} → {chat.trip.routeTo}
                     </p>
                   )}
+                  {chat?.driver?.driverMetrics && (
+                    <div className="flex items-center gap-1">
+                      <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                      <span className="text-xs font-medium text-gray-600">
+                        {chat.driver.driverMetrics.rankingScore.toFixed(1)}
+                      </span>
+                    </div>
+                  )}
                 </div>
+                {otherUser?.phone && (
+                  <p className="text-sm text-gray-500 mt-1">{otherUser.phone}</p>
+                )}
               </div>
             </div>
           </div>
         </header>
 
+        {/* Reservation Indicator */}
+        {isReservationActive && timeRemaining !== null && (
+          <div className="bg-primary-50 border-b border-primary-100 px-4 py-3">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <Clock className="h-5 w-5 text-primary-600 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-semibold text-primary-900">Vaqtinchalik rezervatsiya faol</p>
+                    <p className="text-xs text-primary-700">Kelishuvga erishish uchun vaqt qoldi</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-xl border border-primary-200">
+                  <span className="text-lg font-bold text-primary-600">
+                    {Math.floor(timeRemaining / 60000)}:{(Math.floor((timeRemaining % 60000) / 1000)).toString().padStart(2, '0')}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isReservationExpired && (
+          <div className="bg-gray-50 border-b border-gray-200 px-4 py-3">
+            <div className="max-w-4xl mx-auto">
+              <p className="text-sm font-medium text-gray-700 text-center">
+                Kelishuvga erishilmadi. Chat faqat o'qish uchun.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {!driverResponded && isReservationActive && (
+          <div className="bg-yellow-50 border-b border-yellow-200 px-4 py-3">
+            <div className="max-w-4xl mx-auto">
+              <p className="text-sm font-medium text-yellow-800 text-center">
+                Haydovchi hozirda faol emas. Bekor qilish va boshqa safarni tanlash mumkin.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Messages */}
-        <main className="flex-1 overflow-y-auto">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-4">
+        <main className="flex-1 overflow-y-auto bg-gray-50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-3">
             {messages.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-gray-500 text-sm">Hali xabarlar yo'q</p>
@@ -185,18 +260,18 @@ export default function ChatPage() {
                   >
                     <div
                       className={`
-                        max-w-[70%] rounded-2xl px-4 py-3 shadow-sm
+                        max-w-[75%] rounded-2xl px-4 py-2.5 shadow-sm
                         ${isOwn
-                          ? 'bg-blue-500 text-white rounded-br-sm'
-                          : 'bg-white text-gray-900 border border-gray-200 rounded-bl-sm'
+                          ? 'bg-primary-500 text-white rounded-br-sm'
+                          : 'bg-white text-gray-900 border border-gray-100 rounded-bl-sm'
                         }
                       `}
                     >
                       <p className="text-sm leading-relaxed">{msg.content}</p>
                       <p 
                         className={`
-                          text-xs mt-2
-                          ${isOwn ? 'text-blue-100' : 'text-gray-500'}
+                          text-xs mt-1.5
+                          ${isOwn ? 'text-primary-100' : 'text-gray-500'}
                         `}
                       >
                         {formatTime(msg.createdAt)}
@@ -210,44 +285,72 @@ export default function ChatPage() {
           </div>
         </main>
 
-        {/* Input Area */}
-        <footer className="border-t border-gray-200 bg-white">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
-            <div className="flex items-end gap-3">
-              <Button
-                variant="outline"
-                size="icon"
-                className="flex-shrink-0 h-11 w-11 border-gray-300 hover:bg-gray-50"
-              >
-                <MapPin className="h-5 w-5 text-gray-600" />
-              </Button>
-              <div className="flex-1 relative">
-                <Input
-                  type="text"
-                  placeholder="Xabar yozing..."
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSend(e);
-                    }
-                  }}
-                  className="pr-12 h-11 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                  disabled={sendMessageMutation.isPending}
-                />
+        {/* Actions */}
+        {isReservationActive && (
+          <div className="border-t border-gray-100 bg-white px-4 py-4">
+            <div className="max-w-4xl mx-auto space-y-3">
+              <div className="flex gap-3">
+                <Button
+                  onClick={handleConfirm}
+                  disabled={!driverResponded}
+                  className="flex-1 bg-secondary-500 hover:bg-secondary-600 text-white font-semibold py-3 rounded-xl"
+                >
+                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  Kelishuvni Tasdiqlash
+                </Button>
+                <Button
+                  onClick={handleCancel}
+                  variant="outline"
+                  className="flex-1 border-gray-300 hover:bg-gray-50 font-semibold py-3 rounded-xl"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Bekor Qilish va Boshqa Safarni Tanlash
+                </Button>
               </div>
-              <Button
-                onClick={(e) => handleSend(e)}
-                disabled={!message.trim() || sendMessageMutation.isPending}
-                isLoading={sendMessageMutation.isPending}
-                className="flex-shrink-0 h-11 w-11 bg-blue-500 hover:bg-blue-600 text-white p-0"
-              >
-                <Send className="h-5 w-5" />
-              </Button>
             </div>
           </div>
-        </footer>
+        )}
+
+        {/* Input Area */}
+        {!isReadOnly && (
+          <footer className="border-t border-gray-100 bg-white">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
+              <div className="flex items-end gap-3">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="flex-shrink-0 h-11 w-11 border-gray-200 hover:bg-gray-50 rounded-xl"
+                >
+                  <MapPin className="h-5 w-5 text-gray-600" />
+                </Button>
+                <div className="flex-1 relative">
+                  <Input
+                    type="text"
+                    placeholder="Xabar yozing..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSend(e);
+                      }
+                    }}
+                    className="pr-12 h-11 border-gray-200 focus:border-primary-500 focus:ring-primary-500 rounded-xl"
+                    disabled={sendMessageMutation.isPending}
+                  />
+                </div>
+                <Button
+                  onClick={(e) => handleSend(e)}
+                  disabled={!message.trim() || sendMessageMutation.isPending}
+                  isLoading={sendMessageMutation.isPending}
+                  className="flex-shrink-0 h-11 w-11 bg-primary-500 hover:bg-primary-600 text-white p-0 rounded-xl"
+                >
+                  <Send className="h-5 w-5" />
+                </Button>
+              </div>
+            </div>
+          </footer>
+        )}
       </div>
     </RegistrationGuard>
   );

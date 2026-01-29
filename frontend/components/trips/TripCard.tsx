@@ -47,91 +47,85 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onReserve, isLoading }
 
   const VehicleIcon = vehicleIcons[trip.vehicleType.toLowerCase() as keyof typeof vehicleIcons] || Car;
 
+  const isDriverOnline = true; // TODO: Get from trip data
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.2 }}
     >
-      <Card className="p-6 hover:shadow-lg transition-all duration-200 border border-gray-200 bg-white mb-4">
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Driver Info */}
-          <div className="flex items-start gap-4">
-            <Avatar className="h-14 w-14 border-2 border-gray-100">
-              <AvatarFallback className="bg-blue-100 text-blue-700">
-                {trip.driver.firstName?.[0] || '?'}{trip.driver.lastName?.[0] || ''}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <h3 className="font-semibold text-gray-900">
-                {trip.driver.firstName} {trip.driver.lastName}
-              </h3>
-              {trip.driver.driverMetrics && (
-                <div className="flex items-center gap-1 mt-1">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  <span className="text-sm font-medium text-gray-700">
-                    {trip.driver.driverMetrics.rankingScore.toFixed(1)}
-                  </span>
+      <Card className="p-5 hover:shadow-md transition-all duration-200 border border-gray-100 bg-white mb-3 rounded-2xl">
+        <div className="space-y-4">
+          {/* Header: Vehicle Type & Driver Info */}
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-3">
+              <div className="text-2xl">{getVehicleIcon(trip.vehicleType)}</div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-gray-900 text-base">
+                    {trip.driver.firstName} {trip.driver.lastName}
+                  </h3>
+                  {isDriverOnline ? (
+                    <span className="h-2 w-2 bg-secondary-500 rounded-full" title="Onlayn" />
+                  ) : (
+                    <span className="h-2 w-2 bg-gray-300 rounded-full" title="Oflayn" />
+                  )}
                 </div>
-              )}
-            </div>
-          </div>
-
-          {/* Trip Details */}
-          <div className="flex-1 space-y-4">
-            {/* Route & Time */}
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="font-medium text-gray-900">{trip.routeFrom}</span>
-                <span className="text-gray-400">→</span>
-                <span className="font-medium text-gray-900">{trip.routeTo}</span>
+                {trip.driver.driverMetrics && (
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                    <span className="text-xs font-medium text-gray-600">
+                      {trip.driver.driverMetrics.rankingScore.toFixed(1)}
+                    </span>
+                  </div>
+                )}
               </div>
-              <p className="text-sm text-gray-600">
-                Jo'nash vaqti: <span className="font-medium text-gray-900">{departureStart} - {departureEnd}</span>
-              </p>
             </div>
-
-            {/* Features */}
-            <div className="flex flex-wrap items-center gap-3">
-              <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-0">
-                <VehicleIcon className="h-3.5 w-3.5 mr-1.5" />
-                {trip.vehicleType}
-              </Badge>
-              <Badge variant="secondary" className="bg-green-50 text-green-700 border-0">
-                <Users className="h-3.5 w-3.5 mr-1.5" />
-                {trip.availableSeats} o'rin
-              </Badge>
-              {trip.pickupType === 'HOME_PICKUP' && (
-                <Badge variant="secondary" className="bg-purple-50 text-purple-700 border-0">
-                  <Home className="h-3.5 w-3.5 mr-1.5" />
-                  Uydan olish
-                </Badge>
-              )}
-              {trip.deliveryType === 'CARGO_ACCEPTED' && (
-                <Badge variant="secondary" className="bg-orange-50 text-orange-700 border-0">
-                  <Package className="h-3.5 w-3.5 mr-1.5" />
-                  Yuk qabul qiladi
-                </Badge>
-              )}
+            <div className="text-right">
+              <div className="text-xs text-gray-500">Bo'sh o'rinlar</div>
+              <div className="text-lg font-bold text-gray-900">{trip.availableSeats}</div>
             </div>
           </div>
 
-          {/* Price & CTA */}
-          <div className="flex lg:flex-col items-end lg:items-center justify-between lg:justify-center gap-4 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-gray-100 lg:pl-6">
-            <div className="text-right lg:text-center">
-              <div className="text-sm text-gray-500">Bo'sh o'rinlar</div>
-              <div className="text-lg font-bold text-gray-900">{trip.availableSeats} / {trip.totalSeats}</div>
+          {/* Route */}
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-semibold text-gray-900 text-base">{trip.routeFrom}</span>
+              <span className="text-gray-400">→</span>
+              <span className="font-semibold text-gray-900 text-base">{trip.routeTo}</span>
             </div>
-            <Button
-              onClick={() => onReserve(trip.id)}
-              disabled={trip.availableSeats === 0 || isLoading}
-              isLoading={isLoading}
-              className="bg-blue-500 hover:bg-blue-600 text-white h-11 px-6 transition-all duration-200"
-            >
-              <MessageCircle className="h-4 w-4 mr-2" />
-              Chat va Rezervatsiya
-            </Button>
+            <p className="text-sm text-gray-600">
+              Jo'nash vaqti: <span className="font-medium text-gray-900">{departureStart}–{departureEnd}</span>
+            </p>
           </div>
+
+          {/* Badges */}
+          <div className="flex flex-wrap items-center gap-2">
+            {trip.pickupType === 'HOME_PICKUP' && (
+              <Badge className="bg-primary-50 text-primary-700 border-0 text-xs px-2.5 py-1">
+                <Home className="h-3 w-3 mr-1" />
+                Uydan olish
+              </Badge>
+            )}
+            {trip.deliveryType === 'CARGO_ACCEPTED' && (
+              <Badge className="bg-secondary-50 text-secondary-700 border-0 text-xs px-2.5 py-1">
+                <Package className="h-3 w-3 mr-1" />
+                Yuk qabul qiladi
+              </Badge>
+            )}
+          </div>
+
+          {/* CTA */}
+          <Button
+            onClick={() => onReserve(trip.id)}
+            disabled={trip.availableSeats === 0 || isLoading}
+            isLoading={isLoading}
+            className="w-full bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 rounded-xl shadow-sm"
+          >
+            <MessageCircle className="h-4 w-4 mr-2" />
+            Chat & Rezervatsiya (10 min)
+          </Button>
         </div>
       </Card>
     </motion.div>
