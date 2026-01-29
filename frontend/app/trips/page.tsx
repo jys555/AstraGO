@@ -58,7 +58,7 @@ function TripsPage() {
     }
 
     // Check if user is trying to reserve their own trip
-    const currentUser = userData?.user || (await apiClient.getCurrentUser()).user;
+    const currentUser = userData?.user || (await apiClient.getCurrentUser())?.user;
     const trip = data?.trips?.find(t => t.id === tripId);
     if (trip && currentUser?.id === trip.driver.id) {
       alert('Siz o\'z safaringizga rezervatsiya qila olmaysiz.');
