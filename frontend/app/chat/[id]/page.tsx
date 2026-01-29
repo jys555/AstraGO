@@ -129,28 +129,35 @@ export default function ChatPage() {
   const isDriver = chat?.driver?.id === currentUserId;
 
   // Get active reservation for this chat (only for passengers)
+  // Only use reservation hook if user is passenger and chat has a reservation
+  const shouldUseReservation = !isDriver && chat?.reservationId;
   const { reservation, timeRemaining, driverResponded, confirmReservation, cancelReservation } = useReservation();
-  const isReservationActive = !isDriver && reservation && reservation.status === 'PENDING' && timeRemaining !== null && timeRemaining > 0;
-  const isReservationExpired = !isDriver && reservation && reservation.status === 'PENDING' && timeRemaining !== null && timeRemaining === 0;
-  const isReadOnly = isReservationExpired;
+  
+  // Check if reservation belongs to this chat
+  const chatReservation = shouldUseReservation && reservation && reservation.id === chat?.reservationId ? reservation : null;
+  const isReservationActive = chatReservation && chatReservation.status === 'PENDING' && timeRemaining !== null && timeRemaining > 0;
+  const isReservationExpired = chatReservation && chatReservation.status === 'PENDING' && timeRemaining !== null && timeRemaining === 0;
+  const isReadOnly = isReservationExpired || (chat?.status === 'READ_ONLY');
 
   const handleConfirm = async () => {
-    if (!reservation) return;
+    if (!chatReservation) return;
     try {
-      await confirmReservation(reservation.id);
+      await confirmReservation(chatReservation.id);
       router.push('/my-trips');
     } catch (error) {
       console.error('Rezervatsiyani tasdiqlashda xatolik:', error);
+      alert('Rezervatsiyani tasdiqlashda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
     }
   };
 
   const handleCancel = async () => {
-    if (!reservation) return;
+    if (!chatReservation) return;
     try {
-      await cancelReservation(reservation.id);
+      await cancelReservation(chatReservation.id);
       router.push('/trips');
     } catch (error) {
       console.error('Rezervatsiyani bekor qilishda xatolik:', error);
+      alert('Rezervatsiyani bekor qilishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
     }
   };
 
@@ -286,8 +293,8 @@ export default function ChatPage() {
           </div>
         </main>
 
-        {/* Actions */}
-        {isReservationActive && (
+        {/* Actions - Only show for passengers with active reservation */}
+        {!isDriver && isReservationActive && chatReservation && (
           <div className="border-t border-gray-100 bg-white px-4 py-4">
             <div className="max-w-4xl mx-auto space-y-3">
               <div className="flex gap-3">
