@@ -21,6 +21,7 @@ export default function HomePage() {
     from: string;
     to: string;
     date: string;
+    passengers: number;
   } | null>(null);
 
   // Get user data to determine role
@@ -34,9 +35,13 @@ export default function HomePage() {
   const userRole = user?.role || 'PASSENGER';
   const isProfileComplete = !!(user?.firstName && user?.phone);
 
-  const handleSearch = (from: string, to: string, date: string) => {
-    setSearchParams({ from, to, date });
-    router.push(`/trips?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&date=${encodeURIComponent(date)}`);
+  const handleSearch = (from: string, to: string, date: string, passengers: number) => {
+    setSearchParams({ from, to, date, passengers });
+    router.push(
+      `/trips?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&date=${encodeURIComponent(
+        date,
+      )}&passengers=${encodeURIComponent(String(passengers))}`,
+    );
   };
 
   const handleCreateTrip = () => {
@@ -85,6 +90,7 @@ export default function HomePage() {
                   initialFrom={searchParams?.from}
                   initialTo={searchParams?.to}
                   initialDate={searchParams?.date}
+                  initialPassengers={searchParams?.passengers}
                 />
               </div>
 
