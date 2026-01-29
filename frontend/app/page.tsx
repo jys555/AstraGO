@@ -35,13 +35,13 @@ export default function HomePage() {
   const isProfileComplete = !!(user?.firstName && user?.phone);
 
   const handleSearch = (from: string, to: string, date: string, passengerCount?: number) => {
-    setSearchParams({ from, to, date, passengerCount: passengerCount?.toString() });
     const params = new URLSearchParams({
       from,
       to,
       date,
       ...(passengerCount && passengerCount > 1 ? { passengerCount: passengerCount.toString() } : {}),
     });
+    setSearchParams(params);
     router.push(`/trips?${params.toString()}`);
   };
 

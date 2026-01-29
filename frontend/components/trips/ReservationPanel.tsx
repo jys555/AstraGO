@@ -41,9 +41,7 @@ export const ReservationPanel: React.FC<ReservationPanelProps> = ({
       }
     } catch (error) {
       console.error('Chat ochishda xatolik:', error);
-      // Fallback to Telegram only if internal chat fails
-      const driver = reservation.trip.driver;
-      openTelegramChat(driver.username || undefined, driver.phone || undefined);
+      alert('Chat ochishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
     }
   };
 
