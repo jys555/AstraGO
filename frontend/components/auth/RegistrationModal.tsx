@@ -229,7 +229,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 overflow-hidden">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50 p-4 overflow-hidden">
       <div className="register-modal bg-white rounded-2xl w-full max-w-md shadow-xl max-h-[90vh] flex flex-col overflow-hidden">
         <h3 className="flex-shrink-0">Profilingizni to'ldiring</h3>
         

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { RouteSearch } from '@/components/search/RouteSearch';
@@ -8,20 +8,18 @@ import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { BannerCarousel } from '@/components/home/BannerCarousel';
 import { BenefitsCarousel } from '@/components/home/BenefitsCarousel';
-import { GuestHomePage } from '@/components/home/GuestHomePage';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
+import { RegistrationModal } from '@/components/auth/RegistrationModal';
+import { Search, Car } from 'lucide-react';
 
 // Disable SSR for pages that use React Query
 export const dynamic = 'force-dynamic';
 
 export default function HomePage() {
   const router = useRouter();
-  const [searchParams, setSearchParams] = useState<{
-    from: string;
-    to: string;
-    date: string;
-  } | null>(null);
+  const [showRegistration, setShowRegistration] = useState(false);
+  const [registrationContext, setRegistrationContext] = useState<'search' | 'create' | null>(null);
 
   // Get user data to determine role
   const { data: userData } = useQuery({
@@ -34,10 +32,76 @@ export default function HomePage() {
   const userRole = user?.role || 'PASSENGER';
   const isProfileComplete = !!(user?.firstName && user?.phone);
 
-  const handleSearch = (from: string, to: string, date: string, passengerCount?: number) => {
-    // Update state with required fields only
-    setSearchParams({ from, to, date });
+  // Handle post-registration redirect
+  useEffect(() => {
+    if (user && isProfileComplete) {
+      const pendingAction = sessionStorage.getItem('pendingAction');
+      if (pendingAction) {
+        sessionStorage.removeItem('pendingAction');
+        
+        // Navigate based on action and role
+        if (pendingAction === 'search') {
+          // User clicked "Search trip"
+          if (userRole === 'PASSENGER') {
+            // Passenger registered for search - go to trips page
+            router.push('/trips');
+          } else {
+            // Driver registered but clicked search - stay on home page (driver home)
+            // Already on home page, no redirect needed
+          }
+        } else if (pendingAction === 'create') {
+          // User clicked "Create trip"
+          if (userRole === 'DRIVER') {
+            // Driver registered for create - go to create trip page
+            router.push('/trips/create');
+          } else {
+            // Passenger registered but clicked create - stay on home page (passenger home)
+            // Already on home page, no redirect needed
+          }
+        }
+      }
+    }
+  }, [user, isProfileComplete, userRole, router]);
+
+  const handleSearchClick = () => {
+    if (!user || !isProfileComplete) {
+      // Store search intent
+      sessionStorage.setItem('pendingAction', 'search');
+      setRegistrationContext('search');
+      setShowRegistration(true);
+      return;
+    }
+    // User is registered - navigate to trips page
+    router.push('/trips');
+  };
+
+  const handleCreateTripClick = () => {
+    if (!user || !isProfileComplete) {
+      // Store create trip intent
+      sessionStorage.setItem('pendingAction', 'create');
+      setRegistrationContext('create');
+      setShowRegistration(true);
+      return;
+    }
+    // User is registered - navigate to create trip page
+    router.push('/trips/create');
+  };
+
+  const handleRegistrationSuccess = async () => {
+    setShowRegistration(false);
+    const pendingAction = sessionStorage.getItem('pendingAction');
     
+    // Clear pending action
+    sessionStorage.removeItem('pendingAction');
+
+    // Wait a bit for user data to be updated
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Reload to get fresh user data
+    window.location.reload();
+  };
+
+  const handleSearch = (from: string, to: string, date: string, passengerCount?: number) => {
     // Build URL with all params including passengerCount
     const urlParams = new URLSearchParams({
       from,
@@ -75,53 +139,39 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <RouteSearch
-                onSearch={handleSearch}
-                initialFrom={searchParams?.from}
-                initialTo={searchParams?.to}
-                initialDate={searchParams?.date}
-              />
-
               {/* Benefits Carousel */}
               <BenefitsCarousel />
 
-              {/* Quick Filters */}
-              <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-gray-700">Tezkor Filtrlar</h3>
-                <div className="flex flex-wrap gap-2">
-                  <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-primary-300 transition-all">
-                    ✓ Onlayn haydovchilar
-                  </button>
-                  <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-primary-300 transition-all">
-                    ⏰ Eng tezkor jo'nash
-                  </button>
-                  <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-primary-300 transition-all">
-                    🏠 Uydan olish
-                  </button>
-                  <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-primary-300 transition-all">
-                    📦 Yuk qabul qiladi
-                  </button>
-                </div>
-              </div>
-
-              {/* Driver Section for Guests */}
-              <div className="bg-gradient-to-b from-primary-50 to-white rounded-xl p-6 border border-primary-100">
-                <div className="text-center mb-4">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    Siz haydovchisiz va yo'lovchilar sizni topishini xohlaysizmi?
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Safaringizni yarating va yo'lovchilarni toping. Qulay narxlar va tez to'lovlar
-                  </p>
-                </div>
-
+              {/* Action Buttons for Guests */}
+              <div className="space-y-4">
                 <Button
-                  onClick={handleCreateTrip}
+                  onClick={handleSearchClick}
                   variant="primary"
-                  className="w-full"
+                  className="w-full h-14 text-lg font-semibold"
                 >
-                  🚗 Safar Yaratish
+                  <Search className="h-5 w-5 mr-2" />
+                  Safar Qidirish
                 </Button>
+
+                <div className="bg-gradient-to-b from-primary-50 to-white rounded-xl p-6 border border-primary-100">
+                  <div className="text-center mb-4">
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                      Siz haydovchisiz va yo'lovchilar sizni topishini xohlaysizmi?
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Safaringizni yarating va yo'lovchilarni toping. Qulay narxlar va tez to'lovlar
+                    </p>
+                  </div>
+
+                  <Button
+                    onClick={handleCreateTripClick}
+                    variant="primary"
+                    className="w-full h-14 text-lg font-semibold"
+                  >
+                    <Car className="h-5 w-5 mr-2" />
+                    Safar Yaratish
+                  </Button>
+                </div>
               </div>
             </div>
           ) : (
@@ -199,6 +249,14 @@ export default function HomePage() {
           )}
         </div>
       </div>
+      <RegistrationModal
+        isOpen={showRegistration}
+        onClose={() => {
+          setShowRegistration(false);
+          sessionStorage.removeItem('pendingAction');
+        }}
+        onSuccess={handleRegistrationSuccess}
+      />
     </RegistrationGuard>
   );
 }

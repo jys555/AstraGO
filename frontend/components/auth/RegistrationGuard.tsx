@@ -49,16 +49,6 @@ export function RegistrationGuard({ children, requireRegistration = false }: Reg
     return (
       <>
         {children}
-        <RegistrationModal
-          isOpen={showRegistration}
-          onClose={() => {
-            setShowRegistration(false);
-          }}
-          onSuccess={() => {
-            // Registration successful, invalidate query to refetch
-            window.location.reload(); // Simple reload to ensure fresh state
-          }}
-        />
       </>
     );
   }
