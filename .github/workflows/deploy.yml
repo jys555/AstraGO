@@ -1,0 +1,19 @@
+name: Trigger Deployments
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'frontend/**'
+      - 'vercel.json'
+      - '.github/workflows/deploy.yml'
+
+jobs:
+  trigger-vercel:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel Deployment
+        run: |
+          echo "Frontend changes detected. Vercel should auto-deploy."
+          echo "If Vercel doesn't deploy, check Vercel dashboard for watched paths configuration."
