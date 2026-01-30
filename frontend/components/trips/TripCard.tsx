@@ -131,10 +131,14 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onReserve, isLoading }
             <div className="w-full bg-gray-100 text-gray-500 font-semibold py-3 rounded-xl text-center text-sm">
               Bu sizning safaringiz
             </div>
+          ) : trip.availableSeats === 0 ? (
+            <div className="w-full bg-gray-100 text-gray-500 font-semibold py-3 rounded-xl text-center text-sm">
+              Barcha o'rinlar band
+            </div>
           ) : (
             <Button
               onClick={() => onReserve(trip.id)}
-              disabled={trip.availableSeats === 0 || isLoading}
+              disabled={isLoading}
               isLoading={isLoading}
               className="w-full bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 rounded-xl shadow-sm"
             >

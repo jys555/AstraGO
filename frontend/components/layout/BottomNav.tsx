@@ -1,10 +1,39 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import { apiClient } from '@/lib/api';
+import { useState } from 'react';
+import { RegistrationModal } from '@/components/auth/RegistrationModal';
 
 export function BottomNav() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [showRegistration, setShowRegistration] = useState(false);
+  
+  const { data: userData } = useQuery({
+    queryKey: ['user', 'me'],
+    queryFn: () => apiClient.getCurrentUser(),
+    retry: false,
+  });
+
+  const user = userData?.user;
+  const isProfileComplete = !!(user?.firstName && user?.phone);
+
+  const handleNavClick = (e: React.MouseEvent, href: string) => {
+    // Allow home page navigation without registration
+    if (href === '/') {
+      return;
+    }
+
+    // Check if user needs to register for protected pages
+    if (!user || !isProfileComplete) {
+      e.preventDefault();
+      setShowRegistration(true);
+      return;
+    }
+  };
 
   const navItems = [
     {
@@ -54,6 +83,7 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={(e) => handleNavClick(e, item.href)}
               className={`flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-xl transition-all duration-200 min-w-[60px] ${
                 isActive
                   ? 'text-primary-500'
@@ -70,6 +100,14 @@ export function BottomNav() {
           );
         })}
       </div>
+      <RegistrationModal
+        isOpen={showRegistration}
+        onClose={() => setShowRegistration(false)}
+        onSuccess={() => {
+          setShowRegistration(false);
+          window.location.reload();
+        }}
+      />
     </nav>
   );
 }

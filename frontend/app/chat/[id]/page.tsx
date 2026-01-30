@@ -185,7 +185,7 @@ export default function ChatPage() {
 
   return (
     <RegistrationGuard>
-      <div className="flex flex-col h-screen bg-gray-50">
+      <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
         {/* Header */}
         <header className="border-b border-gray-100 bg-white">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
@@ -273,8 +273,8 @@ export default function ChatPage() {
         )}
 
         {/* Messages */}
-        <main className="flex-1 overflow-y-auto bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-3">
+        <main className="flex-1 overflow-y-auto bg-gray-50 overscroll-contain">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 space-y-3 pb-4">
             {messages.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-gray-500 text-sm">Hali xabarlar yo'q</p>
@@ -317,41 +317,40 @@ export default function ChatPage() {
 
         {/* Actions - Only show for passengers with active reservation */}
         {!isDriver && isReservationActive && chatReservation && (
-          <div className="border-t border-gray-100 bg-white px-4 py-4">
-            <div className="max-w-4xl mx-auto space-y-3">
-              <div className="flex gap-3">
-                <Button
-                  onClick={handleConfirm}
-                  disabled={!driverResponded}
-                  className="flex-1 bg-secondary-500 hover:bg-secondary-600 text-white font-semibold py-3 rounded-xl"
-                >
-                  <CheckCircle2 className="h-4 w-4 mr-2" />
-                  Kelishuvni Tasdiqlash
-                </Button>
-                <Button
-                  onClick={handleCancel}
-                  variant="outline"
-                  className="flex-1 border-gray-300 hover:bg-gray-50 font-semibold py-3 rounded-xl"
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Bekor Qilish va Boshqa Safarni Tanlash
-                </Button>
-              </div>
+          <div className="border-t border-gray-100 bg-white px-4 py-3 pb-20">
+            <div className="max-w-4xl mx-auto space-y-2">
+              <Button
+                onClick={handleConfirm}
+                disabled={!driverResponded}
+                className="w-full bg-secondary-500 hover:bg-secondary-600 text-white font-semibold py-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <CheckCircle2 className="h-4 w-4 mr-2" />
+                Kelishuvni Tasdiqlash
+              </Button>
+              <Button
+                onClick={handleCancel}
+                variant="outline"
+                className="w-full border-gray-300 hover:bg-gray-50 font-semibold py-3 rounded-xl"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Bekor Qilish va Boshqa Safarni Tanlash
+              </Button>
             </div>
           </div>
         )}
 
-        {/* Input Area */}
+        {/* Input Area - Show for both drivers and passengers (unless read-only) */}
         {!isReadOnly && (
-          <footer className="border-t border-gray-100 bg-white">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
-              <div className="flex items-end gap-3">
+          <footer className="border-t border-gray-100 bg-white pb-20">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3">
+              <form onSubmit={handleSend} className="flex items-end gap-2">
                 <Button
+                  type="button"
                   variant="outline"
                   size="icon"
-                  className="flex-shrink-0 h-11 w-11 border-gray-200 hover:bg-gray-50 rounded-xl"
+                  className="flex-shrink-0 h-10 w-10 border-gray-200 hover:bg-gray-50 rounded-xl"
                 >
-                  <MapPin className="h-5 w-5 text-gray-600" />
+                  <MapPin className="h-4 w-4 text-gray-600" />
                 </Button>
                 <div className="flex-1 relative">
                   <Input
@@ -365,19 +364,19 @@ export default function ChatPage() {
                         handleSend(e);
                       }
                     }}
-                    className="pr-12 h-11 border-gray-200 focus:border-primary-500 focus:ring-primary-500 rounded-xl"
+                    className="h-10 pr-12 border-gray-200 focus:border-primary-500 focus:ring-primary-500 rounded-xl text-sm"
                     disabled={sendMessageMutation.isPending}
                   />
                 </div>
                 <Button
-                  onClick={(e) => handleSend(e)}
+                  type="submit"
                   disabled={!message.trim() || sendMessageMutation.isPending}
                   isLoading={sendMessageMutation.isPending}
-                  className="flex-shrink-0 h-11 w-11 bg-primary-500 hover:bg-primary-600 text-white p-0 rounded-xl"
+                  className="flex-shrink-0 h-10 w-10 bg-primary-500 hover:bg-primary-600 text-white p-0 rounded-xl"
                 >
-                  <Send className="h-5 w-5" />
+                  <Send className="h-4 w-4" />
                 </Button>
-              </div>
+              </form>
             </div>
           </footer>
         )}

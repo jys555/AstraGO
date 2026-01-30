@@ -25,6 +25,7 @@ export default function CreateTripPage() {
 
   const user = userData?.user;
   const isProfileComplete = !!(user?.firstName && user?.phone);
+  const isDriver = user?.role === 'DRIVER';
 
   const [routeFrom, setRouteFrom] = useState('');
   const [routeTo, setRouteTo] = useState('');
@@ -59,6 +60,11 @@ export default function CreateTripPage() {
 
     if (!isProfileComplete) {
       setShowRegistration(true);
+      return;
+    }
+
+    if (!isDriver) {
+      router.push('/profile');
       return;
     }
 
@@ -117,14 +123,26 @@ export default function CreateTripPage() {
             </div>
           )}
 
-          {user && user.role === 'PASSENGER' && (
-            <div className="mb-4 bg-blue-50 border border-blue-200 text-blue-800 text-sm rounded-xl p-3">
-              Hozirda profilingiz roli <strong>yo&apos;lovchi</strong>. Haydovchi sifatida safar yaratish uchun profil sozlamalarida rolni
-              &nbsp;<strong>Haydovchi</strong> qilib o&apos;zgartiring.
+          {user && !isDriver && (
+            <div className="mb-4 bg-red-50 border border-red-200 text-red-800 text-sm rounded-xl p-4">
+              <h3 className="font-semibold mb-2">Siz haydovchi emassiz</h3>
+              <p className="mb-3">
+                Safar yaratish uchun profilingiz roli <strong>Haydovchi</strong> bo&apos;lishi kerak. 
+                Profil sozlamalarida rolni o&apos;zgartiring.
+              </p>
+              <Button
+                variant="primary"
+                onClick={() => router.push('/profile')}
+                className="w-full"
+              >
+                Profilga O&apos;tish
+              </Button>
             </div>
           )}
 
-          <Card>
+          {isProfileComplete && isDriver && (
+            <Card>
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Qayerdan</label>
@@ -262,6 +280,7 @@ export default function CreateTripPage() {
               </Button>
             </form>
           </Card>
+          )}
         </main>
 
         <RegistrationModal
