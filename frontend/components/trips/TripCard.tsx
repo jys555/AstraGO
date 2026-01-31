@@ -58,7 +58,7 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onReserve, isLoading }
 
   const VehicleIcon = vehicleIcons[trip.vehicleType.toLowerCase() as keyof typeof vehicleIcons] || Car;
 
-  const isDriverOnline = true; // TODO: Get from trip data
+  const isDriverOnline = trip.driver?.onlineStatus ?? false;
 
   return (
     <motion.div

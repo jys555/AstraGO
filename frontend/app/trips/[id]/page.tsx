@@ -143,6 +143,9 @@ export default function TripDetailPage() {
   }
 
   const trip = data.trip;
+  const currentUser = userData?.user;
+  const isOwnTrip = currentUser?.id && trip.driverId && currentUser.id === trip.driverId;
+  
   const formatTime = (dateString: string) => {
     return new Date(dateString).toLocaleTimeString('en-US', {
       hour: '2-digit',
@@ -154,8 +157,26 @@ export default function TripDetailPage() {
   const isConfirmed = reservation?.status === 'CONFIRMED';
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-6">
+    <RegistrationGuard>
+      <div className="min-h-screen bg-gray-50 pb-20">
+        {/* Header */}
+        <header className="border-b border-gray-200 bg-white sticky top-0 z-50 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.back()}
+                className="hover:bg-gray-100"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <h1 className="text-xl font-bold text-gray-900">Safar Tafsilotlari</h1>
+            </div>
+          </div>
+        </header>
+
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Active Reservation Panel */}
         {isReservationForThisTrip && reservation && timeRemaining !== null && !isConfirmed && (
           <div className="mb-6">
@@ -278,7 +299,7 @@ export default function TripDetailPage() {
               </div>
             </div>
 
-            {!isReservationForThisTrip && (
+            {!isReservationForThisTrip && !isOwnTrip && (
               <div className="border-t pt-4">
                 <Button
                   variant="primary"
@@ -288,15 +309,23 @@ export default function TripDetailPage() {
                   isLoading={reservationLoading}
                 >
                   {trip.availableSeats === 0
-                    ? 'No Seats Available'
+                    ? 'Barcha o\'rinlar band'
                     : reservation
-                    ? 'You have an active reservation'
-                    : 'Chat & Reserve (10 min)'}
+                    ? 'Sizda faol rezervatsiya bor'
+                    : 'Chat & Rezervatsiya (10 min)'}
                 </Button>
+              </div>
+            )}
+            {isOwnTrip && (
+              <div className="border-t pt-4">
+                <div className="w-full bg-gray-100 text-gray-500 font-semibold py-3 rounded-xl text-center text-sm">
+                  Bu sizning safaringiz
+                </div>
               </div>
             )}
           </div>
         </Card>
+        </main>
       </div>
       
       <RegistrationModal
@@ -304,6 +333,6 @@ export default function TripDetailPage() {
         onClose={() => setShowRegistration(false)}
         onSuccess={handleRegistrationSuccess}
       />
-    </main>
+    </RegistrationGuard>
   );
 }

@@ -75,6 +75,10 @@ export default function ChatPage() {
       if (data.chatId === chatId) {
         queryClient.invalidateQueries({ queryKey: ['chat-messages', chatId] });
         queryClient.invalidateQueries({ queryKey: ['chats'] });
+        // If driver sends a message, invalidate reservation to update driverResponded
+        if (chatData?.chat && chatData.chat.driverId === data.senderId && chatReservation) {
+          queryClient.invalidateQueries({ queryKey: ['reservation', 'active'] });
+        }
       }
     };
 
@@ -83,7 +87,7 @@ export default function ChatPage() {
     return () => {
       wsClient.unsubscribeFromChat(chatId);
     };
-  }, [chatId, currentUserIdValue, queryClient]);
+  }, [chatId, currentUserIdValue, queryClient, chatData, chatReservation]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -159,7 +163,11 @@ export default function ChatPage() {
   const chatReservation = !isDriver && chat.reservationId && reservation && reservation.id === chat.reservationId ? reservation : null;
   const isReservationActive = chatReservation && chatReservation.status === 'PENDING' && timeRemaining !== null && timeRemaining > 0;
   const isReservationExpired = chatReservation && chatReservation.status === 'PENDING' && timeRemaining !== null && timeRemaining === 0;
-  const isReadOnly = isReservationExpired || (chat.status === 'READ_ONLY');
+  const isReadOnly = isReservationExpired || (chat.status === 'READ_ONLY') || (chat.status === 'ARCHIVED');
+  
+  // Check if driver has sent any messages (driver responded)
+  const driverHasMessaged = messages.some((msg: ChatMessage) => msg.senderId === chat.driverId);
+  const effectiveDriverResponded = driverResponded || driverHasMessaged;
 
   const handleConfirm = async () => {
     if (!chatReservation) return;
@@ -262,7 +270,7 @@ export default function ChatPage() {
           </div>
         )}
 
-        {!driverResponded && isReservationActive && (
+        {!effectiveDriverResponded && isReservationActive && (
           <div className="bg-yellow-50 border-b border-yellow-200 px-4 py-3">
             <div className="max-w-4xl mx-auto">
               <p className="text-sm font-medium text-yellow-800 text-center">
@@ -321,7 +329,7 @@ export default function ChatPage() {
             <div className="max-w-4xl mx-auto space-y-2">
               <Button
                 onClick={handleConfirm}
-                disabled={!driverResponded}
+                disabled={!effectiveDriverResponded}
                 className="w-full bg-secondary-500 hover:bg-secondary-600 text-white font-semibold py-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <CheckCircle2 className="h-4 w-4 mr-2" />

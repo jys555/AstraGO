@@ -51,8 +51,12 @@ export default function ChatListPage() {
   };
 
   // Separate chats into active and archived
+  // Active chats: status is ACTIVE
+  // Archived chats: status is ARCHIVED or READ_ONLY (these should always be shown in archive)
   const activeChats = data?.chats?.filter((chat: Chat) => chat.status === 'ACTIVE') || [];
-  const archivedChats = data?.chats?.filter((chat: Chat) => chat.status === 'ARCHIVED' || chat.status === 'READ_ONLY') || [];
+  const archivedChats = data?.chats?.filter((chat: Chat) => 
+    chat.status === 'ARCHIVED' || chat.status === 'READ_ONLY'
+  ) || [];
 
   return (
     <RegistrationGuard>
