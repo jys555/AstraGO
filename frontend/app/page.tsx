@@ -183,9 +183,6 @@ export default function HomePage() {
                   <div className="px-4 py-6 space-y-6">
                     <RouteSearch
                       onSearch={handleSearch}
-                      initialFrom={searchParams?.from}
-                      initialTo={searchParams?.to}
-                      initialDate={searchParams?.date}
                     />
 
                     {/* Quick Filters */}
