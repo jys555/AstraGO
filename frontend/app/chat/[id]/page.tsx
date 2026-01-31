@@ -166,6 +166,7 @@ export default function ChatPage() {
   const isReadOnly = isReservationExpired || (chat.status === 'READ_ONLY') || (chat.status === 'ARCHIVED');
   
   // Check if driver has sent any messages (driver responded)
+  // Driver is considered to have responded if they sent at least one message
   const driverHasMessaged = messages.some((msg: ChatMessage) => msg.senderId === chat.driverId);
   const effectiveDriverResponded = driverResponded || driverHasMessaged;
 
