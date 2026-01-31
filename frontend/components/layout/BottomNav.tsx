@@ -75,31 +75,33 @@ export function BottomNav() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-50 safe-area-bottom shadow-sm">
-      <div className="flex items-center justify-around px-1 py-2 max-w-md mx-auto">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href));
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={(e) => handleNavClick(e, item.href)}
-              className={`flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-xl transition-all duration-200 min-w-[60px] ${
-                isActive
-                  ? 'text-primary-500'
-                  : 'text-gray-500'
-              }`}
-            >
-              <div className={`transition-colors ${isActive ? 'text-primary-500' : 'text-gray-500'}`}>
-                {item.icon}
-              </div>
-              <span className={`text-[11px] font-medium leading-tight ${isActive ? 'text-primary-500' : 'text-gray-500'}`}>
-                {item.label}
-              </span>
-            </Link>
-          );
-        })}
-      </div>
+    <>
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-50 safe-area-bottom shadow-sm">
+        <div className="flex items-center justify-around px-1 py-2 max-w-md mx-auto">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href));
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={(e) => handleNavClick(e, item.href)}
+                className={`flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-xl transition-all duration-200 min-w-[60px] ${
+                  isActive
+                    ? 'text-primary-500'
+                    : 'text-gray-500'
+                }`}
+              >
+                <div className={`transition-colors ${isActive ? 'text-primary-500' : 'text-gray-500'}`}>
+                  {item.icon}
+                </div>
+                <span className={`text-[11px] font-medium leading-tight ${isActive ? 'text-primary-500' : 'text-gray-500'}`}>
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
       <RegistrationModal
         isOpen={showRegistration}
         onClose={() => setShowRegistration(false)}
@@ -108,6 +110,6 @@ export function BottomNav() {
           window.location.reload();
         }}
       />
-    </nav>
+    </>
   );
 }
