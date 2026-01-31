@@ -5,6 +5,7 @@ import { apiClient } from '@/lib/api';
 import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useRouter } from 'next/navigation';
 import { Chat } from '@/types';
 
@@ -49,6 +50,10 @@ export default function ChatListPage() {
     return 'Xabar yo\'q';
   };
 
+  // Separate chats into active and archived
+  const activeChats = data?.chats?.filter((chat: Chat) => chat.status === 'ACTIVE') || [];
+  const archivedChats = data?.chats?.filter((chat: Chat) => chat.status === 'ARCHIVED' || chat.status === 'READ_ONLY') || [];
+
   return (
     <RegistrationGuard>
       <div className="min-h-screen bg-gray-50 pb-20">
@@ -62,57 +67,150 @@ export default function ChatListPage() {
               <p className="text-gray-600">Yuklanmoqda...</p>
             </div>
           ) : !data?.chats || data.chats.length === 0 ? (
-            <Card>
-              <div className="text-center py-12">
-                <p className="text-gray-600 text-lg mb-4">Hali chatlar yo'q</p>
-                <p className="text-gray-500 text-sm">
-                  Rezervatsiya qilganingizda chat avtomatik yaratiladi
-                </p>
+            <Card className="p-12 text-center border border-gray-100 bg-white rounded-2xl">
+              <div className="flex flex-col items-center gap-4">
+                <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center">
+                  <svg className="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Chatlar yo'q</h3>
+                  <p className="text-gray-600 text-sm">Rezervatsiya qilganingizda chat avtomatik yaratiladi</p>
+                </div>
               </div>
             </Card>
           ) : (
-            <div className="space-y-3">
-              {data.chats.map((chat: Chat) => {
-                const currentUserId = currentUserData?.user?.id;
-                const otherUser = chat.driver?.id === currentUserId 
-                  ? chat.passenger 
-                  : chat.driver;
-                
-                return (
-                  <Card
-                    key={chat.id}
-                    onClick={() => router.push(`/chat/${chat.id}`)}
-                    hover
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-xl">
-                          {otherUser?.firstName?.[0] || '?'}
-                        </span>
+            <Tabs defaultValue="active" className="w-full">
+              <TabsList className="grid w-full max-w-md grid-cols-2 mb-6 bg-gray-100 rounded-xl p-1">
+                <TabsTrigger value="active" className="data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm rounded-lg font-semibold">
+                  Faol ({activeChats.length})
+                </TabsTrigger>
+                <TabsTrigger value="archived" className="data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm rounded-lg font-semibold">
+                  Arxiv ({archivedChats.length})
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="active" className="space-y-3">
+                {activeChats.length === 0 ? (
+                  <Card className="p-12 text-center border border-gray-100 bg-white rounded-2xl">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center">
+                        <svg className="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                          <h3 className="font-semibold text-gray-900 truncate">
-                            {otherUser?.firstName} {otherUser?.lastName}
-                          </h3>
-                          <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
-                            {formatDate(chat.messages?.[0]?.createdAt || chat.createdAt)}
-                          </span>
-                        </div>
-                        {chat.trip && (
-                          <p className="text-xs text-gray-500 mb-1">
-                            {chat.trip.routeFrom} → {chat.trip.routeTo}
-                          </p>
-                        )}
-                        <p className="text-sm text-gray-600 truncate">
-                          {getLastMessage(chat)}
-                        </p>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Faol chatlar yo'q</h3>
+                        <p className="text-gray-600 text-sm">Rezervatsiya qilganingizda chat avtomatik yaratiladi</p>
                       </div>
                     </div>
                   </Card>
-                );
-              })}
-            </div>
+                ) : (
+                  activeChats.map((chat: Chat) => {
+                    const currentUserId = currentUserData?.user?.id;
+                    const otherUser = chat.driver?.id === currentUserId 
+                      ? chat.passenger 
+                      : chat.driver;
+                    
+                    return (
+                      <Card
+                        key={chat.id}
+                        onClick={() => router.push(`/chat/${chat.id}`)}
+                        hover
+                        className="p-4 hover:shadow-md transition-shadow duration-200 border border-gray-100 bg-white rounded-2xl"
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span className="text-xl font-semibold text-blue-700">
+                              {otherUser?.firstName?.[0] || '?'}
+                            </span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1">
+                              <h3 className="font-semibold text-gray-900 truncate">
+                                {otherUser?.firstName} {otherUser?.lastName}
+                              </h3>
+                              <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
+                                {formatDate(chat.messages?.[0]?.createdAt || chat.createdAt)}
+                              </span>
+                            </div>
+                            {chat.trip && (
+                              <p className="text-xs text-gray-500 mb-1">
+                                {chat.trip.routeFrom} → {chat.trip.routeTo}
+                              </p>
+                            )}
+                            <p className="text-sm text-gray-600 truncate">
+                              {getLastMessage(chat)}
+                            </p>
+                          </div>
+                        </div>
+                      </Card>
+                    );
+                  })
+                )}
+              </TabsContent>
+
+              <TabsContent value="archived" className="space-y-3">
+                {archivedChats.length === 0 ? (
+                  <Card className="p-12 text-center border border-gray-100 bg-white rounded-2xl">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center">
+                        <svg className="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Arxivlangan chatlar yo'q</h3>
+                        <p className="text-gray-600 text-sm">Yakunlangan chatlar shu yerda ko'rinadi</p>
+                      </div>
+                    </div>
+                  </Card>
+                ) : (
+                  archivedChats.map((chat: Chat) => {
+                    const currentUserId = currentUserData?.user?.id;
+                    const otherUser = chat.driver?.id === currentUserId 
+                      ? chat.passenger 
+                      : chat.driver;
+                    
+                    return (
+                      <Card
+                        key={chat.id}
+                        onClick={() => router.push(`/chat/${chat.id}`)}
+                        hover
+                        className="p-4 hover:shadow-md transition-shadow duration-200 border border-gray-100 bg-white rounded-2xl opacity-75"
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span className="text-xl font-semibold text-gray-600">
+                              {otherUser?.firstName?.[0] || '?'}
+                            </span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1">
+                              <h3 className="font-semibold text-gray-700 truncate">
+                                {otherUser?.firstName} {otherUser?.lastName}
+                              </h3>
+                              <span className="text-xs text-gray-400 flex-shrink-0 ml-2">
+                                {formatDate(chat.messages?.[0]?.createdAt || chat.createdAt)}
+                              </span>
+                            </div>
+                            {chat.trip && (
+                              <p className="text-xs text-gray-400 mb-1">
+                                {chat.trip.routeFrom} → {chat.trip.routeTo}
+                              </p>
+                            )}
+                            <p className="text-sm text-gray-500 truncate">
+                              {getLastMessage(chat)}
+                            </p>
+                          </div>
+                        </div>
+                      </Card>
+                    );
+                  })
+                )}
+              </TabsContent>
+            </Tabs>
           )}
         </main>
       </div>

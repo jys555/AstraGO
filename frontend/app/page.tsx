@@ -144,14 +144,25 @@ export default function HomePage() {
 
               {/* Action Buttons for Guests */}
               <div className="space-y-4">
-                <Button
-                  onClick={handleSearchClick}
-                  variant="primary"
-                  className="w-full h-14 text-lg font-semibold"
-                >
-                  <Search className="h-5 w-5 mr-2" />
-                  Safar Qidirish
-                </Button>
+                <div className="bg-gradient-to-b from-primary-50 to-white rounded-xl p-6 border border-primary-100">
+                  <div className="text-center mb-4">
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                      Shaharlararo uzingizga qulay Taxi qidiryapsizmi?
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Sizga mos reyslar buyerda 👇
+                    </p>
+                  </div>
+
+                  <Button
+                    onClick={handleSearchClick}
+                    variant="primary"
+                    className="w-full h-14 text-lg font-semibold"
+                  >
+                    <Search className="h-5 w-5 mr-2" />
+                    Safar Qidirish
+                  </Button>
+                </div>
 
                 <div className="bg-gradient-to-b from-primary-50 to-white rounded-xl p-6 border border-primary-100">
                   <div className="text-center mb-4">

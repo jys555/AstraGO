@@ -24,7 +24,8 @@ export const TripCard: React.FC<TripCardProps> = ({ trip, onReserve, isLoading }
   });
 
   const currentUser = userData?.user;
-  const isOwnTrip = currentUser?.id === trip.driver.id;
+  // Check if current user is the driver of this trip
+  const isOwnTrip = currentUser?.id && trip.driver?.id && currentUser.id === trip.driver.id;
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' });
