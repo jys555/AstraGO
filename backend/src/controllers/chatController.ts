@@ -18,7 +18,7 @@ export async function getMyChats(
           { driverId: user.id },
           { passengerId: user.id },
         ],
-        status: 'ACTIVE',
+        // Return all chats (active and archived) - frontend will filter them
       },
       include: {
         driver: {

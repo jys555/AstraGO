@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
+import { ArrowLeft } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { ReservationPanel } from '@/components/trips/ReservationPanel';
 import { useReservation } from '@/hooks/useReservation';
@@ -11,6 +12,7 @@ import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { MapView } from '@/components/maps/MapView';
 import { RegistrationModal } from '@/components/auth/RegistrationModal';
+import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 
 export default function TripDetailPage() {
   const params = useParams();

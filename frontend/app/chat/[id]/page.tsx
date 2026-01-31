@@ -270,7 +270,7 @@ export default function ChatPage() {
           </div>
         )}
 
-        {!effectiveDriverResponded && isReservationActive && (
+        {!effectiveDriverResponded && isReservationActive && !driverHasMessaged && (
           <div className="bg-yellow-50 border-b border-yellow-200 px-4 py-3">
             <div className="max-w-4xl mx-auto">
               <p className="text-sm font-medium text-yellow-800 text-center">
