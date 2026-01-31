@@ -76,7 +76,7 @@ export default function ChatPage() {
         queryClient.invalidateQueries({ queryKey: ['chat-messages', chatId] });
         queryClient.invalidateQueries({ queryKey: ['chats'] });
         // If driver sends a message, invalidate reservation to update driverResponded
-        if (chatData?.chat && chatData.chat.driverId === data.senderId && chatReservation) {
+        if (chatData?.chat && chatData.chat.driverId === data.senderId && reservation && chatData.chat.reservationId === reservation.id) {
           queryClient.invalidateQueries({ queryKey: ['reservation', 'active'] });
         }
       }
@@ -87,7 +87,7 @@ export default function ChatPage() {
     return () => {
       wsClient.unsubscribeFromChat(chatId);
     };
-  }, [chatId, currentUserIdValue, queryClient, chatData, chatReservation]);
+  }, [chatId, currentUserIdValue, queryClient, chatData, reservation]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
