@@ -59,16 +59,23 @@ export function TimeInput({ value, onChange, className = '', required = false, p
 
   return (
     <div ref={wrapperRef} className="relative" onClick={handleWrapperClick}>
-      {/* Display formatted time */}
-      <div 
-        className="absolute inset-0 flex items-center px-3 pointer-events-none text-gray-700 z-10"
-        style={{ 
-          display: value ? 'flex' : 'none',
-        }}
-      >
-        {displayValue}
-      </div>
-      {/* Native time input */}
+      {/* Display formatted time - always visible when value exists */}
+      {value && (
+        <div 
+          className="absolute inset-0 flex items-center px-3 pointer-events-none text-gray-700 z-10"
+        >
+          {displayValue}
+        </div>
+      )}
+      {/* Placeholder when no value */}
+      {!value && (
+        <div 
+          className="absolute inset-0 flex items-center px-3 pointer-events-none text-gray-400 z-10"
+        >
+          {placeholder || 'HH:mm'}
+        </div>
+      )}
+      {/* Native time input - completely hidden but clickable */}
       <input
         ref={inputRef}
         type="time"
@@ -77,8 +84,14 @@ export function TimeInput({ value, onChange, className = '', required = false, p
         className={className}
         required={required}
         style={{
-          color: value ? 'transparent' : 'inherit',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          opacity: 0,
           cursor: 'pointer',
+          zIndex: 1,
         }}
       />
     </div>
