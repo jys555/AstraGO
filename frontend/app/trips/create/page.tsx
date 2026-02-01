@@ -11,6 +11,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { STANDARD_ROUTES, VEHICLE_TYPES } from '@/lib/constants';
 import { formatTime, formatDate } from '@/lib/dateUtils';
+import { DateInput } from '@/components/ui/DateInput';
+import { TimeInput } from '@/components/ui/TimeInput';
 
 // Disable SSR for pages that use React Query
 export const dynamic = 'force-dynamic';
@@ -193,21 +195,24 @@ export default function CreateTripPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Sana</label>
-                  <input
-                    type="date"
+                  <DateInput
                     value={date}
-                    onChange={(e) => setDate(e.target.value)}
+                    onChange={setDate}
+                    min={new Date().toISOString().split('T')[0]}
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                    placeholder="DD/MM/YYYY"
                   />
                   {errors.date && <p className="text-xs text-red-500 mt-1">{errors.date}</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Boshlanish vaqti</label>
-                  <input
-                    type="time"
+                  <TimeInput
                     value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
+                    onChange={setStartTime}
                     className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                    placeholder="HH:mm"
                   />
                   {errors.startTime && <p className="text-xs text-red-500 mt-1">{errors.startTime}</p>}
                 </div>

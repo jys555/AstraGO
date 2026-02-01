@@ -358,6 +358,15 @@ export async function getMyReservationsAsPassenger(passengerId: string) {
         },
       },
       chat: true,
+      review: {
+        select: {
+          id: true,
+          rating: true,
+          reason: true,
+          comment: true,
+          createdAt: true,
+        },
+      },
     },
     orderBy: {
       createdAt: 'desc',

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '../ui/button';
 import { STANDARD_ROUTES } from '@/lib/constants';
+import { DateInput } from '../ui/DateInput';
 
 interface RouteSearchProps {
   onSearch: (from: string, to: string, date: string, passengerCount?: number) => void;
@@ -73,13 +74,13 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Sana
             </label>
-            <input
-              type="date"
+            <DateInput
               value={date}
-              onChange={(e) => setDate(e.target.value)}
+              onChange={setDate}
               min={new Date().toISOString().split('T')[0]}
               className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
               required
+              placeholder="DD/MM/YYYY"
             />
           </div>
           <div>
