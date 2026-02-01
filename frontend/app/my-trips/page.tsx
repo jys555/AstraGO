@@ -526,10 +526,14 @@ export default function MyTripsPage() {
                                 <span className="font-medium text-gray-900">{reservation.seatCount}</span> o'rin rezervatsiya qilingan
                               </div>
 
-                              {reservation.chat && reservation.chat.id && (
+                              {reservation.chat?.id && (
                                 <Button
                                   variant="outline"
-                                  onClick={() => router.push(`/chat/${reservation.chat.id}`)}
+                                  onClick={() => {
+                                    if (reservation.chat?.id) {
+                                      router.push(`/chat/${reservation.chat.id}`);
+                                    }
+                                  }}
                                   className="w-full border-gray-200 hover:bg-gray-50 font-semibold py-2.5 rounded-xl"
                                 >
                                   <MessageCircle className="h-4 w-4 mr-2" />
