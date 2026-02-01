@@ -135,6 +135,14 @@ export async function getTripById(
           },
         },
         seatAvailability: true,
+        reservations: {
+          where: {
+            status: { in: ['PENDING', 'CONFIRMED'] },
+          },
+          include: {
+            passenger: true,
+          },
+        },
       },
     });
 

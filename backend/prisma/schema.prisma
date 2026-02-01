@@ -68,6 +68,8 @@ model User {
   chatsAsDriver     Chat[] @relation("DriverChats")
   sentMessages      ChatMessage[] @relation("SentMessages")
   driverMetrics     DriverMetrics?
+  reviewsAsPassenger TripReview[] @relation("PassengerReviews")
+  reviewsAsDriver    TripReview[] @relation("DriverReviews")
 
   @@index([telegramId])
   @@index([onlineStatus])
@@ -81,6 +83,7 @@ model Trip {
   routeTo               String
   departureWindowStart  DateTime
   departureWindowEnd    DateTime
+  durationHours         Float?        // Trip duration in hours (calculated from start + duration)
   vehicleType           String
   totalSeats            Int
   availableSeats        Int
@@ -95,6 +98,7 @@ model Trip {
   reservations          Reservation[]
   seatAvailability      SeatAvailability?
   chats                 Chat[]
+  reviews               TripReview[]
 
   @@index([driverId])
   @@index([routeFrom, routeTo])
@@ -119,6 +123,7 @@ model Reservation {
   trip        Trip              @relation(fields: [tripId], references: [id], onDelete: Cascade)
   passenger   User              @relation(fields: [passengerId], references: [id], onDelete: Cascade)
   chat        Chat?
+  review      TripReview?
 
   @@index([tripId])
   @@index([passengerId])
@@ -203,4 +208,38 @@ model DriverMetrics {
   @@index([rankingScore])
   @@index([avgResponseTime])
   @@index([reliabilityScore])
+}
+
+enum ReviewReason {
+  LATE_DEPARTURE
+  POOR_COMMUNICATION
+  UNSAFE_DRIVING
+  RUDE_BEHAVIOR
+  VEHICLE_ISSUES
+  OTHER
+}
+
+model TripReview {
+  id            String       @id @default(uuid())
+  tripId        String
+  reservationId String       @unique
+  passengerId   String
+  driverId      String
+  rating        Int          // 1-5 stars
+  reason        ReviewReason?
+  comment       String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  // Relations
+  trip          Trip         @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  reservation   Reservation  @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  passenger     User         @relation("PassengerReviews", fields: [passengerId], references: [id], onDelete: Cascade)
+  driver        User         @relation("DriverReviews", fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@index([tripId])
+  @@index([reservationId])
+  @@index([passengerId])
+  @@index([driverId])
+  @@index([rating])
 }
