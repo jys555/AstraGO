@@ -430,13 +430,18 @@ export default function MyTripsPage() {
                                   Batafsil
                                 </Button>
                                 {/* Show review button for CONFIRMED reservations with COMPLETED trips */}
-                                {reservation.status === 'CONFIRMED' && reservation.trip.status === 'COMPLETED' && !reservation.review && (
+                                {reservation.status === 'CONFIRMED' && reservation.trip.status === 'COMPLETED' && (
                                   <Button
                                     onClick={() => handleOpenReview(reservation)}
-                                    className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2.5 rounded-xl"
+                                    disabled={!!reservation.review}
+                                    className={`font-semibold py-2.5 rounded-xl ${
+                                      reservation.review
+                                        ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                                        : 'bg-yellow-500 hover:bg-yellow-600 text-white'
+                                    }`}
                                   >
-                                    <Star className="h-4 w-4 mr-2" />
-                                    Baholash
+                                    <Star className={`h-4 w-4 mr-2 ${reservation.review ? 'fill-gray-600' : ''}`} />
+                                    {reservation.review ? 'Baholangan' : 'Baholash'}
                                   </Button>
                                 )}
                               </div>
@@ -583,13 +588,18 @@ export default function MyTripsPage() {
                                   </Button>
                                 )}
                                 {/* Show review button for CONFIRMED reservations with COMPLETED trips */}
-                                {reservation.status === 'CONFIRMED' && reservation.trip.status === 'COMPLETED' && !reservation.review && (
+                                {reservation.status === 'CONFIRMED' && reservation.trip.status === 'COMPLETED' && (
                                   <Button
                                     onClick={() => handleOpenReview(reservation)}
-                                    className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2.5 rounded-xl"
+                                    disabled={!!reservation.review}
+                                    className={`flex-1 font-semibold py-2.5 rounded-xl ${
+                                      reservation.review
+                                        ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                                        : 'bg-yellow-500 hover:bg-yellow-600 text-white'
+                                    }`}
                                   >
-                                    <Star className="h-4 w-4 mr-2" />
-                                    Baholash
+                                    <Star className={`h-4 w-4 mr-2 ${reservation.review ? 'fill-gray-600' : ''}`} />
+                                    {reservation.review ? 'Baholangan' : 'Baholash'}
                                   </Button>
                                 )}
                               </div>
