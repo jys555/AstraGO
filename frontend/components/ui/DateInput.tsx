@@ -42,42 +42,49 @@ export function DateInput({ value, onChange, min, className = '', required = fal
 
   return (
     <div ref={wrapperRef} className="relative">
-      {/* Native date input - visible box with transparent text */}
+      {/* Visible box - styled like input */}
+      <div
+        className={className}
+        style={{
+          border: '1px solid #d1d5db',
+          borderRadius: '0.5rem',
+          padding: '0.5rem 0.75rem',
+          minHeight: '2.5rem',
+          backgroundColor: 'white',
+          cursor: 'pointer',
+          position: 'relative',
+        }}
+      >
+        {/* Display formatted date or placeholder */}
+        {value ? (
+          <span className="text-gray-700">{displayValue}</span>
+        ) : (
+          <span className="text-gray-400">{placeholder || 'DD/MM/YYYY'}</span>
+        )}
+      </div>
+      {/* Native date input - completely hidden but clickable */}
       <input
         ref={inputRef}
         type="date"
         value={value}
         onChange={handleChange}
         min={min}
-        className={className}
         required={required}
         style={{
-          color: 'transparent',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          opacity: 0,
           cursor: 'pointer',
+          zIndex: 1,
+          pointerEvents: 'auto',
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
         }}
       />
-      {/* Display formatted date - overlay on top */}
-      {value && (
-        <div 
-          className="absolute inset-0 flex items-center px-3 pointer-events-none text-gray-700"
-          style={{
-            zIndex: 10,
-          }}
-        >
-          {displayValue}
-        </div>
-      )}
-      {/* Placeholder when no value */}
-      {!value && (
-        <div 
-          className="absolute inset-0 flex items-center px-3 pointer-events-none text-gray-400"
-          style={{
-            zIndex: 10,
-          }}
-        >
-          {placeholder || 'DD/MM/YYYY'}
-        </div>
-      )}
     </div>
   );
 }
