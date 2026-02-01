@@ -212,6 +212,22 @@ class ApiClient {
   async getDriverMetrics(driverId: string): Promise<{ metrics: DriverMetrics }> {
     return this.request<{ metrics: DriverMetrics }>(`/api/users/drivers/${driverId}/metrics`);
   }
+
+  // Reviews
+  async createReview(reservationId: string, rating: number, reason?: string, comment?: string): Promise<{ review: any }> {
+    return this.request<{ review: any }>('/api/reviews', {
+      method: 'POST',
+      body: JSON.stringify({ reservationId, rating, reason, comment }),
+    });
+  }
+
+  async getReviewByReservation(reservationId: string): Promise<{ review: any | null }> {
+    return this.request<{ review: any | null }>(`/api/reviews/reservation/${reservationId}`);
+  }
+
+  async getDriverReviews(driverId: string): Promise<{ reviews: any[] }> {
+    return this.request<{ reviews: any[] }>(`/api/reviews/driver/${driverId}`);
+  }
 }
 
 export const apiClient = new ApiClient(API_URL);

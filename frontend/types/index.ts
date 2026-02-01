@@ -23,6 +23,7 @@ export interface Trip {
   routeTo: string;
   departureWindowStart: string;
   departureWindowEnd: string;
+  durationHours?: number;
   vehicleType: string;
   totalSeats: number;
   availableSeats: number;
@@ -50,6 +51,13 @@ export interface Reservation {
   trip: Trip;
   passenger: User;
   chat?: Chat;
+  review?: {
+    id: string;
+    rating: number;
+    reason?: string;
+    comment?: string;
+    createdAt: string;
+  };
 }
 
 export interface Chat {

@@ -383,10 +383,16 @@ export async function getMyTripsAsDriver(
   try {
     const user = (req as any).user;
     const now = new Date();
+    // Only show trips from last 3 days for drivers
+    const threeDaysAgo = new Date(now);
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
     
     const trips = await prisma.trip.findMany({
       where: {
         driverId: user.id,
+        createdAt: {
+          gte: threeDaysAgo, // Only trips from last 3 days
+        },
       },
       include: {
         driver: {
@@ -486,6 +492,15 @@ export async function completeTrip(
           where: {
             status: { in: ['PENDING', 'CONFIRMED'] },
           },
+          include: {
+            passenger: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
         },
       },
     });
@@ -516,9 +531,19 @@ export async function completeTrip(
         },
         seatAvailability: true,
         reservations: {
+          where: {
+            status: 'CONFIRMED', // Only return confirmed reservations for review
+          },
           include: {
-            passenger: true,
+            passenger: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+              },
+            },
             chat: true,
+            review: true, // Include review if exists
           },
         },
       },

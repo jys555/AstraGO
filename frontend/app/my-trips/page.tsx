@@ -1,7 +1,8 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Calendar, MapPin, MessageCircle, Clock, CheckCircle2, XCircle } from 'lucide-react';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { ArrowLeft, Calendar, MapPin, MessageCircle, Clock, CheckCircle2, XCircle, Star } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Card } from '@/components/ui/card';
 import { StatusBadge } from '@/components/ui/StatusBadge';
@@ -14,12 +15,18 @@ import { useReservation } from '@/hooks/useReservation';
 import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { Trip, Reservation } from '@/types';
+import { ReviewModal } from '@/components/trips/ReviewModal';
+import { formatDate, formatTime } from '@/lib/dateUtils';
 
 // Disable SSR for pages that use React Query
 export const dynamic = 'force-dynamic';
 
 export default function MyTripsPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
+
   const { data: userData } = useQuery({
     queryKey: ['user', 'me'],
     queryFn: () => apiClient.getCurrentUser(),
@@ -27,6 +34,31 @@ export default function MyTripsPage() {
 
   const user = userData?.user;
   const isDriver = user?.role === 'DRIVER';
+
+  const createReviewMutation = useMutation({
+    mutationFn: ({ reservationId, rating, reason, comment }: { reservationId: string; rating: number; reason?: string; comment?: string }) =>
+      apiClient.createReview(reservationId, rating, reason, comment),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-reservations', 'passenger'] });
+      setReviewModalOpen(false);
+      setSelectedReservation(null);
+      alert('Baholash muvaffaqiyatli yuborildi!');
+    },
+    onError: (error: any) => {
+      console.error('Baholash yuborishda xatolik:', error);
+      alert('Baholash yuborishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
+    },
+  });
+
+  const handleOpenReview = (reservation: Reservation) => {
+    // Check if review already exists
+    if (reservation.review) {
+      alert('Bu safar uchun allaqachon baholash berilgan.');
+      return;
+    }
+    setSelectedReservation(reservation);
+    setReviewModalOpen(true);
+  };
 
   // For passengers: Get all reservations (active and past)
   const { data: passengerReservationsData, isLoading: passengerReservationsLoading } = useQuery({
@@ -45,20 +77,9 @@ export default function MyTripsPage() {
     enabled: isDriver === true,
   });
 
-  const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString('uz-UZ', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('uz-UZ', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
+  // Use dateUtils for consistent formatting
+  const formatTimeLocal = (dateString: string) => formatTime(dateString);
+  const formatDateLocal = (dateString: string) => formatDate(dateString);
 
   const statusConfig = {
     ACTIVE: {
@@ -195,9 +216,9 @@ export default function MyTripsPage() {
                                   {trip.routeFrom} → {trip.routeTo}
                                 </h3>
                                 <p className="text-sm text-gray-600">
-                                  {formatDate(trip.departureWindowStart)} •{' '}
-                                  {formatTime(trip.departureWindowStart)} -{' '}
-                                  {formatTime(trip.departureWindowEnd)}
+                                  {formatDateLocal(trip.departureWindowStart)} •{' '}
+                                  {formatTimeLocal(trip.departureWindowStart)} -{' '}
+                                  {formatTimeLocal(trip.departureWindowEnd)}
                                 </p>
                               </div>
                               <Badge className={`${statusConfig.ACTIVE.color} border`}>
@@ -398,6 +419,16 @@ export default function MyTripsPage() {
                                 >
                                   Batafsil
                                 </Button>
+                                {/* Show review button for CONFIRMED reservations with COMPLETED trips */}
+                                {reservation.status === 'CONFIRMED' && reservation.trip.status === 'COMPLETED' && !reservation.review && (
+                                  <Button
+                                    onClick={() => handleOpenReview(reservation)}
+                                    className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2.5 rounded-xl"
+                                  >
+                                    <Star className="h-4 w-4 mr-2" />
+                                    Baholash
+                                  </Button>
+                                )}
                               </div>
                             </div>
                           </Card>
@@ -439,9 +470,9 @@ export default function MyTripsPage() {
                                     {trip.routeFrom} → {trip.routeTo}
                                   </h3>
                                   <p className="text-sm text-gray-600">
-                                    {formatDate(trip.departureWindowStart)} •{' '}
-                                    {formatTime(trip.departureWindowStart)} -{' '}
-                                    {formatTime(trip.departureWindowEnd)}
+                                    {formatDateLocal(trip.departureWindowStart)} •{' '}
+                                    {formatTimeLocal(trip.departureWindowStart)} -{' '}
+                                    {formatTimeLocal(trip.departureWindowEnd)}
                                   </p>
                                 </div>
                                 <Badge className={`${statusInfo?.color || 'bg-gray-50 text-gray-700'} border`}>
@@ -508,9 +539,9 @@ export default function MyTripsPage() {
                                     {reservation.trip.routeFrom} → {reservation.trip.routeTo}
                                   </h3>
                                   <p className="text-sm text-gray-600">
-                                    {formatDate(reservation.trip.departureWindowStart)} •{' '}
-                                    {formatTime(reservation.trip.departureWindowStart)} -{' '}
-                                    {formatTime(reservation.trip.departureWindowEnd)}
+                                    {formatDateLocal(reservation.trip.departureWindowStart)} •{' '}
+                                    {formatTimeLocal(reservation.trip.departureWindowStart)} -{' '}
+                                    {formatTimeLocal(reservation.trip.departureWindowEnd)}
                                   </p>
                                   <p className="text-sm text-gray-500 mt-1">
                                     {reservation.trip.driver.firstName} {reservation.trip.driver.lastName}
@@ -526,20 +557,32 @@ export default function MyTripsPage() {
                                 <span className="font-medium text-gray-900">{reservation.seatCount}</span> o'rin rezervatsiya qilingan
                               </div>
 
-                              {reservation.chat?.id && (
-                                <Button
-                                  variant="outline"
-                                  onClick={() => {
-                                    if (reservation.chat?.id) {
-                                      router.push(`/chat/${reservation.chat.id}`);
-                                    }
-                                  }}
-                                  className="w-full border-gray-200 hover:bg-gray-50 font-semibold py-2.5 rounded-xl"
-                                >
-                                  <MessageCircle className="h-4 w-4 mr-2" />
-                                  Chat tarixini ko'rish
-                                </Button>
-                              )}
+                              <div className="flex gap-2">
+                                {reservation.chat?.id && (
+                                  <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                      if (reservation.chat?.id) {
+                                        router.push(`/chat/${reservation.chat.id}`);
+                                      }
+                                    }}
+                                    className="flex-1 border-gray-200 hover:bg-gray-50 font-semibold py-2.5 rounded-xl"
+                                  >
+                                    <MessageCircle className="h-4 w-4 mr-2" />
+                                    Chat tarixini ko'rish
+                                  </Button>
+                                )}
+                                {/* Show review button for CONFIRMED reservations with COMPLETED trips */}
+                                {reservation.status === 'CONFIRMED' && reservation.trip.status === 'COMPLETED' && !reservation.review && (
+                                  <Button
+                                    onClick={() => handleOpenReview(reservation)}
+                                    className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2.5 rounded-xl"
+                                  >
+                                    <Star className="h-4 w-4 mr-2" />
+                                    Baholash
+                                  </Button>
+                                )}
+                              </div>
                             </div>
                           </Card>
                         );
@@ -551,6 +594,30 @@ export default function MyTripsPage() {
             </TabsContent>
           </Tabs>
         </main>
+
+        {/* Review Modal */}
+        {selectedReservation && (
+          <ReviewModal
+            isOpen={reviewModalOpen}
+            onClose={() => {
+              setReviewModalOpen(false);
+              setSelectedReservation(null);
+            }}
+            onSubmit={(rating, reason, comment) => {
+              if (selectedReservation) {
+                createReviewMutation.mutate({
+                  reservationId: selectedReservation.id,
+                  rating,
+                  reason,
+                  comment,
+                });
+              }
+            }}
+            reservationId={selectedReservation.id}
+            tripRoute={`${selectedReservation.trip.routeFrom} → ${selectedReservation.trip.routeTo}`}
+            isLoading={createReviewMutation.isPending}
+          />
+        )}
       </div>
     </RegistrationGuard>
   );

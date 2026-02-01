@@ -8,6 +8,7 @@ import tripsRouter from './routes/trips';
 import reservationsRouter from './routes/reservations';
 import usersRouter from './routes/users';
 import chatsRouter from './routes/chats';
+import reviewsRouter from './routes/reviews';
 import { setupWebSocketHandlers } from './websocket/handlers';
 
 dotenv.config();
@@ -99,6 +100,7 @@ app.use('/api/trips', tripsRouter);
 app.use('/api/reservations', reservationsRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/chats', chatsRouter);
+app.use('/api/reviews', reviewsRouter);
 
 // Error handler (must be last)
 app.use(errorHandler);

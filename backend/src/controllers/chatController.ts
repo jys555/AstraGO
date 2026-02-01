@@ -11,6 +11,13 @@ export async function getMyChats(
 ) {
   try {
     const user = (req as any).user;
+    const now = new Date();
+    const threeDaysAgo = new Date(now);
+    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+    
+    // For drivers, only show chats from last 3 days
+    // For passengers, show all chats
+    const isDriver = user.role === 'DRIVER';
     
     const chats = await prisma.chat.findMany({
       where: {
@@ -18,7 +25,12 @@ export async function getMyChats(
           { driverId: user.id },
           { passengerId: user.id },
         ],
-        // Return all chats (active and archived) - frontend will filter them
+        // For drivers, only show chats from last 3 days
+        ...(isDriver && {
+          createdAt: {
+            gte: threeDaysAgo,
+          },
+        }),
       },
       include: {
         driver: {
