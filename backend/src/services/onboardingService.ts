@@ -144,9 +144,11 @@ export async function shouldShowNotificationNudge(telegramUserId: string): Promi
   }
 
   // Check if user has active reservations or trips
+  // TypeScript needs explicit type assertion for Prisma select types
+  const userId = user.id;
   const activeReservations = await prisma.reservation.count({
     where: {
-      passengerId: user.id,
+      passengerId: userId,
       status: {
         in: ['PENDING', 'CONFIRMED'],
       },
@@ -155,7 +157,7 @@ export async function shouldShowNotificationNudge(telegramUserId: string): Promi
 
   const activeTrips = await prisma.trip.count({
     where: {
-      driverId: user.id,
+      driverId: userId,
       status: 'ACTIVE',
     },
   });
