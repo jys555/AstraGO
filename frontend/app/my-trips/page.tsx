@@ -46,7 +46,16 @@ export default function MyTripsPage() {
     },
     onError: (error: any) => {
       console.error('Baholash yuborishda xatolik:', error);
-      alert('Baholash yuborishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
+      const errorMessage = error?.response?.data?.error || error?.message || 'Baholash yuborishda xatolik yuz berdi.';
+      if (errorMessage.includes('already exists')) {
+        alert('Bu safar uchun allaqachon baholash berilgan.');
+        // Refresh data to get updated review status
+        queryClient.invalidateQueries({ queryKey: ['my-reservations', 'passenger'] });
+        setReviewModalOpen(false);
+        setSelectedReservation(null);
+      } else {
+        alert(`Baholash yuborishda xatolik: ${errorMessage}`);
+      }
     },
   });
 

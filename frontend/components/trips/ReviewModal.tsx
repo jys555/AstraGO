@@ -14,14 +14,42 @@ interface ReviewModalProps {
   isLoading?: boolean;
 }
 
-const REVIEW_REASONS = [
-  { value: 'LATE_DEPARTURE', label: 'Kechikkan jo\'nash' },
-  { value: 'POOR_COMMUNICATION', label: 'Yomon aloqa' },
-  { value: 'UNSAFE_DRIVING', label: 'Xavfsiz haydash' },
-  { value: 'RUDE_BEHAVIOR', label: 'Qo\'pol xulq' },
-  { value: 'VEHICLE_ISSUES', label: 'Mashina muammolari' },
-  { value: 'OTHER', label: 'Boshqa' },
-];
+// Review reasons based on rating
+const REVIEW_REASONS_BY_RATING: Record<number, Array<{ value: string; label: string }>> = {
+  5: [
+    { value: 'FRIENDLY_DRIVER', label: 'Haydovchi xushmuomalali' },
+    { value: 'EXCELLENT_VEHICLE', label: 'Mashina saloni a\'lo holatda' },
+    { value: 'FAST_DELIVERY', label: 'Tez yetkazdi' },
+    { value: 'OTHER', label: 'Boshqa' },
+  ],
+  4: [
+    { value: 'GOOD_SERVICE', label: 'Yaxshi xizmat' },
+    { value: 'CLEAN_VEHICLE', label: 'Mashina toza' },
+    { value: 'ON_TIME', label: 'Vaqtida yetkazdi' },
+    { value: 'OTHER', label: 'Boshqa' },
+  ],
+  3: [
+    { value: 'RUDE_BEHAVIOR', label: 'Haydovchi qo\'pol' },
+    { value: 'POOR_VEHICLE', label: 'Mashina saloni yaxshi emas' },
+    { value: 'LATE_DELIVERY', label: 'Rejadagidan ortiq vaqtda yetkazdi' },
+    { value: 'OTHER', label: 'Boshqa' },
+  ],
+  2: [
+    { value: 'RUDE_BEHAVIOR', label: 'Haydovchi qo\'pol' },
+    { value: 'POOR_VEHICLE', label: 'Mashina saloni yaxshi emas' },
+    { value: 'LATE_DELIVERY', label: 'Rejadagidan ortiq vaqtda yetkazdi' },
+    { value: 'UNSAFE_DRIVING', label: 'Xavfsiz haydash' },
+    { value: 'OTHER', label: 'Boshqa' },
+  ],
+  1: [
+    { value: 'RUDE_BEHAVIOR', label: 'Haydovchi qo\'pol' },
+    { value: 'POOR_VEHICLE', label: 'Mashina saloni yaxshi emas' },
+    { value: 'LATE_DELIVERY', label: 'Rejadagidan ortiq vaqtda yetkazdi' },
+    { value: 'UNSAFE_DRIVING', label: 'Xavfsiz haydash' },
+    { value: 'POOR_COMMUNICATION', label: 'Yomon aloqa' },
+    { value: 'OTHER', label: 'Boshqa' },
+  ],
+};
 
 export function ReviewModal({
   isOpen,
@@ -33,21 +61,40 @@ export function ReviewModal({
 }: ReviewModalProps) {
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
-  const [selectedReason, setSelectedReason] = useState<string>('');
+  const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
   const [comment, setComment] = useState('');
 
+  // Get reasons for current rating
+  const currentReasons = rating > 0 ? REVIEW_REASONS_BY_RATING[rating] || [] : [];
+
   if (!isOpen) return null;
+
+  const handleReasonToggle = (reasonValue: string) => {
+    setSelectedReasons((prev) =>
+      prev.includes(reasonValue)
+        ? prev.filter((r) => r !== reasonValue)
+        : [...prev, reasonValue]
+    );
+  };
 
   const handleSubmit = () => {
     if (rating < 1 || rating > 5) {
       alert('Iltimos, baholashni tanlang (1-5 yulduz)');
       return;
     }
-    onSubmit(rating, selectedReason || undefined, comment.trim() || undefined);
+    // Use first selected reason or undefined
+    const reason = selectedReasons.length > 0 ? selectedReasons[0] : undefined;
+    onSubmit(rating, reason, comment.trim() || undefined);
     // Reset form
     setRating(0);
-    setSelectedReason('');
+    setSelectedReasons([]);
     setComment('');
+  };
+
+  // Reset selected reasons when rating changes
+  const handleRatingChange = (newRating: number) => {
+    setRating(newRating);
+    setSelectedReasons([]);
   };
 
   return (
@@ -75,7 +122,7 @@ export function ReviewModal({
               <button
                 key={star}
                 type="button"
-                onClick={() => setRating(star)}
+                onClick={() => handleRatingChange(star)}
                 onMouseEnter={() => setHoveredRating(star)}
                 onMouseLeave={() => setHoveredRating(0)}
                 className="focus:outline-none transition-transform hover:scale-110"
@@ -91,24 +138,28 @@ export function ReviewModal({
             ))}
           </div>
 
-          {/* Reason Selection (only for low ratings) */}
-          {rating > 0 && rating < 4 && (
+          {/* Reason Selection (multichoice based on rating) */}
+          {rating > 0 && currentReasons.length > 0 && (
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Sababni tanlang (ixtiyoriy)
+                Sababni tanlang (ixtiyoriy, bir nechtasini tanlash mumkin)
               </label>
-              <select
-                value={selectedReason}
-                onChange={(e) => setSelectedReason(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-              >
-                <option value="">Sababni tanlang</option>
-                {REVIEW_REASONS.map((reason) => (
-                  <option key={reason.value} value={reason.value}>
-                    {reason.label}
-                  </option>
+              <div className="space-y-2">
+                {currentReasons.map((reason) => (
+                  <label
+                    key={reason.value}
+                    className="flex items-center space-x-2 p-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedReasons.includes(reason.value)}
+                      onChange={() => handleReasonToggle(reason.value)}
+                      className="w-4 h-4 text-primary-500 border-gray-300 rounded focus:ring-primary-500"
+                    />
+                    <span className="text-sm text-gray-700">{reason.label}</span>
+                  </label>
                 ))}
-              </select>
+              </div>
             </div>
           )}
 
