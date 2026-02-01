@@ -41,9 +41,21 @@ export function TimeInput({ value, onChange, className = '', required = false, p
   const handleDisplayClick = () => {
     // Trigger native time picker
     if (nativeInputRef.current) {
-      nativeInputRef.current.showPicker?.();
-      nativeInputRef.current.focus();
-      nativeInputRef.current.click();
+      try {
+        // Try showPicker first (works in modern browsers)
+        if (nativeInputRef.current.showPicker) {
+          nativeInputRef.current.showPicker();
+        } else {
+          // Fallback: focus and click
+          nativeInputRef.current.focus();
+          nativeInputRef.current.click();
+        }
+      } catch (error) {
+        // If showPicker fails (e.g., in iframe), use fallback
+        console.log('showPicker not available, using fallback');
+        nativeInputRef.current.focus();
+        nativeInputRef.current.click();
+      }
     }
   };
 
@@ -57,9 +69,18 @@ export function TimeInput({ value, onChange, className = '', required = false, p
     // Trigger native picker
     if (nativeInputRef.current) {
       setTimeout(() => {
-        nativeInputRef.current?.showPicker?.();
-        nativeInputRef.current?.focus();
-        nativeInputRef.current?.click();
+        try {
+          if (nativeInputRef.current?.showPicker) {
+            nativeInputRef.current.showPicker();
+          } else {
+            nativeInputRef.current?.focus();
+            nativeInputRef.current?.click();
+          }
+        } catch (error) {
+          // Fallback if showPicker fails
+          nativeInputRef.current?.focus();
+          nativeInputRef.current?.click();
+        }
       }, 0);
     }
   };
@@ -84,17 +105,28 @@ export function TimeInput({ value, onChange, className = '', required = false, p
         required={required}
         style={{ cursor: 'pointer' }}
       />
-      {/* Hidden native time input for picker */}
+      {/* Native time input for picker - positioned to overlay */}
       <input
         ref={nativeInputRef}
         type="time"
         value={value}
         onChange={handleNativeChange}
-        className="absolute inset-0 opacity-0 pointer-events-none"
-        style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }}
+        className="absolute inset-0 opacity-0 cursor-pointer"
+        style={{ 
+          width: '100%', 
+          height: '100%', 
+          position: 'absolute', 
+          top: 0, 
+          left: 0,
+          zIndex: 1,
+        }}
         required={required}
         aria-hidden="true"
         tabIndex={-1}
+        onClick={(e) => {
+          // Prevent event bubbling
+          e.stopPropagation();
+        }}
       />
     </div>
   );
