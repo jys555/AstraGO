@@ -231,6 +231,7 @@ export async function createTrip(
       metrics?.responseRate || 0,
       totalTrips,
       cancelledTripsWithPassengers,
+      metrics?.avgRating || null,
       user.onlineStatus
     );
 
@@ -246,6 +247,8 @@ export async function createTrip(
         cancelledTrips: 0,
         cancelledTripsWithPassengers: 0,
         reliabilityScore,
+        avgRating: null,
+        totalReviews: 0,
         rankingScore,
       },
       update: {

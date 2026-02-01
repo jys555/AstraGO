@@ -1,6 +1,6 @@
 import prisma from '../config/database';
 import { NotFoundError, ValidationError } from '../utils/errors';
-import { updateDriverMetrics } from './driverRankingService';
+import { calculateRankingScore, calculateReliabilityScore } from './driverRankingService';
 
 /**
  * Create a review for a completed trip
@@ -76,10 +76,46 @@ export async function createReview(
     select: { rating: true },
   });
 
-  const avgRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
+  const avgRating = allReviews.length > 0
+    ? allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length
+    : null;
 
-  // Note: We can add avgRating to DriverMetrics if needed
-  // For now, we'll just update the driver metrics with the new review count
+  // Update driver metrics with new rating
+  const metrics = await prisma.driverMetrics.findUnique({
+    where: { driverId: reservation.trip.driverId },
+  });
+
+  const driver = await prisma.user.findUnique({
+    where: { id: reservation.trip.driverId },
+  });
+
+  if (driver && metrics) {
+    // Recalculate ranking score with new rating
+    const reliabilityScore = calculateReliabilityScore(
+      metrics.totalTrips,
+      metrics.cancelledTripsWithPassengers
+    );
+    
+    const rankingScore = calculateRankingScore(
+      metrics.avgResponseTime,
+      metrics.responseRate,
+      metrics.totalTrips,
+      metrics.cancelledTripsWithPassengers,
+      avgRating,
+      driver.onlineStatus
+    );
+
+    await prisma.driverMetrics.update({
+      where: { driverId: reservation.trip.driverId },
+      data: {
+        avgRating,
+        totalReviews: allReviews.length,
+        reliabilityScore,
+        rankingScore,
+        lastUpdated: new Date(),
+      },
+    });
+  }
 
   return review;
 }

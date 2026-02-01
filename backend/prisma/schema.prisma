@@ -198,6 +198,8 @@ model DriverMetrics {
   cancelledTrips            Int      @default(0) // total cancelled trips
   cancelledTripsWithPassengers Int  @default(0) // cancelled trips that had passengers
   reliabilityScore          Float    @default(100) // 0-100, based on cancellation rate
+  avgRating                 Float?   // average rating from reviews (1-5)
+  totalReviews              Int      @default(0) // total number of reviews
   rankingScore              Float    @default(0) // calculated score for sorting
   lastUpdated               DateTime @updatedAt
 

@@ -9,6 +9,8 @@ export interface DriverRankingMetrics {
   cancelledTrips: number;
   cancelledTripsWithPassengers: number;
   reliabilityScore: number;
+  avgRating: number | null;
+  totalReviews: number;
   onlineStatus: boolean;
 }
 
@@ -46,66 +48,79 @@ export function calculateReliabilityScore(
  * Higher score = better ranking
  * 
  * Factors:
- * - Response time (faster = higher score) - 0-30 points
- * - Response rate (higher = higher score) - 0-25 points
- * - Reliability score (less cancellations = higher score) - 0-25 points
- * - Online status (online = bonus) - 0-10 points
- * - Total trips (more = slight bonus) - 0-10 points
+ * - Response time (faster = higher score) - 0-25 points
+ * - Response rate (higher = higher score) - 0-20 points
+ * - Reliability score (less cancellations = higher score) - 0-20 points
+ * - Average rating (higher = higher score) - 0-25 points
+ * - Online status (online = bonus) - 0-5 points
+ * - Total trips (more = slight bonus) - 0-5 points
  */
 export function calculateRankingScore(
   avgResponseTime: number | null,
   responseRate: number,
   totalTrips: number,
   cancelledTripsWithPassengers: number,
+  avgRating: number | null,
   onlineStatus: boolean
 ): number {
   let score = 0;
 
-  // Response time component (0-30 points)
+  // Response time component (0-25 points)
   // Faster response = higher score
   if (avgResponseTime !== null) {
     if (avgResponseTime <= 60) {
       // Responded within 1 minute
-      score += 30;
+      score += 25;
     } else if (avgResponseTime <= 120) {
       // Responded within 2 minutes
-      score += 25;
+      score += 20;
     } else if (avgResponseTime <= 300) {
       // Responded within 5 minutes
-      score += 15;
+      score += 12;
     } else {
       // Responded after 5 minutes
       score += 5;
     }
   } else {
     // No response time data (new driver)
-    score += 15;
+    score += 12;
   }
 
-  // Response rate component (0-25 points)
+  // Response rate component (0-20 points)
   // Higher response rate = higher score
-  score += (responseRate / 100) * 25;
+  score += (responseRate / 100) * 20;
 
-  // Reliability component (0-25 points)
+  // Reliability component (0-20 points)
   // Higher reliability = higher score
   const reliabilityScore = calculateReliabilityScore(totalTrips, cancelledTripsWithPassengers);
-  score += (reliabilityScore / 100) * 25;
+  score += (reliabilityScore / 100) * 20;
 
-  // Online status bonus (0-10 points)
-  if (onlineStatus) {
-    score += 10;
+  // Average rating component (0-25 points)
+  // Higher rating = higher score (most important factor)
+  if (avgRating !== null && avgRating > 0) {
+    // Convert 1-5 rating to 0-25 points
+    // 5 stars = 25 points, 4 stars = 20 points, etc.
+    score += (avgRating / 5) * 25;
+  } else {
+    // No ratings yet (new driver) - neutral score
+    score += 12.5;
   }
 
-  // Total trips component (0-10 points)
+  // Online status bonus (0-5 points)
+  if (onlineStatus) {
+    score += 5;
+  }
+
+  // Total trips component (0-5 points)
   // More trips = slight bonus (diminishing returns)
   if (totalTrips >= 50) {
-    score += 10;
-  } else if (totalTrips >= 20) {
-    score += 7;
-  } else if (totalTrips >= 10) {
     score += 5;
-  } else if (totalTrips >= 5) {
+  } else if (totalTrips >= 20) {
     score += 3;
+  } else if (totalTrips >= 10) {
+    score += 2;
+  } else if (totalTrips >= 5) {
+    score += 1;
   }
 
   return Math.round(score * 100) / 100; // Round to 2 decimal places
@@ -159,12 +174,14 @@ export async function updateDriverMetrics(
   const totalTrips = metrics?.totalTrips || 0;
   const cancelledTripsWithPassengers = metrics?.cancelledTripsWithPassengers || 0;
   const reliabilityScore = calculateReliabilityScore(totalTrips, cancelledTripsWithPassengers);
+  const avgRating = metrics?.avgRating || null;
   
   const rankingScore = calculateRankingScore(
     avgResponseTime,
     responseRate,
     totalTrips,
     cancelledTripsWithPassengers,
+    avgRating,
     driver.onlineStatus
   );
 
@@ -180,6 +197,8 @@ export async function updateDriverMetrics(
       cancelledTrips: 0,
       cancelledTripsWithPassengers: 0,
       reliabilityScore,
+      avgRating: null,
+      totalReviews: 0,
       rankingScore,
     },
     update: {
@@ -218,6 +237,8 @@ export async function getDriverRanking(driverId: string): Promise<DriverRankingM
     cancelledTrips: metrics?.cancelledTrips || 0,
     cancelledTripsWithPassengers: metrics?.cancelledTripsWithPassengers || 0,
     reliabilityScore: metrics?.reliabilityScore || 100,
+    avgRating: metrics?.avgRating || null,
+    totalReviews: metrics?.totalReviews || 0,
     onlineStatus: driver.onlineStatus,
   };
 }
@@ -258,6 +279,7 @@ export async function updateDriverMetricsOnTripCancellation(
     metrics?.responseRate || 0,
     totalTrips,
     cancelledTripsWithPassengers,
+    metrics?.avgRating || null,
     driver.onlineStatus
   );
 
@@ -273,6 +295,8 @@ export async function updateDriverMetricsOnTripCancellation(
       cancelledTrips,
       cancelledTripsWithPassengers,
       reliabilityScore,
+      avgRating: metrics?.avgRating || null,
+      totalReviews: metrics?.totalReviews || 0,
       rankingScore,
     },
     update: {
