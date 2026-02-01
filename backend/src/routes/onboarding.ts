@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticate } from '../middleware/auth';
+import { authenticateTelegram } from '../middleware/auth';
 import {
   getOnboardingStateHandler,
   completeOnboardingStepHandler,
@@ -11,7 +11,7 @@ import {
 
 const router = Router();
 
-router.use(authenticate);
+router.use(authenticateTelegram);
 
 router.get('/state', getOnboardingStateHandler);
 router.post('/step', completeOnboardingStepHandler);

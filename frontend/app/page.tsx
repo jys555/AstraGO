@@ -37,7 +37,7 @@ export default function HomePage() {
   const isProfileComplete = !!(user?.firstName && user?.phone);
 
   // Onboarding hooks
-  const { onboardingState, completeStep, updateLastAppOpen, dismissBanner } = useOnboarding();
+  const { onboardingState, completeStep, updatePreferences, updateLastAppOpen, dismissBanner } = useOnboarding();
   const { shouldShowPinBanner, shouldShowNotifBanner, isLoading: bannersLoading } = useBanners();
   const [onboardingStep, setOnboardingStep] = useState<number | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
