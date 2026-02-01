@@ -70,32 +70,10 @@ export default function MyTripsPage() {
   };
 
   // For passengers: Get all reservations (active and past)
+  // Backend now includes reviews in the response
   const { data: passengerReservationsData, isLoading: passengerReservationsLoading } = useQuery({
     queryKey: ['my-reservations', 'passenger'],
-    queryFn: async () => {
-      const data = await apiClient.getMyReservations();
-      // Fetch review for each reservation
-      if (data.reservations) {
-        const reservationsWithReviews = await Promise.all(
-          data.reservations.map(async (reservation: Reservation) => {
-            try {
-              const reviewData = await apiClient.getReviewByReservation(reservation.id);
-              return {
-                ...reservation,
-                review: reviewData.review || null,
-              };
-            } catch {
-              return {
-                ...reservation,
-                review: null,
-              };
-            }
-          })
-        );
-        return { reservations: reservationsWithReviews };
-      }
-      return data;
-    },
+    queryFn: () => apiClient.getMyReservations(),
     enabled: isDriver === false && !!user,
   });
 
