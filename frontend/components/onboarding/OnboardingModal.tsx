@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 interface OnboardingModalProps {
   isOpen: boolean;
   currentStep: number;
-  onStepComplete: (step: number, action: 'next' | 'later') => void;
+  onStepComplete: (step: number, action: 'next' | 'later', notifOptIn?: boolean) => void;
   onClose: () => void;
 }
 
@@ -146,7 +146,7 @@ export function OnboardingModal({
                   <div className="space-y-3">
                     <Button
                       onClick={() => {
-                        onStepComplete(2, 'next');
+                        onStepComplete(2, 'next', true); // Opt in
                         handleNext();
                       }}
                       className="w-full bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 rounded-xl"
@@ -155,7 +155,7 @@ export function OnboardingModal({
                     </Button>
                     <button
                       onClick={() => {
-                        onStepComplete(2, 'next');
+                        onStepComplete(2, 'next', false); // Opt out
                         handleNext();
                       }}
                       className="w-full text-gray-600 hover:text-gray-800 text-sm font-medium py-2"
