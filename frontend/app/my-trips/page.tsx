@@ -28,7 +28,14 @@ export default function MyTripsPage() {
   const user = userData?.user;
   const isDriver = user?.role === 'DRIVER';
 
-  // For passengers: Get active and past reservations
+  // For passengers: Get all reservations (active and past)
+  const { data: passengerReservationsData, isLoading: passengerReservationsLoading } = useQuery({
+    queryKey: ['my-reservations', 'passenger'],
+    queryFn: () => apiClient.getMyReservations(),
+    enabled: isDriver === false && !!user,
+  });
+
+  // For passengers: Also get active reservation for pending status
   const { reservation: activeReservation } = useReservation();
   
   // For drivers: Get trips created by driver (active and completed)
@@ -90,6 +97,33 @@ export default function MyTripsPage() {
   const activeTrips = driverTripsData?.trips?.filter((trip: Trip) => trip.status === 'ACTIVE') || [];
   const pastTrips = driverTripsData?.trips?.filter((trip: Trip) => trip.status !== 'ACTIVE') || [];
 
+  // For passengers: Separate reservations into active and past
+  const allReservations = passengerReservationsData?.reservations || [];
+  const activeReservations = allReservations.filter((res: Reservation) => {
+    // Active: PENDING (with activeReservation) or CONFIRMED with trip status ACTIVE
+    if (res.status === 'PENDING' && activeReservation && activeReservation.id === res.id) {
+      return true;
+    }
+    if (res.status === 'CONFIRMED' && res.trip.status === 'ACTIVE') {
+      return true;
+    }
+    return false;
+  });
+  const pastReservations = allReservations.filter((res: Reservation) => {
+    // Past: CANCELLED, EXPIRED, or CONFIRMED with trip status COMPLETED/CANCELLED
+    if (res.status === 'CANCELLED' || res.status === 'EXPIRED') {
+      return true;
+    }
+    if (res.status === 'CONFIRMED' && (res.trip.status === 'COMPLETED' || res.trip.status === 'CANCELLED')) {
+      return true;
+    }
+    // Also include PENDING reservations that are not the active one
+    if (res.status === 'PENDING' && (!activeReservation || activeReservation.id !== res.id)) {
+      return true;
+    }
+    return false;
+  });
+
   return (
     <RegistrationGuard>
       <div className="min-h-screen bg-gray-50 pb-20">
@@ -116,10 +150,10 @@ export default function MyTripsPage() {
           <Tabs defaultValue="active" className="w-full">
             <TabsList className="grid w-full max-w-md grid-cols-2 mb-6 bg-gray-100 rounded-xl p-1">
               <TabsTrigger value="active" className="data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm rounded-lg font-semibold">
-                Faol ({isDriver ? activeTrips.length : (activeReservation ? 1 : 0)})
+                Faol ({isDriver ? activeTrips.length : activeReservations.length})
               </TabsTrigger>
               <TabsTrigger value="past" className="data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm rounded-lg font-semibold">
-                Tarix ({isDriver ? pastTrips.length : 0})
+                Tarix ({isDriver ? pastTrips.length : pastReservations.length})
               </TabsTrigger>
             </TabsList>
 
@@ -249,105 +283,12 @@ export default function MyTripsPage() {
               ) : (
                 // Passenger: Active reservations
                 <>
-                  {activeReservation ? (
-                    <Card className="p-5 hover:shadow-md transition-shadow duration-200 border border-gray-100 bg-white rounded-2xl">
-                      <div className="space-y-4">
-                        {/* Driver Info */}
-                        <div className="flex items-start gap-4">
-                          <Avatar className="h-12 w-12 border-2 border-gray-100">
-                            <AvatarFallback className="bg-primary-100 text-primary-700 font-semibold">
-                              {activeReservation.trip.driver.firstName?.[0] || '?'}{activeReservation.trip.driver.lastName?.[0] || ''}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900 text-base">
-                              {activeReservation.trip.driver.firstName} {activeReservation.trip.driver.lastName}
-                            </h3>
-                            <p className="text-sm text-gray-500">Haydovchi</p>
-                            {activeReservation.trip.driver.phone && (
-                              <p className="text-sm text-gray-600 mt-1">{activeReservation.trip.driver.phone}</p>
-                            )}
-                          </div>
-                          {(() => {
-                            const statusInfo = statusConfig[activeReservation.status as keyof typeof statusConfig];
-                            const StatusIcon = statusInfo?.icon || Clock;
-                            return (
-                              <Badge className={`${statusInfo?.color || 'bg-gray-50 text-gray-700'} border`}>
-                                <StatusIcon className="h-3.5 w-3.5 mr-1.5" />
-                                {statusInfo?.label || activeReservation.status}
-                              </Badge>
-                            );
-                          })()}
-                        </div>
-
-                        {/* Route */}
-                        <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
-                          <MapPin className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                          <span className="font-semibold text-gray-900">{activeReservation.trip.routeFrom}</span>
-                          <span className="text-gray-400">→</span>
-                          <span className="font-semibold text-gray-900">{activeReservation.trip.routeTo}</span>
-                        </div>
-
-                        {/* Date & Time */}
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <Calendar className="h-4 w-4 text-gray-400" />
-                          <span>
-                            {formatDate(activeReservation.trip.departureWindowStart)} •{' '}
-                            {formatTime(activeReservation.trip.departureWindowStart)} -{' '}
-                            {formatTime(activeReservation.trip.departureWindowEnd)}
-                          </span>
-                        </div>
-
-                        {/* Booking Info */}
-                        <div className="text-sm text-gray-600">
-                          <span className="font-medium text-gray-900">{activeReservation.seatCount}</span> o'rin rezervatsiya qilingan
-                        </div>
-
-                        {/* Actions */}
-                        <div className="flex gap-3 pt-2">
-                          {activeReservation.chat ? (
-                            <Button
-                              onClick={() => activeReservation.chat && router.push(`/chat/${activeReservation.chat.id}`)}
-                              className="flex-1 bg-primary-500 hover:bg-primary-600 text-white font-semibold py-2.5 rounded-xl"
-                            >
-                              <MessageCircle className="h-4 w-4 mr-2" />
-                              Chat
-                            </Button>
-                          ) : (
-                            <Button
-                              variant="outline"
-                              onClick={async () => {
-                                try {
-                                  const chatData = await apiClient.getChatByReservation(activeReservation.id);
-                                  if (chatData?.chat?.id) {
-                                    router.push(`/chat/${chatData.chat.id}`);
-                                  } else {
-                                    throw new Error('Chat yaratilmadi');
-                                  }
-                                } catch (error) {
-                                  console.error('Chat yaratishda xatolik:', error);
-                                  alert('Chat yaratishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
-                                }
-                              }}
-                              className="flex-1 border-gray-200 hover:bg-gray-50 font-semibold py-2.5 rounded-xl"
-                            >
-                              <MessageCircle className="h-4 w-4 mr-2" />
-                              Chat yaratish
-                            </Button>
-                          )}
-                          {activeReservation.status === 'CONFIRMED' && (
-                            <Button
-                              variant="outline"
-                              onClick={() => router.push(`/trips/${activeReservation.tripId}`)}
-                              className="border-gray-200 hover:bg-gray-50 font-semibold py-2.5 rounded-xl"
-                            >
-                              Batafsil
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    </Card>
-                  ) : (
+                  {passengerReservationsLoading ? (
+                    <div className="text-center py-12">
+                      <div className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                      <p className="text-gray-600">Yuklanmoqda...</p>
+                    </div>
+                  ) : activeReservations.length === 0 ? (
                     <Card className="p-12 text-center border border-gray-100 bg-white rounded-2xl">
                       <div className="flex flex-col items-center gap-4">
                         <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center">
@@ -365,6 +306,104 @@ export default function MyTripsPage() {
                         </Button>
                       </div>
                     </Card>
+                  ) : (
+                    <div className="space-y-4">
+                      {activeReservations.map((reservation: Reservation) => {
+                        const statusInfo = statusConfig[reservation.status as keyof typeof statusConfig];
+                        const StatusIcon = statusInfo?.icon || Clock;
+                        return (
+                          <Card key={reservation.id} className="p-5 hover:shadow-md transition-shadow duration-200 border border-gray-100 bg-white rounded-2xl">
+                            <div className="space-y-4">
+                              {/* Driver Info */}
+                              <div className="flex items-start gap-4">
+                                <Avatar className="h-12 w-12 border-2 border-gray-100">
+                                  <AvatarFallback className="bg-primary-100 text-primary-700 font-semibold">
+                                    {reservation.trip.driver.firstName?.[0] || '?'}{reservation.trip.driver.lastName?.[0] || ''}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1">
+                                  <h3 className="font-semibold text-gray-900 text-base">
+                                    {reservation.trip.driver.firstName} {reservation.trip.driver.lastName}
+                                  </h3>
+                                  <p className="text-sm text-gray-500">Haydovchi</p>
+                                  {reservation.trip.driver.phone && (
+                                    <p className="text-sm text-gray-600 mt-1">{reservation.trip.driver.phone}</p>
+                                  )}
+                                </div>
+                                <Badge className={`${statusInfo?.color || 'bg-gray-50 text-gray-700'} border`}>
+                                  <StatusIcon className="h-3.5 w-3.5 mr-1.5" />
+                                  {statusInfo?.label || reservation.status}
+                                </Badge>
+                              </div>
+
+                              {/* Route */}
+                              <div className="flex items-center gap-2 pb-3 border-b border-gray-100">
+                                <MapPin className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                                <span className="font-semibold text-gray-900">{reservation.trip.routeFrom}</span>
+                                <span className="text-gray-400">→</span>
+                                <span className="font-semibold text-gray-900">{reservation.trip.routeTo}</span>
+                              </div>
+
+                              {/* Date & Time */}
+                              <div className="flex items-center gap-2 text-sm text-gray-600">
+                                <Calendar className="h-4 w-4 text-gray-400" />
+                                <span>
+                                  {formatDate(reservation.trip.departureWindowStart)} •{' '}
+                                  {formatTime(reservation.trip.departureWindowStart)} -{' '}
+                                  {formatTime(reservation.trip.departureWindowEnd)}
+                                </span>
+                              </div>
+
+                              {/* Booking Info */}
+                              <div className="text-sm text-gray-600">
+                                <span className="font-medium text-gray-900">{reservation.seatCount}</span> o'rin rezervatsiya qilingan
+                              </div>
+
+                              {/* Actions */}
+                              <div className="flex gap-3 pt-2">
+                                {reservation.chat ? (
+                                  <Button
+                                    onClick={() => reservation.chat && router.push(`/chat/${reservation.chat.id}`)}
+                                    className="flex-1 bg-primary-500 hover:bg-primary-600 text-white font-semibold py-2.5 rounded-xl"
+                                  >
+                                    <MessageCircle className="h-4 w-4 mr-2" />
+                                    Chat
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    variant="outline"
+                                    onClick={async () => {
+                                      try {
+                                        const chatData = await apiClient.getChatByReservation(reservation.id);
+                                        if (chatData?.chat?.id) {
+                                          router.push(`/chat/${chatData.chat.id}`);
+                                        } else {
+                                          throw new Error('Chat yaratilmadi');
+                                        }
+                                      } catch (error) {
+                                        console.error('Chat yaratishda xatolik:', error);
+                                        alert('Chat yaratishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
+                                      }
+                                    }}
+                                    className="flex-1 border-gray-200 hover:bg-gray-50 font-semibold py-2.5 rounded-xl"
+                                  >
+                                    <MessageCircle className="h-4 w-4 mr-2" />
+                                    Chat yaratish
+                                  </Button>
+                                )}
+                                <Button
+                                  variant="outline"
+                                  onClick={() => router.push(`/trips/${reservation.tripId}`)}
+                                  className="border-gray-200 hover:bg-gray-50 font-semibold py-2.5 rounded-xl"
+                                >
+                                  Batafsil
+                                </Button>
+                              </div>
+                            </div>
+                          </Card>
+                        );
+                      })}
+                    </div>
                   )}
                 </>
               )}
@@ -442,17 +481,68 @@ export default function MyTripsPage() {
                 </>
               ) : (
                 // Passenger: Past reservations
-                <Card className="p-12 text-center border border-gray-100 bg-white rounded-2xl">
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center">
-                      <Clock className="h-8 w-8 text-gray-400" />
+                <>
+                  {pastReservations.length === 0 ? (
+                    <Card className="p-12 text-center border border-gray-100 bg-white rounded-2xl">
+                      <div className="flex flex-col items-center gap-4">
+                        <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center">
+                          <Clock className="h-8 w-8 text-gray-400" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">Tarix yo'q</h3>
+                          <p className="text-gray-600 text-sm">Yakunlangan va bekor qilingan rezervatsiyalar shu yerda ko'rinadi</p>
+                        </div>
+                      </div>
+                    </Card>
+                  ) : (
+                    <div className="space-y-4">
+                      {pastReservations.map((reservation: Reservation) => {
+                        const statusInfo = statusConfig[reservation.status as keyof typeof statusConfig];
+                        const StatusIcon = statusInfo?.icon || Clock;
+                        return (
+                          <Card key={reservation.id} className="p-5 hover:shadow-md transition-shadow duration-200 border border-gray-100 bg-white rounded-2xl">
+                            <div className="space-y-4">
+                              <div className="flex items-start justify-between">
+                                <div className="flex-1">
+                                  <h3 className="font-semibold text-lg text-gray-900">
+                                    {reservation.trip.routeFrom} → {reservation.trip.routeTo}
+                                  </h3>
+                                  <p className="text-sm text-gray-600">
+                                    {formatDate(reservation.trip.departureWindowStart)} •{' '}
+                                    {formatTime(reservation.trip.departureWindowStart)} -{' '}
+                                    {formatTime(reservation.trip.departureWindowEnd)}
+                                  </p>
+                                  <p className="text-sm text-gray-500 mt-1">
+                                    {reservation.trip.driver.firstName} {reservation.trip.driver.lastName}
+                                  </p>
+                                </div>
+                                <Badge className={`${statusInfo?.color || 'bg-gray-50 text-gray-700'} border`}>
+                                  <StatusIcon className="h-3.5 w-3.5 mr-1.5" />
+                                  {statusInfo?.label || reservation.status}
+                                </Badge>
+                              </div>
+
+                              <div className="text-sm text-gray-600">
+                                <span className="font-medium text-gray-900">{reservation.seatCount}</span> o'rin rezervatsiya qilingan
+                              </div>
+
+                              {reservation.chat && (
+                                <Button
+                                  variant="outline"
+                                  onClick={() => router.push(`/chat/${reservation.chat.id}`)}
+                                  className="w-full border-gray-200 hover:bg-gray-50 font-semibold py-2.5 rounded-xl"
+                                >
+                                  <MessageCircle className="h-4 w-4 mr-2" />
+                                  Chat tarixini ko'rish
+                                </Button>
+                              )}
+                            </div>
+                          </Card>
+                        );
+                      })}
                     </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Tarix yo'q</h3>
-                      <p className="text-gray-600 text-sm">Yakunlangan va bekor qilingan rezervatsiyalar shu yerda ko'rinadi</p>
-                    </div>
-                  </div>
-                </Card>
+                  )}
+                </>
               )}
             </TabsContent>
           </Tabs>

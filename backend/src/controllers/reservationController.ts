@@ -5,6 +5,7 @@ import {
   cancelReservation,
   getActiveReservation,
   checkDriverResponse,
+  getMyReservationsAsPassenger,
 } from '../services/reservationService';
 import { NotFoundError } from '../utils/errors';
 
@@ -106,6 +107,22 @@ export async function getActiveReservationHandler(
       reservation,
       driverResponded,
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getMyReservationsHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const user = (req as any).user;
+
+    const reservations = await getMyReservationsAsPassenger(user.id);
+
+    res.json({ reservations });
   } catch (error) {
     next(error);
   }

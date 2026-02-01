@@ -5,6 +5,7 @@ import {
   confirmReservationHandler,
   cancelReservationHandler,
   getActiveReservationHandler,
+  getMyReservationsHandler,
 } from '../controllers/reservationController';
 import { authenticateTelegram } from '../middleware/auth';
 import { createReservationSchema } from '../utils/validators';
@@ -35,6 +36,7 @@ router.use(authenticateTelegram);
 
 router.post('/', validate(createReservationSchema), createReservationHandler);
 router.get('/active', getActiveReservationHandler);
+router.get('/my-reservations', getMyReservationsHandler);
 router.get('/:id', getReservationHandler);
 router.patch('/:id/confirm', confirmReservationHandler);
 router.delete('/:id', cancelReservationHandler);

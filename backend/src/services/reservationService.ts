@@ -335,3 +335,32 @@ export async function expireOldReservations() {
 
   return expired.length;
 }
+
+/**
+ * Get all reservations for a passenger (all statuses)
+ */
+export async function getMyReservationsAsPassenger(passengerId: string) {
+  return prisma.reservation.findMany({
+    where: {
+      passengerId,
+      status: {
+        in: ['PENDING', 'CONFIRMED', 'CANCELLED', 'EXPIRED'],
+      },
+    },
+    include: {
+      trip: {
+        include: {
+          driver: {
+            include: {
+              driverMetrics: true,
+            },
+          },
+        },
+      },
+      chat: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+}

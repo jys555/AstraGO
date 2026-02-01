@@ -125,6 +125,12 @@ class ApiClient {
     });
   }
 
+  async completeTrip(id: string): Promise<{ trip: Trip }> {
+    return this.request<{ trip: Trip }>(`/api/trips/${id}/complete`, {
+      method: 'PATCH',
+    });
+  }
+
   // Reservations
   async createReservation(tripId: string, seatCount: number = 1): Promise<{ reservation: Reservation }> {
     return this.request<{ reservation: Reservation }>('/api/reservations', {
@@ -139,6 +145,10 @@ class ApiClient {
 
   async getActiveReservation(): Promise<{ reservation: Reservation | null; driverResponded: boolean }> {
     return this.request<{ reservation: Reservation | null; driverResponded: boolean }>('/api/reservations/active');
+  }
+
+  async getMyReservations(): Promise<{ reservations: Reservation[] }> {
+    return this.request<{ reservations: Reservation[] }>('/api/reservations/my-reservations');
   }
 
   async confirmReservation(id: string): Promise<{ reservation: Reservation }> {

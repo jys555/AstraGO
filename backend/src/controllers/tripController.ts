@@ -330,6 +330,7 @@ export async function getMyTripsAsDriver(
 ) {
   try {
     const user = (req as any).user;
+    const now = new Date();
     
     const trips = await prisma.trip.findMany({
       where: {
@@ -354,7 +355,136 @@ export async function getMyTripsAsDriver(
       },
     });
 
-    res.json({ trips });
+    // Auto-expire trips that have passed their departure window
+    // Update trips where departureWindowEnd has passed and status is still ACTIVE
+    const expiredTrips = trips.filter(
+      (trip) => trip.status === 'ACTIVE' && new Date(trip.departureWindowEnd) < now
+    );
+
+    if (expiredTrips.length > 0) {
+      await prisma.trip.updateMany({
+        where: {
+          id: { in: expiredTrips.map((t) => t.id) },
+          status: 'ACTIVE',
+        },
+        data: {
+          status: 'COMPLETED',
+        },
+      });
+
+      // Archive chats for completed trips
+      for (const trip of expiredTrips) {
+        await prisma.chat.updateMany({
+          where: {
+            tripId: trip.id,
+            status: { in: ['ACTIVE'] },
+          },
+          data: {
+            status: 'ARCHIVED',
+            archivedAt: new Date(),
+          },
+        });
+      }
+    }
+
+    // Refetch trips to get updated statuses
+    const updatedTrips = await prisma.trip.findMany({
+      where: {
+        driverId: user.id,
+      },
+      include: {
+        driver: {
+          include: {
+            driverMetrics: true,
+          },
+        },
+        seatAvailability: true,
+        reservations: {
+          include: {
+            passenger: true,
+            chat: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    res.json({ trips: updatedTrips });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// Complete/close a trip (driver only)
+export async function completeTrip(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const user = (req as any).user;
+    const { id } = req.params;
+
+    const trip = await prisma.trip.findUnique({
+      where: { id },
+      include: {
+        reservations: {
+          where: {
+            status: { in: ['PENDING', 'CONFIRMED'] },
+          },
+        },
+      },
+    });
+
+    if (!trip) {
+      throw new NotFoundError('Trip');
+    }
+
+    if (trip.driverId !== user.id) {
+      throw new ValidationError('Not authorized to complete this trip');
+    }
+
+    if (trip.status !== 'ACTIVE') {
+      throw new ValidationError('Only active trips can be completed');
+    }
+
+    // Update trip status to COMPLETED
+    const updated = await prisma.trip.update({
+      where: { id },
+      data: {
+        status: 'COMPLETED',
+      },
+      include: {
+        driver: {
+          include: {
+            driverMetrics: true,
+          },
+        },
+        seatAvailability: true,
+        reservations: {
+          include: {
+            passenger: true,
+            chat: true,
+          },
+        },
+      },
+    });
+
+    // Archive all active chats for this trip
+    await prisma.chat.updateMany({
+      where: {
+        tripId: id,
+        status: { in: ['ACTIVE'] },
+      },
+      data: {
+        status: 'ARCHIVED',
+        archivedAt: new Date(),
+      },
+    });
+
+    res.json({ trip: updated });
   } catch (error) {
     next(error);
   }
