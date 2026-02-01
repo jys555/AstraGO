@@ -228,6 +228,42 @@ class ApiClient {
   async getDriverReviews(driverId: string): Promise<{ reviews: any[] }> {
     return this.request<{ reviews: any[] }>(`/api/reviews/driver/${driverId}`);
   }
+
+  // Onboarding
+  async getOnboardingState(): Promise<{ state: { currentStep: number; onboardingCompletedAt: string | null; pinNudgeCooldownUntil: string | null; notifOptIn: boolean; notifCooldownUntil: string | null } }> {
+    return this.request<{ state: any }>('/api/onboarding/state');
+  }
+
+  async completeOnboardingStep(step: number, action: 'next' | 'later'): Promise<{ success: boolean }> {
+    return this.request<{ success: boolean }>('/api/onboarding/step', {
+      method: 'POST',
+      body: JSON.stringify({ step, action }),
+    });
+  }
+
+  async updateNotificationPreferences(notifOptIn: boolean, weeklyDigestOptIn?: boolean): Promise<{ success: boolean }> {
+    return this.request<{ success: boolean }>('/api/onboarding/preferences', {
+      method: 'POST',
+      body: JSON.stringify({ notifOptIn, weeklyDigestOptIn }),
+    });
+  }
+
+  async getBannerVisibility(type: 'pin' | 'notifications'): Promise<{ shouldShow: boolean }> {
+    return this.request<{ shouldShow: boolean }>(`/api/onboarding/banner?type=${type}`);
+  }
+
+  async dismissBanner(type: 'pin' | 'notifications'): Promise<{ success: boolean }> {
+    return this.request<{ success: boolean }>('/api/onboarding/banner/dismiss', {
+      method: 'POST',
+      body: JSON.stringify({ type }),
+    });
+  }
+
+  async updateLastAppOpen(): Promise<{ success: boolean }> {
+    return this.request<{ success: boolean }>('/api/onboarding/app-open', {
+      method: 'POST',
+    });
+  }
 }
 
 export const apiClient = new ApiClient(API_URL);

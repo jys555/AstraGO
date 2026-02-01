@@ -61,6 +61,17 @@ model User {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
+  // Onboarding & Retention
+  onboardingCompletedAt     DateTime?
+  pinNudgeCooldownUntil      DateTime?
+  notifOptIn                 Boolean   @default(false)
+  notifCooldownUntil         DateTime?
+  weeklyDigestOptIn          Boolean   @default(false)
+  lastAppOpenAt              DateTime?
+  lastNotificationSentAt     DateTime?
+  notificationsSentToday     Int       @default(0)
+  notificationsSentDate      DateTime? // Date when notificationsSentToday was last reset
+
   // Relations
   tripsAsDriver     Trip[]
   reservations      Reservation[]
@@ -70,6 +81,7 @@ model User {
   driverMetrics     DriverMetrics?
   reviewsAsPassenger TripReview[] @relation("PassengerReviews")
   reviewsAsDriver    TripReview[] @relation("DriverReviews")
+  notificationLogs   NotificationLog[]
 
   @@index([telegramId])
   @@index([onlineStatus])
@@ -254,4 +266,36 @@ model TripReview {
   @@index([passengerId])
   @@index([driverId])
   @@index([rating])
+}
+
+enum NotificationType {
+  DRIVER_REPLIED
+  RESERVATION_EXPIRING_2MIN
+  TRIP_CONFIRMED
+  TRIP_CANCELLED
+  TRIP_WINDOW_1H
+  TRIP_WINDOW_15MIN
+  WEEKLY_TOP_TRIPS
+}
+
+model NotificationLog {
+  id                  String           @id @default(uuid())
+  telegramUserId      String
+  type                NotificationType
+  relatedTripId       String?
+  relatedReservationId String?
+  sentAt              DateTime         @default(now())
+
+  // Relations
+  user                User             @relation(fields: [telegramUserId], references: [telegramId], onDelete: Cascade)
+
+  @@index([telegramUserId])
+  @@index([sentAt])
+  @@index([type])
+}
+
+model FeatureFlag {
+  key     String  @id
+  enabled Boolean  @default(false)
+  updatedAt DateTime @updatedAt
 }

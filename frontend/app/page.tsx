@@ -11,6 +11,10 @@ import { BenefitsCarousel } from '@/components/home/BenefitsCarousel';
 import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { RegistrationModal } from '@/components/auth/RegistrationModal';
+import { OnboardingModal } from '@/components/onboarding/OnboardingModal';
+import { NudgeBanner } from '@/components/onboarding/NudgeBanner';
+import { useOnboarding } from '@/hooks/useOnboarding';
+import { useBanners } from '@/hooks/useBanners';
 import { Search, Car } from 'lucide-react';
 
 // Disable SSR for pages that use React Query
@@ -31,6 +35,34 @@ export default function HomePage() {
   const user = userData?.user;
   const userRole = user?.role || 'PASSENGER';
   const isProfileComplete = !!(user?.firstName && user?.phone);
+
+  // Onboarding hooks
+  const { onboardingState, completeStep, updateLastAppOpen, dismissBanner } = useOnboarding();
+  const { shouldShowPinBanner, shouldShowNotifBanner, isLoading: bannersLoading } = useBanners();
+  const [onboardingStep, setOnboardingStep] = useState<number | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  // Update last app open on mount
+  useEffect(() => {
+    if (user) {
+      updateLastAppOpen();
+    }
+  }, [user, updateLastAppOpen]);
+
+  // Check if onboarding should be shown
+  useEffect(() => {
+    if (onboardingState && !onboardingState.onboardingCompletedAt) {
+      // Determine current step
+      let step = 1;
+      if (onboardingState.currentStep > 1) {
+        step = onboardingState.currentStep;
+      }
+      setOnboardingStep(step);
+      setShowOnboarding(true);
+    } else if (onboardingState?.onboardingCompletedAt) {
+      setShowOnboarding(false);
+    }
+  }, [onboardingState]);
 
   // Handle post-registration redirect
   useEffect(() => {
@@ -188,6 +220,32 @@ export default function HomePage() {
           ) : (
             /* Registered user - role-based content */
             <>
+              {/* Nudge Banners */}
+              {user && !bannersLoading && (
+                <div className="px-4 pt-4">
+                  {shouldShowPinBanner && (
+                    <NudgeBanner
+                      type="pin"
+                      onDismiss={() => dismissBanner('pin')}
+                      onAction={() => {
+                        // Show PIN instructions - could open onboarding step 1 or show instructions
+                        setShowOnboarding(true);
+                        setOnboardingStep(1);
+                      }}
+                    />
+                  )}
+                  {shouldShowNotifBanner && !shouldShowPinBanner && (
+                    <NudgeBanner
+                      type="notifications"
+                      onDismiss={() => dismissBanner('notifications')}
+                      onAction={() => {
+                        updatePreferences({ notifOptIn: true });
+                      }}
+                    />
+                  )}
+                </div>
+              )}
+
               {userRole === 'PASSENGER' && (
                 <>
                   {/* Passenger Search Section */}
@@ -265,6 +323,33 @@ export default function HomePage() {
         }}
         onSuccess={handleRegistrationSuccess}
       />
+
+      {/* Onboarding Modal */}
+      {showOnboarding && onboardingStep && (
+        <OnboardingModal
+          isOpen={showOnboarding}
+          currentStep={onboardingStep}
+          onStepComplete={async (step, action, notifOptIn) => {
+            await completeStep({ step, action });
+            
+            // Handle step 2 notification preference
+            if (step === 2 && action === 'next' && notifOptIn !== undefined) {
+              updatePreferences({ notifOptIn });
+            }
+            
+            if (action === 'next' && step < 3) {
+              setOnboardingStep(step + 1);
+            } else if (action === 'next' && step === 3) {
+              setShowOnboarding(false);
+            } else if (action === 'later') {
+              setShowOnboarding(false);
+            }
+          }}
+          onClose={() => {
+            setShowOnboarding(false);
+          }}
+        />
+      )}
     </RegistrationGuard>
   );
 }
