@@ -6,7 +6,39 @@ export interface DriverRankingMetrics {
   avgResponseTime: number | null;
   responseRate: number;
   totalTrips: number;
+  cancelledTrips: number;
+  cancelledTripsWithPassengers: number;
+  reliabilityScore: number;
   onlineStatus: boolean;
+}
+
+/**
+ * Calculate reliability score based on cancellation rate
+ * Higher score = more reliable (less cancellations)
+ * 
+ * Formula:
+ * - If no trips cancelled: 100
+ * - If cancelled trips with passengers: penalty based on cancellation rate
+ * - Cancellation rate = (cancelledTripsWithPassengers / totalTrips) * 100
+ */
+export function calculateReliabilityScore(
+  totalTrips: number,
+  cancelledTripsWithPassengers: number
+): number {
+  if (totalTrips === 0) {
+    return 100; // New driver, assume reliable
+  }
+
+  const cancellationRate = (cancelledTripsWithPassengers / totalTrips) * 100;
+  
+  // Penalty: subtract points based on cancellation rate
+  // 0% cancellation = 100 points
+  // 10% cancellation = 90 points
+  // 20% cancellation = 80 points
+  // etc.
+  const reliabilityScore = Math.max(0, 100 - cancellationRate);
+  
+  return Math.round(reliabilityScore * 100) / 100;
 }
 
 /**
@@ -14,47 +46,54 @@ export interface DriverRankingMetrics {
  * Higher score = better ranking
  * 
  * Factors:
- * - Response time (faster = higher score)
- * - Response rate (higher = higher score)
- * - Online status (online = bonus)
- * - Total trips (more = slight bonus)
+ * - Response time (faster = higher score) - 0-30 points
+ * - Response rate (higher = higher score) - 0-25 points
+ * - Reliability score (less cancellations = higher score) - 0-25 points
+ * - Online status (online = bonus) - 0-10 points
+ * - Total trips (more = slight bonus) - 0-10 points
  */
 export function calculateRankingScore(
   avgResponseTime: number | null,
   responseRate: number,
   totalTrips: number,
+  cancelledTripsWithPassengers: number,
   onlineStatus: boolean
 ): number {
   let score = 0;
 
-  // Response time component (0-40 points)
+  // Response time component (0-30 points)
   // Faster response = higher score
   if (avgResponseTime !== null) {
     if (avgResponseTime <= 60) {
       // Responded within 1 minute
-      score += 40;
+      score += 30;
     } else if (avgResponseTime <= 120) {
       // Responded within 2 minutes
-      score += 30;
+      score += 25;
     } else if (avgResponseTime <= 300) {
       // Responded within 5 minutes
-      score += 20;
+      score += 15;
     } else {
       // Responded after 5 minutes
-      score += 10;
+      score += 5;
     }
   } else {
     // No response time data (new driver)
-    score += 20;
+    score += 15;
   }
 
-  // Response rate component (0-30 points)
+  // Response rate component (0-25 points)
   // Higher response rate = higher score
-  score += (responseRate / 100) * 30;
+  score += (responseRate / 100) * 25;
 
-  // Online status bonus (0-20 points)
+  // Reliability component (0-25 points)
+  // Higher reliability = higher score
+  const reliabilityScore = calculateReliabilityScore(totalTrips, cancelledTripsWithPassengers);
+  score += (reliabilityScore / 100) * 25;
+
+  // Online status bonus (0-10 points)
   if (onlineStatus) {
-    score += 20;
+    score += 10;
   }
 
   // Total trips component (0-10 points)
@@ -117,10 +156,15 @@ export async function updateDriverMetrics(
     avgResponseTime = metrics?.avgResponseTime || null;
   }
 
+  const totalTrips = metrics?.totalTrips || 0;
+  const cancelledTripsWithPassengers = metrics?.cancelledTripsWithPassengers || 0;
+  const reliabilityScore = calculateReliabilityScore(totalTrips, cancelledTripsWithPassengers);
+  
   const rankingScore = calculateRankingScore(
     avgResponseTime,
     responseRate,
-    metrics?.totalTrips || 0,
+    totalTrips,
+    cancelledTripsWithPassengers,
     driver.onlineStatus
   );
 
@@ -133,6 +177,9 @@ export async function updateDriverMetrics(
       totalReservations,
       confirmedReservations: newConfirmedReservations,
       totalTrips: 0,
+      cancelledTrips: 0,
+      cancelledTripsWithPassengers: 0,
+      reliabilityScore,
       rankingScore,
     },
     update: {
@@ -140,6 +187,7 @@ export async function updateDriverMetrics(
       responseRate,
       totalReservations,
       confirmedReservations: newConfirmedReservations,
+      reliabilityScore,
       rankingScore,
       lastUpdated: new Date(),
     },
@@ -167,6 +215,73 @@ export async function getDriverRanking(driverId: string): Promise<DriverRankingM
     avgResponseTime: metrics?.avgResponseTime || null,
     responseRate: metrics?.responseRate || 0,
     totalTrips: metrics?.totalTrips || 0,
+    cancelledTrips: metrics?.cancelledTrips || 0,
+    cancelledTripsWithPassengers: metrics?.cancelledTripsWithPassengers || 0,
+    reliabilityScore: metrics?.reliabilityScore || 100,
     onlineStatus: driver.onlineStatus,
   };
+}
+
+/**
+ * Update driver metrics when a trip is cancelled
+ * Penalty is applied only if trip had passengers
+ */
+export async function updateDriverMetricsOnTripCancellation(
+  driverId: string,
+  hadPassengers: boolean,
+  passengerCount: number
+): Promise<void> {
+  const metrics = await prisma.driverMetrics.findUnique({
+    where: { driverId },
+  });
+
+  const driver = await prisma.user.findUnique({
+    where: { id: driverId },
+  });
+
+  if (!driver) {
+    throw new Error('Driver not found');
+  }
+
+  const totalTrips = (metrics?.totalTrips || 0) + 1;
+  const cancelledTrips = (metrics?.cancelledTrips || 0) + 1;
+  const cancelledTripsWithPassengers = hadPassengers
+    ? (metrics?.cancelledTripsWithPassengers || 0) + 1
+    : (metrics?.cancelledTripsWithPassengers || 0);
+
+  // Calculate reliability score
+  const reliabilityScore = calculateReliabilityScore(totalTrips, cancelledTripsWithPassengers);
+
+  // Recalculate ranking score with updated metrics
+  const rankingScore = calculateRankingScore(
+    metrics?.avgResponseTime || null,
+    metrics?.responseRate || 0,
+    totalTrips,
+    cancelledTripsWithPassengers,
+    driver.onlineStatus
+  );
+
+  await prisma.driverMetrics.upsert({
+    where: { driverId },
+    create: {
+      driverId,
+      avgResponseTime: null,
+      responseRate: 0,
+      totalReservations: 0,
+      confirmedReservations: 0,
+      totalTrips,
+      cancelledTrips,
+      cancelledTripsWithPassengers,
+      reliabilityScore,
+      rankingScore,
+    },
+    update: {
+      totalTrips,
+      cancelledTrips,
+      cancelledTripsWithPassengers,
+      reliabilityScore,
+      rankingScore,
+      lastUpdated: new Date(),
+    },
+  });
 }

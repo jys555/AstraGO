@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, XCircle } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { ReservationPanel } from '@/components/trips/ReservationPanel';
 import { useReservation } from '@/hooks/useReservation';
@@ -48,11 +48,43 @@ export default function TripDetailPage() {
     },
   });
 
+  const cancelTripMutation = useMutation({
+    mutationFn: () => apiClient.cancelTrip(tripId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
+      queryClient.invalidateQueries({ queryKey: ['my-trips', 'driver'] });
+      queryClient.invalidateQueries({ queryKey: ['chats'] });
+      queryClient.invalidateQueries({ queryKey: ['trips'] });
+      alert('Safar bekor qilindi. Agar safarda yo\'lovchilar bo\'lsa, ishonchsizlik balli qo\'shildi.');
+      router.push('/my-trips');
+    },
+    onError: (error: any) => {
+      console.error('Safarni bekor qilishda xatolik:', error);
+      alert('Safarni bekor qilishda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
+    },
+  });
+
   const handleCompleteTrip = async () => {
     if (!confirm('Safarni yakunlashni xohlaysizmi? Barcha faol chatlar arxivga o\'tkaziladi.')) {
       return;
     }
     completeTripMutation.mutate();
+  };
+
+  const handleCancelTrip = async () => {
+    const trip = data?.trip;
+    const hasPassengers = trip?.reservations && trip.reservations.some(
+      (r: any) => (r.status === 'PENDING' || r.status === 'CONFIRMED')
+    );
+    
+    const message = hasPassengers
+      ? 'Safarni bekor qilishni xohlaysizmi? Safarda yo\'lovchilar bor, shuning uchun ishonchsizlik balli qo\'shiladi. Barcha rezervatsiyalar bekor qilinadi.'
+      : 'Safarni bekor qilishni xohlaysizmi? Safarda yo\'lovchilar yo\'q, shuning uchun jarima yo\'q.';
+    
+    if (!confirm(message)) {
+      return;
+    }
+    cancelTripMutation.mutate();
   };
 
   const {
@@ -344,16 +376,28 @@ export default function TripDetailPage() {
             {isOwnTrip && (
               <div className="border-t pt-4 space-y-3">
                 {trip.status === 'ACTIVE' && (
-                  <Button
-                    variant="primary"
-                    className="w-full bg-secondary-500 hover:bg-secondary-600 text-white font-semibold py-3 rounded-xl"
-                    onClick={handleCompleteTrip}
-                    disabled={completeTripMutation.isPending}
-                    isLoading={completeTripMutation.isPending}
-                  >
-                    <CheckCircle2 className="h-4 w-4 mr-2" />
-                    Safarni Yakunlash
-                  </Button>
+                  <>
+                    <Button
+                      variant="primary"
+                      className="w-full bg-secondary-500 hover:bg-secondary-600 text-white font-semibold py-3 rounded-xl"
+                      onClick={handleCompleteTrip}
+                      disabled={completeTripMutation.isPending || cancelTripMutation.isPending}
+                      isLoading={completeTripMutation.isPending}
+                    >
+                      <CheckCircle2 className="h-4 w-4 mr-2" />
+                      Safarni Yakunlash
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full border-red-300 text-red-600 hover:bg-red-50 font-semibold py-3 rounded-xl"
+                      onClick={handleCancelTrip}
+                      disabled={completeTripMutation.isPending || cancelTripMutation.isPending}
+                      isLoading={cancelTripMutation.isPending}
+                    >
+                      <XCircle className="h-4 w-4 mr-2" />
+                      Safarni Bekor Qilish
+                    </Button>
+                  </>
                 )}
                 {trip.status !== 'ACTIVE' && (
                   <div className="w-full bg-gray-100 text-gray-500 font-semibold py-3 rounded-xl text-center text-sm">

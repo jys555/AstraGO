@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import prisma from '../config/database';
 import { NotFoundError, ValidationError } from '../utils/errors';
 import { updateSeatAvailability } from '../services/seatAvailabilityService';
-import { getDriverRanking } from '../services/driverRankingService';
+import { getDriverRanking, updateDriverMetricsOnTripCancellation, calculateReliabilityScore, calculateRankingScore } from '../services/driverRankingService';
 import { CreateTripInput, UpdateTripInput, TripFilters, TripSortOptions } from '../types';
 
 export async function getTrips(
@@ -201,6 +201,46 @@ export async function createTrip(
         tripId: trip.id,
         reservedSeats: 0,
         availableSeats: trip.totalSeats,
+      },
+    });
+
+    // Update driver metrics: increment totalTrips
+    const metrics = await prisma.driverMetrics.findUnique({
+      where: { driverId: user.id },
+    });
+
+    const totalTrips = (metrics?.totalTrips || 0) + 1;
+    const cancelledTripsWithPassengers = metrics?.cancelledTripsWithPassengers || 0;
+    
+    // Recalculate reliability and ranking scores
+    const reliabilityScore = calculateReliabilityScore(totalTrips, cancelledTripsWithPassengers);
+    const rankingScore = calculateRankingScore(
+      metrics?.avgResponseTime || null,
+      metrics?.responseRate || 0,
+      totalTrips,
+      cancelledTripsWithPassengers,
+      user.onlineStatus
+    );
+
+    await prisma.driverMetrics.upsert({
+      where: { driverId: user.id },
+      create: {
+        driverId: user.id,
+        avgResponseTime: null,
+        responseRate: 0,
+        totalReservations: 0,
+        confirmedReservations: 0,
+        totalTrips,
+        cancelledTrips: 0,
+        cancelledTripsWithPassengers: 0,
+        reliabilityScore,
+        rankingScore,
+      },
+      update: {
+        totalTrips,
+        reliabilityScore,
+        rankingScore,
+        lastUpdated: new Date(),
       },
     });
 
@@ -483,6 +523,121 @@ export async function completeTrip(
         archivedAt: new Date(),
       },
     });
+
+    res.json({ trip: updated });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// Cancel a trip (driver only)
+export async function cancelTrip(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const user = (req as any).user;
+    const { id } = req.params;
+
+    const trip = await prisma.trip.findUnique({
+      where: { id },
+      include: {
+        reservations: {
+          where: {
+            status: { in: ['PENDING', 'CONFIRMED'] },
+          },
+          include: {
+            passenger: true,
+          },
+        },
+      },
+    });
+
+    if (!trip) {
+      throw new NotFoundError('Trip');
+    }
+
+    if (trip.driverId !== user.id) {
+      throw new ValidationError('Not authorized to cancel this trip');
+    }
+
+    if (trip.status !== 'ACTIVE') {
+      throw new ValidationError('Only active trips can be cancelled');
+    }
+
+    // Count passengers with active reservations
+    const activeReservations = trip.reservations.filter(
+      (r) => r.status === 'PENDING' || r.status === 'CONFIRMED'
+    );
+    const passengerCount = activeReservations.reduce(
+      (sum, r) => sum + r.seatCount,
+      0
+    );
+    const hadPassengers = passengerCount > 0;
+
+    // Cancel all active reservations
+    for (const reservation of activeReservations) {
+      // Release seats
+      await updateSeatAvailability(trip.id, -reservation.seatCount);
+
+      // Update reservation status
+      await prisma.reservation.update({
+        where: { id: reservation.id },
+        data: {
+          status: 'CANCELLED',
+        },
+      });
+
+      // Archive chat
+      await prisma.chat.updateMany({
+        where: {
+          reservationId: reservation.id,
+        },
+        data: {
+          status: 'ARCHIVED',
+          archivedAt: new Date(),
+        },
+      });
+    }
+
+    // Update trip status to CANCELLED
+    const updated = await prisma.trip.update({
+      where: { id },
+      data: {
+        status: 'CANCELLED',
+      },
+      include: {
+        driver: {
+          include: {
+            driverMetrics: true,
+          },
+        },
+        seatAvailability: true,
+        reservations: {
+          include: {
+            passenger: true,
+            chat: true,
+          },
+        },
+      },
+    });
+
+    // Update driver metrics with penalty (only if had passengers)
+    if (hadPassengers) {
+      await updateDriverMetricsOnTripCancellation(
+        user.id,
+        true,
+        passengerCount
+      );
+    } else {
+      // No penalty if no passengers, but still track cancellation
+      await updateDriverMetricsOnTripCancellation(
+        user.id,
+        false,
+        0
+      );
+    }
 
     res.json({ trip: updated });
   } catch (error) {

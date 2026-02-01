@@ -183,20 +183,24 @@ model ChatMessage {
 }
 
 model DriverMetrics {
-  id              String   @id @default(uuid())
-  driverId        String   @unique
-  avgResponseTime Float?   // in seconds
-  responseRate    Float    @default(0) // percentage (0-100)
-  totalTrips      Int      @default(0)
-  totalReservations Int    @default(0)
-  confirmedReservations Int @default(0)
-  rankingScore    Float    @default(0) // calculated score for sorting
-  lastUpdated     DateTime @updatedAt
+  id                        String   @id @default(uuid())
+  driverId                  String   @unique
+  avgResponseTime           Float?   // in seconds
+  responseRate              Float    @default(0) // percentage (0-100)
+  totalTrips                Int      @default(0)
+  totalReservations         Int      @default(0)
+  confirmedReservations     Int      @default(0)
+  cancelledTrips            Int      @default(0) // total cancelled trips
+  cancelledTripsWithPassengers Int  @default(0) // cancelled trips that had passengers
+  reliabilityScore          Float    @default(100) // 0-100, based on cancellation rate
+  rankingScore              Float    @default(0) // calculated score for sorting
+  lastUpdated               DateTime @updatedAt
 
   // Relations
-  driver          User     @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  driver                    User     @relation(fields: [driverId], references: [id], onDelete: Cascade)
 
   @@index([driverId])
   @@index([rankingScore])
   @@index([avgResponseTime])
+  @@index([reliabilityScore])
 }

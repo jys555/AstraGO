@@ -526,7 +526,7 @@ export default function MyTripsPage() {
                                 <span className="font-medium text-gray-900">{reservation.seatCount}</span> o'rin rezervatsiya qilingan
                               </div>
 
-                              {reservation.chat && (
+                              {reservation.chat && reservation.chat.id && (
                                 <Button
                                   variant="outline"
                                   onClick={() => router.push(`/chat/${reservation.chat.id}`)}

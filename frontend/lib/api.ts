@@ -131,6 +131,12 @@ class ApiClient {
     });
   }
 
+  async cancelTrip(id: string): Promise<{ trip: Trip }> {
+    return this.request<{ trip: Trip }>(`/api/trips/${id}/cancel`, {
+      method: 'PATCH',
+    });
+  }
+
   // Reservations
   async createReservation(tripId: string, seatCount: number = 1): Promise<{ reservation: Reservation }> {
     return this.request<{ reservation: Reservation }>('/api/reservations', {
