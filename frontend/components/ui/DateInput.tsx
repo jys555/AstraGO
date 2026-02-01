@@ -39,46 +39,10 @@ export function DateInput({ value, onChange, min, className = '', required = fal
     onChange(e.target.value);
   };
 
-  const handleWrapperClick = (e: React.MouseEvent) => {
-    // Prevent default and stop propagation
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Focus and click the native input to trigger picker
-    if (inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.click();
-      
-      // Try to open picker (may fail in iframe, but click should work)
-      try {
-        if (inputRef.current.showPicker) {
-          inputRef.current.showPicker();
-        }
-      } catch (error) {
-        // showPicker might fail in iframe, but click should work
-      }
-    }
-  };
 
   return (
-    <div ref={wrapperRef} className="relative" onClick={handleWrapperClick}>
-      {/* Display formatted date - always visible when value exists */}
-      {value && (
-        <div 
-          className="absolute inset-0 flex items-center px-3 pointer-events-none text-gray-700 z-10"
-        >
-          {displayValue}
-        </div>
-      )}
-      {/* Placeholder when no value */}
-      {!value && (
-        <div 
-          className="absolute inset-0 flex items-center px-3 pointer-events-none text-gray-400 z-10"
-        >
-          {placeholder || 'DD/MM/YYYY'}
-        </div>
-      )}
-      {/* Native date input - completely hidden but clickable */}
+    <div ref={wrapperRef} className="relative">
+      {/* Native date input - visible box with transparent text */}
       <input
         ref={inputRef}
         type="date"
@@ -88,21 +52,32 @@ export function DateInput({ value, onChange, min, className = '', required = fal
         className={className}
         required={required}
         style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          opacity: 0,
+          color: 'transparent',
           cursor: 'pointer',
-          zIndex: 1,
-          pointerEvents: 'auto',
-        }}
-        onClick={(e) => {
-          // Allow native input to handle click
-          e.stopPropagation();
         }}
       />
+      {/* Display formatted date - overlay on top */}
+      {value && (
+        <div 
+          className="absolute inset-0 flex items-center px-3 pointer-events-none text-gray-700"
+          style={{
+            zIndex: 10,
+          }}
+        >
+          {displayValue}
+        </div>
+      )}
+      {/* Placeholder when no value */}
+      {!value && (
+        <div 
+          className="absolute inset-0 flex items-center px-3 pointer-events-none text-gray-400"
+          style={{
+            zIndex: 10,
+          }}
+        >
+          {placeholder || 'DD/MM/YYYY'}
+        </div>
+      )}
     </div>
   );
 }
