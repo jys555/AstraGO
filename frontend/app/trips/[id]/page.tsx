@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, CheckCircle2, XCircle } from 'lucide-react';
 import { apiClient } from '@/lib/api';
+import { formatDate, formatTime } from '@/lib/dateUtils';
 import { ReservationPanel } from '@/components/trips/ReservationPanel';
 import { useReservation } from '@/hooks/useReservation';
 import { Card } from '@/components/ui/card';
@@ -202,13 +203,6 @@ export default function TripDetailPage() {
   const trip = data.trip;
   const currentUser = userData?.user;
   const isOwnTrip = currentUser?.id && trip.driverId && currentUser.id === trip.driverId;
-  
-  const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
 
   const isReservationForThisTrip = reservation?.tripId === tripId;
   const isConfirmed = reservation?.status === 'CONFIRMED';
@@ -327,6 +321,9 @@ export default function TripDetailPage() {
                   <p className="font-semibold">
                     {formatTime(trip.departureWindowStart)} -{' '}
                     {formatTime(trip.departureWindowEnd)}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {formatDate(trip.departureWindowStart)}
                   </p>
                 </div>
                 <div>

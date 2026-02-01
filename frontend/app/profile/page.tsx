@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation';
 import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { EditProfileModal } from '@/components/auth/EditProfileModal';
+import { formatDate } from '@/lib/dateUtils';
 
 // Disable SSR for pages that use React Query
 export const dynamic = 'force-dynamic';
@@ -37,8 +38,9 @@ export default function ProfilePage() {
     DRIVER: 'Haydovchi',
   };
 
+  // Use dateUtils for consistent formatting
   const memberSince = user?.createdAt 
-    ? new Date(user.createdAt).toLocaleDateString('uz-UZ', { month: 'long', year: 'numeric' })
+    ? formatDate(user.createdAt)
     : '';
 
   return (

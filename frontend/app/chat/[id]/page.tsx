@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Send, MapPin, Clock, Star, CheckCircle2, X } from 'lucide-react';
 import { apiClient } from '@/lib/api';
+import { formatDate, formatTime } from '@/lib/dateUtils';
 import { wsClient } from '@/lib/websocket';
 import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
 import { AppHeader } from '@/components/layout/AppHeader';
@@ -100,22 +101,18 @@ export default function ChatPage() {
     sendMessageMutation.mutate(message.trim());
   };
 
-  const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString('uz-UZ', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const formatDate = (dateString: string) => {
+  // Use dateUtils for consistent formatting
+  const formatTimeLocal = (dateString: string) => formatTime(dateString);
+  
+  const formatDateLocal = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
     const isToday = date.toDateString() === now.toDateString();
     
     if (isToday) {
-      return formatTime(dateString);
+      return formatTimeLocal(dateString);
     } else {
-      return date.toLocaleDateString('uz-UZ', { month: 'short', day: 'numeric' }) + ' ' + formatTime(dateString);
+      return formatDate(dateString) + ' ' + formatTimeLocal(dateString);
     }
   };
 
@@ -313,7 +310,7 @@ export default function ChatPage() {
                           ${isOwn ? 'text-primary-100' : 'text-gray-500'}
                         `}
                       >
-                        {formatTime(msg.createdAt)}
+                        {formatTimeLocal(msg.createdAt)}
                       </p>
                     </div>
                   </div>

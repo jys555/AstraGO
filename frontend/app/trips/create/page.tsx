@@ -10,6 +10,7 @@ import { AppHeader } from '@/components/layout/AppHeader';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { STANDARD_ROUTES, VEHICLE_TYPES } from '@/lib/constants';
+import { formatTime, formatDate } from '@/lib/dateUtils';
 
 // Disable SSR for pages that use React Query
 export const dynamic = 'force-dynamic';
@@ -233,7 +234,7 @@ export default function CreateTripPage() {
                         const end = new Date(start);
                         end.setHours(end.getHours() + Math.floor(durationHours));
                         end.setMinutes(end.getMinutes() + Math.round((durationHours % 1) * 60));
-                        return end.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit', hour12: false });
+                        return formatTime(end);
                       })()
                     }
                     {(() => {
@@ -242,7 +243,7 @@ export default function CreateTripPage() {
                       end.setHours(end.getHours() + Math.floor(durationHours));
                       end.setMinutes(end.getMinutes() + Math.round((durationHours % 1) * 60));
                       const isNextDay = end.toDateString() !== start.toDateString();
-                      return isNextDay ? ` (ertangi kun)` : '';
+                      return isNextDay ? ` (${formatDate(end)})` : '';
                     })()}
                   </p>
                 )}

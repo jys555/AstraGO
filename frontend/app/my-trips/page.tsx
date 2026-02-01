@@ -368,11 +368,11 @@ export default function MyTripsPage() {
                               {/* Date & Time */}
                               <div className="flex items-center gap-2 text-sm text-gray-600">
                                 <Calendar className="h-4 w-4 text-gray-400" />
-                                <span>
-                                  {formatDate(reservation.trip.departureWindowStart)} •{' '}
-                                  {formatTime(reservation.trip.departureWindowStart)} -{' '}
-                                  {formatTime(reservation.trip.departureWindowEnd)}
-                                </span>
+                          <span>
+                            {formatDateLocal(reservation.trip.departureWindowStart)} •{' '}
+                            {formatTimeLocal(reservation.trip.departureWindowStart)} -{' '}
+                            {formatTimeLocal(reservation.trip.departureWindowEnd)}
+                          </span>
                               </div>
 
                               {/* Booking Info */}

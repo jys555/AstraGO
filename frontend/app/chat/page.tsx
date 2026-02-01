@@ -26,7 +26,8 @@ export default function ChatListPage() {
     refetchInterval: 10000, // Refetch every 10 seconds
   });
 
-  const formatDate = (dateString: string) => {
+  // Use dateUtils for consistent formatting
+  const formatDateLocal = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -39,7 +40,7 @@ export default function ChatListPage() {
     } else if (days < 7) {
       return `${days} kun oldin`;
     } else {
-      return date.toLocaleDateString('uz-UZ', { month: 'short', day: 'numeric' });
+      return formatDate(dateString);
     }
   };
 
@@ -136,7 +137,7 @@ export default function ChatListPage() {
                                 {otherUser?.firstName} {otherUser?.lastName}
                               </h3>
                               <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
-                                {formatDate(chat.messages?.[0]?.createdAt || chat.createdAt)}
+                                {formatDateLocal(chat.messages?.[0]?.createdAt || chat.createdAt)}
                               </span>
                             </div>
                             {chat.trip && (
@@ -196,7 +197,7 @@ export default function ChatListPage() {
                                 {otherUser?.firstName} {otherUser?.lastName}
                               </h3>
                               <span className="text-xs text-gray-400 flex-shrink-0 ml-2">
-                                {formatDate(chat.messages?.[0]?.createdAt || chat.createdAt)}
+                                {formatDateLocal(chat.messages?.[0]?.createdAt || chat.createdAt)}
                               </span>
                             </div>
                             {chat.trip && (
