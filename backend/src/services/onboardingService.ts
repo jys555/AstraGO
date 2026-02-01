@@ -131,6 +131,7 @@ export async function shouldShowNotificationNudge(telegramUserId: string): Promi
   const user = await prisma.user.findUnique({
     where: { telegramId: telegramUserId },
     select: {
+      id: true,
       notifOptIn: true,
       notifCooldownUntil: true,
     },
