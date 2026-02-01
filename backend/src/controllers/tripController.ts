@@ -181,6 +181,9 @@ export async function createTrip(
       throw new ValidationError('Departure window cannot be in the past');
     }
 
+    // Calculate duration if not provided
+    const durationHours = data.durationHours || ((end.getTime() - start.getTime()) / (1000 * 60 * 60));
+
     const trip = await prisma.trip.create({
       data: {
         driverId: user.id,
@@ -188,6 +191,7 @@ export async function createTrip(
         routeTo: data.routeTo,
         departureWindowStart: start,
         departureWindowEnd: end,
+        durationHours,
         vehicleType: data.vehicleType,
         totalSeats: data.totalSeats,
         availableSeats: data.totalSeats,

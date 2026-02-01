@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
@@ -31,7 +31,7 @@ export default function CreateTripPage() {
   const [routeTo, setRouteTo] = useState('');
   const [date, setDate] = useState('');
   const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
+  const [durationHours, setDurationHours] = useState(6); // Default 6 hours
   const [vehicleType, setVehicleType] = useState(user?.carModel || VEHICLE_TYPES[0]);
   const [totalSeats, setTotalSeats] = useState(3);
   const [pickupType, setPickupType] = useState<'STATION_ONLY' | 'HOME_PICKUP'>('STATION_ONLY');
@@ -40,6 +40,13 @@ export default function CreateTripPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showRegistration, setShowRegistration] = useState(false);
 
+  // Auto-fill vehicle type from user's car model when user data loads
+  useEffect(() => {
+    if (user?.carModel) {
+      setVehicleType(user.carModel);
+    }
+  }, [user?.carModel]);
+
   const validate = () => {
     const newErrors: Record<string, string> = {};
 
@@ -47,7 +54,7 @@ export default function CreateTripPage() {
     if (!routeTo.trim()) newErrors.routeTo = 'Borish manzili majburiy';
     if (!date) newErrors.date = 'Sana majburiy';
     if (!startTime) newErrors.startTime = 'Boshlanish vaqti majburiy';
-    if (!endTime) newErrors.endTime = 'Tugash vaqti majburiy';
+    if (!durationHours || durationHours < 0.5) newErrors.durationHours = 'Davomiylik kamida 0.5 soat bo\'lishi kerak';
     if (!vehicleType.trim()) newErrors.vehicleType = 'Mashina turi majburiy';
     if (!totalSeats || totalSeats < 1) newErrors.totalSeats = 'O\'rinlar soni kamida 1 bo\'lishi kerak';
 
@@ -73,14 +80,18 @@ export default function CreateTripPage() {
     try {
       setIsSubmitting(true);
 
-      const departureWindowStart = new Date(`${date}T${startTime}:00`).toISOString();
-      const departureWindowEnd = new Date(`${date}T${endTime}:00`).toISOString();
+      const departureWindowStart = new Date(`${date}T${startTime}:00`);
+      // Calculate end time from start time + duration
+      const departureWindowEnd = new Date(departureWindowStart);
+      departureWindowEnd.setHours(departureWindowEnd.getHours() + Math.floor(durationHours));
+      departureWindowEnd.setMinutes(departureWindowEnd.getMinutes() + Math.round((durationHours % 1) * 60));
 
       const { trip } = await apiClient.createTrip({
         routeFrom: routeFrom.trim(),
         routeTo: routeTo.trim(),
-        departureWindowStart,
-        departureWindowEnd,
+        departureWindowStart: departureWindowStart.toISOString(),
+        departureWindowEnd: departureWindowEnd.toISOString(),
+        durationHours,
         vehicleType: vehicleType.trim(),
         totalSeats,
         pickupType,
@@ -178,7 +189,7 @@ export default function CreateTripPage() {
                 {errors.routeTo && <p className="text-xs text-red-500 mt-1">{errors.routeTo}</p>}
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Sana</label>
                   <input
@@ -199,31 +210,55 @@ export default function CreateTripPage() {
                   />
                   {errors.startTime && <p className="text-xs text-red-500 mt-1">{errors.startTime}</p>}
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tugash vaqti</label>
-                  <input
-                    type="time"
-                    value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {errors.endTime && <p className="text-xs text-red-500 mt-1">{errors.endTime}</p>}
-                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Taxminiy davomiyligi (soat)</label>
+                <input
+                  type="number"
+                  min={0.5}
+                  max={24}
+                  step={0.5}
+                  value={durationHours}
+                  onChange={(e) => setDurationHours(Number(e.target.value))}
+                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Masalan: 6"
+                />
+                {errors.durationHours && <p className="text-xs text-red-500 mt-1">{errors.durationHours}</p>}
+                {date && startTime && durationHours > 0 && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Taxminiy tugash vaqti: {
+                      (() => {
+                        const start = new Date(`${date}T${startTime}:00`);
+                        const end = new Date(start);
+                        end.setHours(end.getHours() + Math.floor(durationHours));
+                        end.setMinutes(end.getMinutes() + Math.round((durationHours % 1) * 60));
+                        return end.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit', hour12: false });
+                      })()
+                    }
+                    {(() => {
+                      const start = new Date(`${date}T${startTime}:00`);
+                      const end = new Date(start);
+                      end.setHours(end.getHours() + Math.floor(durationHours));
+                      end.setMinutes(end.getMinutes() + Math.round((durationHours % 1) * 60));
+                      const isNextDay = end.toDateString() !== start.toDateString();
+                      return isNextDay ? ` (ertangi kun)` : '';
+                    })()}
+                  </p>
+                )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Mashina turi / modeli</label>
-                <select
+                <input
+                  type="text"
                   value={vehicleType}
-                  onChange={(e) => setVehicleType(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
-                >
-                  {VEHICLE_TYPES.map((type) => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))}
-                </select>
+                  readOnly
+                  disabled
+                  className="w-full border rounded-lg px-3 py-2 text-sm bg-gray-100 text-gray-600 cursor-not-allowed"
+                  title="Mashina modeli profilingizdan olinadi"
+                />
+                <p className="text-xs text-gray-500 mt-1">Mashina modeli profilingizdan avtomatik olinadi</p>
                 {errors.vehicleType && <p className="text-xs text-red-500 mt-1">{errors.vehicleType}</p>}
               </div>
 

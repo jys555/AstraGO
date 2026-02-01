@@ -13,6 +13,7 @@ export interface CreateTripInput {
   routeTo: string;
   departureWindowStart: string;
   departureWindowEnd: string;
+  durationHours?: number; // Optional: if provided, will be stored; if not, calculated from start/end
   vehicleType: string;
   totalSeats: number;
   pickupType: PickupType;
