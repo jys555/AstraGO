@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Trip } from '@/types';
 import { motion } from 'framer-motion';
 import { apiClient } from '@/lib/api';
+import { formatDate, formatTime } from '@/lib/dateUtils';
 
 interface TripCardProps {
   trip: Trip;
