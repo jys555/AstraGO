@@ -41,18 +41,23 @@ export function TimeInput({ value, onChange, className = '', required = false, p
     onChange(e.target.value);
   };
 
-  const handleWrapperClick = () => {
-    // Focus the native input to trigger picker
+  const handleWrapperClick = (e: React.MouseEvent) => {
+    // Prevent default and stop propagation
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Focus and click the native input to trigger picker
     if (inputRef.current) {
       inputRef.current.focus();
-      // Try to open picker
+      inputRef.current.click();
+      
+      // Try to open picker (may fail in iframe, but click should work)
       try {
         if (inputRef.current.showPicker) {
           inputRef.current.showPicker();
         }
       } catch (error) {
-        // showPicker might fail in iframe, but focus should work
-        console.log('showPicker not available');
+        // showPicker might fail in iframe, but click should work
       }
     }
   };
@@ -92,6 +97,11 @@ export function TimeInput({ value, onChange, className = '', required = false, p
           opacity: 0,
           cursor: 'pointer',
           zIndex: 1,
+          pointerEvents: 'auto',
+        }}
+        onClick={(e) => {
+          // Allow native input to handle click
+          e.stopPropagation();
         }}
       />
     </div>
