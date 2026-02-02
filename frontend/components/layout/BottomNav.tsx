@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { RegistrationModal } from '@/components/auth/RegistrationModal';
 
 export function BottomNav() {

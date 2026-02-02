@@ -95,61 +95,14 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messagesData?.messages]);
 
-  // Prevent navbar from moving with keyboard
+  // Prevent navbar from moving with keyboard - simple CSS solution
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // Keep navbar fixed at bottom
-      const keepNavbarFixed = () => {
-        const navbar = document.querySelector('nav[class*="fixed bottom-0"]');
-        if (navbar) {
-          const navElement = navbar as HTMLElement;
-          navElement.style.position = 'fixed';
-          navElement.style.bottom = '0';
-          navElement.style.left = '0';
-          navElement.style.right = '0';
-          navElement.style.transform = 'translateZ(0)';
-          navElement.style.willChange = 'transform';
-        }
-      };
-      
-      // Run immediately and on viewport changes
-      keepNavbarFixed();
-      
-      // Use Telegram WebApp API if available
-      if ((window as any).Telegram?.WebApp) {
-        const tg = (window as any).Telegram.WebApp;
-        tg.expand();
-        tg.enableClosingConfirmation();
-        
-        // Listen for viewport changes
-        const handleViewportChange = () => {
-          keepNavbarFixed();
-        };
-        
-        tg.onEvent('viewportChanged', handleViewportChange);
-        window.addEventListener('resize', handleViewportChange);
-        window.addEventListener('orientationchange', handleViewportChange);
-        
-        // Also check periodically (fallback)
-        const interval = setInterval(keepNavbarFixed, 100);
-        
-        return () => {
-          tg.offEvent('viewportChanged', handleViewportChange);
-          window.removeEventListener('resize', handleViewportChange);
-          window.removeEventListener('orientationchange', handleViewportChange);
-          clearInterval(interval);
-        };
-      } else {
-        // Fallback for non-Telegram environments
-        window.addEventListener('resize', keepNavbarFixed);
-        window.addEventListener('orientationchange', keepNavbarFixed);
-        const interval = setInterval(keepNavbarFixed, 100);
-        
-        return () => {
-          window.removeEventListener('resize', keepNavbarFixed);
-          window.removeEventListener('orientationchange', keepNavbarFixed);
-          clearInterval(interval);
-        };
+      // Set navbar to always stay fixed at bottom using CSS
+      const navbar = document.querySelector('nav[class*="fixed bottom-0"]');
+      if (navbar) {
+        const navElement = navbar as HTMLElement;
+        navElement.style.cssText = 'position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; z-index: 40 !important;';
       }
     }
   }, []);
