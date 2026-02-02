@@ -297,17 +297,17 @@ export default function ChatPage() {
 
         {/* Reservation Indicator */}
         {isReservationActive && timeRemaining !== null && (
-          <div className="bg-primary-50 border-b border-primary-100 px-4 py-3">
+          <div className="bg-primary-50 border-b border-primary-100 px-4 py-2 flex-shrink-0">
             <div className="max-w-4xl mx-auto">
               <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <Clock className="h-5 w-5 text-primary-600 flex-shrink-0" />
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-primary-600 flex-shrink-0" />
                   <div>
                     <p className="text-sm font-semibold text-primary-900">Vaqtinchalik rezervatsiya faol</p>
                     <p className="text-xs text-primary-700">Kelishuvga erishish uchun vaqt qoldi</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-xl border border-primary-200">
+                <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-primary-200">
                   <span className="text-lg font-bold text-primary-600">
                     {Math.floor(timeRemaining / 60000)}:{(Math.floor((timeRemaining % 60000) / 1000)).toString().padStart(2, '0')}
                   </span>
@@ -327,15 +327,6 @@ export default function ChatPage() {
           </div>
         )}
 
-        {!effectiveDriverResponded && isReservationActive && !driverHasMessaged && (
-          <div className="bg-yellow-50 border-b border-yellow-200 px-4 py-3">
-            <div className="max-w-4xl mx-auto">
-              <p className="text-sm font-medium text-yellow-800 text-center">
-                Haydovchi hozirda faol emas. Bekor qilish va boshqa safarni tanlash mumkin.
-              </p>
-            </div>
-          </div>
-        )}
 
         {/* Messages */}
         <main className="flex-1 overflow-y-auto bg-gray-50 overscroll-contain min-h-0">
