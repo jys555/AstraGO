@@ -252,8 +252,8 @@ export default function ChatPage() {
     <RegistrationGuard>
       <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
         {/* Header */}
-        <header className="border-b border-gray-100 bg-white">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
+        <header className="border-b border-gray-100 bg-white flex-shrink-0">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-2">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
@@ -263,24 +263,24 @@ export default function ChatPage() {
               >
                 <ArrowLeft className="h-5 w-5 text-gray-600" />
               </Button>
-              <Avatar className="h-12 w-12 border-2 border-gray-100">
-                <AvatarFallback className="bg-primary-100 text-primary-700 font-semibold">
+              <Avatar className="h-10 w-10 border-2 border-gray-100">
+                <AvatarFallback className="bg-primary-100 text-primary-700 font-semibold text-sm">
                   {otherUser?.firstName?.[0] || '?'}{otherUser?.lastName?.[0] || ''}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1">
-                <h1 className="text-lg font-semibold text-gray-900">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-base font-semibold text-gray-900 truncate">
                   {otherUser?.firstName} {otherUser?.lastName}
                 </h1>
-                <div className="flex items-center gap-3 mt-1">
+                <div className="flex items-center gap-2 mt-0.5">
                   {chat?.trip && (
-                    <p className="text-sm text-gray-600">
+                    <p className="text-xs text-gray-600 truncate">
                       {chat.trip.routeFrom} → {chat.trip.routeTo}
                     </p>
                   )}
                   {chat?.driver?.driverMetrics && (
-                    <div className="flex items-center gap-1">
-                      <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                       <span className="text-xs font-medium text-gray-600">
                         {chat.driver.driverMetrics.rankingScore.toFixed(1)}
                       </span>
@@ -288,7 +288,7 @@ export default function ChatPage() {
                   )}
                 </div>
                 {otherUser?.phone && (
-                  <p className="text-sm text-gray-500 mt-1">{otherUser.phone}</p>
+                  <p className="text-xs text-gray-500 mt-0.5 truncate">{otherUser.phone}</p>
                 )}
               </div>
             </div>
@@ -338,8 +338,8 @@ export default function ChatPage() {
         )}
 
         {/* Messages */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 overscroll-contain">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 space-y-3 pb-4">
+        <main className="flex-1 overflow-y-auto bg-gray-50 overscroll-contain min-h-0">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 space-y-3">
             {messages.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-gray-500 text-sm">Hali xabarlar yo'q</p>
@@ -416,7 +416,7 @@ export default function ChatPage() {
 
         {/* Actions - Only show for passengers with active reservation */}
         {!isDriver && isReservationActive && chatReservation && (
-          <div className="border-t border-gray-100 bg-white px-4 py-3 pb-20">
+          <div className="border-t border-gray-100 bg-white px-4 py-2 flex-shrink-0">
             <div className="max-w-4xl mx-auto space-y-2">
               <Button
                 onClick={handleConfirm}
@@ -440,8 +440,8 @@ export default function ChatPage() {
 
         {/* Input Area - Show for both drivers and passengers (unless read-only) */}
         {!isReadOnly && (
-          <footer className="border-t border-gray-100 bg-white pb-20">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3">
+          <footer className="border-t border-gray-100 bg-white flex-shrink-0 safe-area-bottom">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-2">
               <form onSubmit={handleSend} className="flex items-end gap-2">
                 <Button
                   type="button"
