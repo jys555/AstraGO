@@ -149,7 +149,7 @@ export default function HomePage() {
     <RegistrationGuard>
       <div className="min-h-screen bg-gray-50 pb-20">
         {/* Header */}
-        <AppHeader />
+        <AppHeader hideMenu />
         
         {/* Rounded top corners with banner carousel */}
         <div className="bg-white rounded-t-3xl -mt-4 relative z-10">

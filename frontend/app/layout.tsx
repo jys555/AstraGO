@@ -38,10 +38,12 @@ export default function RootLayout({
           />
         )}
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} miniapp-rounded`}>
         <Providers>
-          {children}
-          <BottomNav />
+          <div className="miniapp-content">
+            {children}
+            <BottomNav />
+          </div>
         </Providers>
       </body>
     </html>

@@ -451,3 +451,21 @@ nav.fixed {
     min-height: -webkit-fill-available;
   }
 }
+
+/* Rounded top corners for Telegram Mini App - smooth appearance */
+.miniapp-rounded {
+  border-radius: 24px 24px 0 0 !important;
+  overflow: hidden;
+}
+
+.miniapp-content {
+  border-radius: 24px 24px 0 0;
+  overflow: hidden;
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
+/* Ensure all pages have rounded top corners */
+.miniapp-content > * {
+  border-radius: 24px 24px 0 0;
+}
