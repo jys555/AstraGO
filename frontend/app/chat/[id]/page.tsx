@@ -95,6 +95,16 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messagesData?.messages]);
 
+  // Mark messages as read when chat is opened
+  useEffect(() => {
+    if (chatId && currentUserIdValue && messagesData?.messages) {
+      // Mark all unread messages as read
+      apiClient.markChatAsRead(chatId).then(() => {
+        queryClient.invalidateQueries({ queryKey: ['chats'] });
+      }).catch(console.error);
+    }
+  }, [chatId, currentUserIdValue, messagesData?.messages, queryClient]);
+
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim() || sendMessageMutation.isPending) return;

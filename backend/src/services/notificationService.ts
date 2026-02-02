@@ -2,6 +2,8 @@ import prisma from '../config/database';
 
 export enum NotificationType {
   DRIVER_REPLIED = 'DRIVER_REPLIED',
+  PASSENGER_REPLIED = 'PASSENGER_REPLIED',
+  NEW_RESERVATION = 'NEW_RESERVATION',
   RESERVATION_EXPIRING_2MIN = 'RESERVATION_EXPIRING_2MIN',
   TRIP_CONFIRMED = 'TRIP_CONFIRMED',
   TRIP_CANCELLED = 'TRIP_CANCELLED',
@@ -12,6 +14,8 @@ export enum NotificationType {
 
 const NOTIFICATION_TEMPLATES: Record<NotificationType, string> = {
   DRIVER_REPLIED: "Haydovchi javob berdi. Kelishuvni tasdiqlash uchun AstraGo'ga kiring.",
+  PASSENGER_REPLIED: "Yo'lovchi javob berdi. Chat orqali kelishuvni yakunlang.",
+  NEW_RESERVATION: "Yangi rezervatsiya: Yo'lovchi o'rin so'radi. Chat orqali javob bering.",
   RESERVATION_EXPIRING_2MIN: "Zaxira tugashiga 2 daqiqa qoldi. Agar ketmoqchi bo'lsangiz, tasdiqlang.",
   TRIP_CONFIRMED: "Reys tasdiqlandi ✅ Tafsilotlar: Reyslarim bo'limida.",
   TRIP_CANCELLED: "Reys bekor qilindi. Xohlasangiz boshqa reys tanlang.",

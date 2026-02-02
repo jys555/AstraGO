@@ -5,6 +5,7 @@ import {
   sendMessage,
   getChatByReservation,
   getChatById,
+  markMessagesAsRead,
 } from '../controllers/chatController';
 import { authenticateTelegram } from '../middleware/auth';
 import { z } from 'zod';
@@ -27,5 +28,8 @@ router.get('/:chatId/messages', getChatMessages);
 
 // Send a message
 router.post('/:chatId/messages', sendMessage);
+
+// Mark messages as read
+router.post('/:chatId/read', markMessagesAsRead);
 
 export default router;

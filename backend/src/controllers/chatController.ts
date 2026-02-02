@@ -78,7 +78,27 @@ export async function getMyChats(
       },
     });
 
-    res.json({ chats });
+    // Calculate unread count for each chat
+    const chatsWithUnread = await Promise.all(
+      chats.map(async (chat) => {
+        const unreadCount = await prisma.chatMessage.count({
+          where: {
+            chatId: chat.id,
+            senderId: {
+              not: user.id, // Messages not sent by current user
+            },
+            readAt: null, // Unread messages
+          },
+        });
+
+        return {
+          ...chat,
+          unreadCount,
+        };
+      })
+    );
+
+    res.json({ chats: chatsWithUnread });
   } catch (error) {
     next(error);
   }
@@ -260,21 +280,73 @@ export async function sendMessage(
       });
     }
 
-    // Send notification if driver sent a message (notify passenger)
-    if (user.id === chat.driverId) {
-      try {
+    // Send notification to the other user (not the sender)
+    try {
+      if (user.id === chat.driverId) {
+        // Driver sent message - notify passenger
         await sendNotification(
           chat.passenger.telegramId,
           NotificationType.DRIVER_REPLIED,
           chat.tripId,
           chat.reservationId
         );
-      } catch (error) {
-        console.error('Failed to send driver reply notification:', error);
+      } else if (user.id === chat.passengerId) {
+        // Passenger sent message - notify driver
+        await sendNotification(
+          chat.driver.telegramId,
+          NotificationType.PASSENGER_REPLIED,
+          chat.tripId,
+          chat.reservationId
+        );
       }
+    } catch (error) {
+      console.error('Failed to send chat notification:', error);
     }
 
     res.status(201).json({ message });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// Mark messages as read
+export async function markMessagesAsRead(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const user = (req as any).user;
+    const { chatId } = req.params;
+
+    // Verify user has access to this chat
+    const chat = await prisma.chat.findUnique({
+      where: { id: chatId },
+    });
+
+    if (!chat) {
+      throw new NotFoundError('Chat');
+    }
+
+    if (chat.driverId !== user.id && chat.passengerId !== user.id) {
+      throw new ValidationError('Not authorized to access this chat');
+    }
+
+    // Mark all unread messages as read
+    await prisma.chatMessage.updateMany({
+      where: {
+        chatId,
+        senderId: {
+          not: user.id, // Messages not sent by current user
+        },
+        readAt: null, // Unread messages
+      },
+      data: {
+        readAt: new Date(),
+      },
+    });
+
+    res.json({ success: true });
   } catch (error) {
     next(error);
   }

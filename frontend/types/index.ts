@@ -83,6 +83,7 @@ export interface Chat {
     status: string;
   };
   messages?: ChatMessage[];
+  unreadCount?: number;
 }
 
 export interface ChatMessage {

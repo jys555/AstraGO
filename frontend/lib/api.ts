@@ -100,6 +100,12 @@ class ApiClient {
     });
   }
 
+  async markChatAsRead(chatId: string): Promise<{ success: boolean }> {
+    return this.request<{ success: boolean }>(`/api/chats/${chatId}/read`, {
+      method: 'POST',
+    });
+  }
+
   async getTrip(id: string): Promise<{ trip: Trip }> {
     return this.request<{ trip: Trip }>(`/api/trips/${id}`);
   }

@@ -1,0 +1,3 @@
+-- AlterEnum
+ALTER TYPE "NotificationType" ADD VALUE 'PASSENGER_REPLIED';
+ALTER TYPE "NotificationType" ADD VALUE 'NEW_RESERVATION';

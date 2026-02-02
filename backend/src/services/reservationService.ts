@@ -113,7 +113,7 @@ export async function createReservation(
   try {
     await sendNotification(
       trip.driver.telegramId,
-      NotificationType.DRIVER_REPLIED,
+      NotificationType.NEW_RESERVATION,
       trip.id,
       reservation.id
     );

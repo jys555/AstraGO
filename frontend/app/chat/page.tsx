@@ -146,9 +146,16 @@ export default function ChatListPage() {
                                 {chat.trip.routeFrom} → {chat.trip.routeTo}
                               </p>
                             )}
-                            <p className="text-sm text-gray-600 truncate">
-                              {getLastMessage(chat)}
-                            </p>
+                            <div className="flex items-center justify-between">
+                              <p className="text-sm text-gray-600 truncate flex-1">
+                                {getLastMessage(chat)}
+                              </p>
+                              {chat.unreadCount && chat.unreadCount > 0 && (
+                                <span className="ml-2 flex-shrink-0 bg-primary-500 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
+                                  {chat.unreadCount > 99 ? '99+' : chat.unreadCount}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </Card>
@@ -206,9 +213,16 @@ export default function ChatListPage() {
                                 {chat.trip.routeFrom} → {chat.trip.routeTo}
                               </p>
                             )}
-                            <p className="text-sm text-gray-500 truncate">
-                              {getLastMessage(chat)}
-                            </p>
+                            <div className="flex items-center justify-between">
+                              <p className="text-sm text-gray-500 truncate flex-1">
+                                {getLastMessage(chat)}
+                              </p>
+                              {chat.unreadCount && chat.unreadCount > 0 && (
+                                <span className="ml-2 flex-shrink-0 bg-primary-500 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
+                                  {chat.unreadCount > 99 ? '99+' : chat.unreadCount}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </Card>
