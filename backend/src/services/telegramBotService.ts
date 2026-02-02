@@ -28,11 +28,11 @@ export async function sendTelegramMessage(
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ description: 'Unknown error' }));
+      const error = await response.json().catch(() => ({ description: 'Unknown error' })) as { description?: string };
       throw new Error(`Telegram API error: ${error.description || response.statusText}`);
     }
 
-    const result = await response.json();
+    const result = await response.json() as { ok: boolean; description?: string };
     if (!result.ok) {
       throw new Error(`Telegram API error: ${result.description || 'Unknown error'}`);
     }

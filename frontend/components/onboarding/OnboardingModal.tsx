@@ -185,7 +185,7 @@ export function OnboardingModal({
                     AstraGo'ga tez kirish uchun chatni PIN qiling yoki Favorites'da saqlang. Shunda 1 bosishda ochasiz.
                   </p>
                   <Button
-                    onClick={handleNext}
+                    onClick={() => handleNext()}
                     className="w-full bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 rounded-xl"
                   >
                     Tushundim
