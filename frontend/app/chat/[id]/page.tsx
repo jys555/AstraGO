@@ -263,24 +263,24 @@ export default function ChatPage() {
               >
                 <ArrowLeft className="h-5 w-5 text-gray-600" />
               </Button>
-              <Avatar className="h-10 w-10 border-2 border-gray-100">
-                <AvatarFallback className="bg-primary-100 text-primary-700 font-semibold text-sm">
+              <Avatar className="h-12 w-12 border-2 border-gray-100">
+                <AvatarFallback className="bg-primary-100 text-primary-700 font-semibold">
                   {otherUser?.firstName?.[0] || '?'}{otherUser?.lastName?.[0] || ''}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1 min-w-0">
-                <h1 className="text-base font-semibold text-gray-900 truncate">
+              <div className="flex-1">
+                <h1 className="text-lg font-semibold text-gray-900">
                   {otherUser?.firstName} {otherUser?.lastName}
                 </h1>
-                <div className="flex items-center gap-2 mt-0.5">
+                <div className="flex items-center gap-3 mt-1">
                   {chat?.trip && (
-                    <p className="text-xs text-gray-600 truncate">
+                    <p className="text-sm text-gray-600">
                       {chat.trip.routeFrom} → {chat.trip.routeTo}
                     </p>
                   )}
                   {chat?.driver?.driverMetrics && (
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                      <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                    <div className="flex items-center gap-1">
+                      <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
                       <span className="text-xs font-medium text-gray-600">
                         {chat.driver.driverMetrics.rankingScore.toFixed(1)}
                       </span>
@@ -288,7 +288,7 @@ export default function ChatPage() {
                   )}
                 </div>
                 {otherUser?.phone && (
-                  <p className="text-xs text-gray-500 mt-0.5 truncate">{otherUser.phone}</p>
+                  <p className="text-sm text-gray-500 mt-1">{otherUser.phone}</p>
                 )}
               </div>
             </div>
