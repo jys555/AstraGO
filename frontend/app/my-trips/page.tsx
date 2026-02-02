@@ -171,7 +171,7 @@ export default function MyTripsPage() {
                 <ArrowLeft className="h-5 w-5" />
               </Button>
               <h1 className="text-xl font-bold text-gray-900">
-                Mening Safarlarim
+                Safarlarim
               </h1>
             </div>
           </div>

@@ -72,7 +72,7 @@ export default function ChatListPage() {
                 variant="ghost"
                 size="sm"
                 onClick={() => router.push('/')}
-                className="hover:bg-gray-50 -ml-2"
+                className="hover:bg-gray-50"
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
