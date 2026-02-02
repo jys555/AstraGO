@@ -329,7 +329,7 @@ export default function ChatPage() {
 
 
         {/* Messages */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 overscroll-contain min-h-0">
+        <main className="flex-1 overflow-y-auto bg-gray-50 overscroll-contain min-h-0 pb-24">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 space-y-3">
             {messages.length === 0 ? (
               <div className="text-center py-12">
@@ -431,7 +431,7 @@ export default function ChatPage() {
 
         {/* Input Area - Show for both drivers and passengers (unless read-only) */}
         {!isReadOnly && (
-          <footer className="border-t border-gray-100 bg-white pb-20">
+          <footer className="fixed bottom-20 left-0 right-0 border-t border-gray-100 bg-white z-30 safe-area-bottom">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3">
               <form onSubmit={handleSend} className="flex items-end gap-2">
                 <Button
