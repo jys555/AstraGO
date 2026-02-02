@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import prisma from '../config/database';
 import { NotFoundError, ValidationError } from '../utils/errors';
 import { getIO } from '../index';
+import { sendNotification, NotificationType } from '../services/notificationService';
 
 // Get all chats for current user (as driver or passenger)
 export async function getMyChats(
@@ -257,6 +258,20 @@ export async function sendMessage(
         chatId,
         message,
       });
+    }
+
+    // Send notification if driver sent a message (notify passenger)
+    if (user.id === chat.driverId) {
+      try {
+        await sendNotification(
+          chat.passenger.telegramId,
+          NotificationType.DRIVER_REPLIED,
+          chat.tripId,
+          chat.reservationId
+        );
+      } catch (error) {
+        console.error('Failed to send driver reply notification:', error);
+      }
     }
 
     res.status(201).json({ message });

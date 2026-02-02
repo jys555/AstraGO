@@ -4,6 +4,7 @@ import { NotFoundError, ValidationError } from '../utils/errors';
 import { updateSeatAvailability } from '../services/seatAvailabilityService';
 import { getDriverRanking, updateDriverMetricsOnTripCancellation, calculateReliabilityScore, calculateRankingScore } from '../services/driverRankingService';
 import { CreateTripInput, UpdateTripInput, TripFilters, TripSortOptions } from '../types';
+import { sendNotification, NotificationType } from '../services/notificationService';
 
 export async function getTrips(
   req: Request,
@@ -639,6 +640,18 @@ export async function cancelTrip(
           archivedAt: new Date(),
         },
       });
+
+      // Send notification to passenger about trip cancellation
+      try {
+        await sendNotification(
+          reservation.passenger.telegramId,
+          NotificationType.TRIP_CANCELLED,
+          trip.id,
+          reservation.id
+        );
+      } catch (error) {
+        console.error('Failed to send cancellation notification:', error);
+      }
     }
 
     // Update trip status to CANCELLED

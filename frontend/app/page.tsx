@@ -52,12 +52,8 @@ export default function HomePage() {
   // Check if onboarding should be shown
   useEffect(() => {
     if (onboardingState && !onboardingState.onboardingCompletedAt) {
-      // Determine current step
-      let step = 1;
-      if (onboardingState.currentStep > 1) {
-        step = onboardingState.currentStep;
-      }
-      setOnboardingStep(step);
+      // Always start at step 1 for new users
+      setOnboardingStep(1);
       setShowOnboarding(true);
     } else if (onboardingState?.onboardingCompletedAt) {
       setShowOnboarding(false);

@@ -4,6 +4,7 @@ import { NotFoundError, ConflictError, ValidationError } from '../utils/errors';
 import { reserveSeats, releaseSeats } from './seatAvailabilityService';
 import { generateChatDeepLink } from './telegramService';
 import { updateDriverMetrics } from './driverRankingService';
+import { sendNotification, NotificationType } from './notificationService';
 
 const RESERVATION_DURATION_MS = 10 * 60 * 1000; // 10 minutes
 const DRIVER_RESPONSE_TIMEOUT_MS = 2 * 60 * 1000; // 2 minutes
@@ -96,6 +97,39 @@ export async function createReservation(
     },
   });
 
+  // Send notification to driver about new reservation
+  try {
+    await sendNotification(
+      trip.driver.telegramId,
+      NotificationType.DRIVER_REPLIED,
+      trip.id,
+      reservation.id
+    );
+  } catch (error) {
+    console.error('Failed to send reservation notification to driver:', error);
+  }
+
+  // Schedule expiration notification (2 minutes before expiry)
+  setTimeout(async () => {
+    try {
+      const reservationCheck = await prisma.reservation.findUnique({
+        where: { id: reservation.id },
+        include: { passenger: true },
+      });
+      
+      if (reservationCheck && reservationCheck.status === 'PENDING') {
+        await sendNotification(
+          reservationCheck.passenger.telegramId,
+          NotificationType.RESERVATION_EXPIRING_2MIN,
+          trip.id,
+          reservation.id
+        );
+      }
+    } catch (error) {
+      console.error('Failed to send expiration notification:', error);
+    }
+  }, RESERVATION_DURATION_MS - 2 * 60 * 1000); // 2 minutes before expiry
+
   return {
     ...reservation,
     chat,
@@ -166,6 +200,18 @@ export async function confirmReservation(
     responseTime,
     true // confirmed
   );
+
+  // Send notification to passenger about confirmation
+  try {
+    await sendNotification(
+      reservation.passenger.telegramId,
+      NotificationType.TRIP_CONFIRMED,
+      reservation.trip.id,
+      reservation.id
+    );
+  } catch (error) {
+    console.error('Failed to send confirmation notification:', error);
+  }
 
   return updated;
 }

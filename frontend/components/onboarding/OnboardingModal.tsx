@@ -96,6 +96,13 @@ export function OnboardingModal({
                     >
                       Qanday PIN qilinadi?
                     </Button>
+                    <Button
+                      onClick={() => handleNext()}
+                      variant="outline"
+                      className="w-full border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-xl"
+                    >
+                      Keyingi
+                    </Button>
                     <button
                       onClick={handleLater}
                       className="w-full text-gray-600 hover:text-gray-800 text-sm font-medium py-2"
