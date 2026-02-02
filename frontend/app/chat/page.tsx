@@ -28,6 +28,7 @@ export default function ChatListPage() {
     refetchInterval: 10000, // Refetch every 10 seconds
   });
 
+  
   // Use dateUtils for consistent formatting
   const formatDateLocal = (dateString: string) => {
     const date = new Date(dateString);
