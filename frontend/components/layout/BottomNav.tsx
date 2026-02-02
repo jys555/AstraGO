@@ -108,7 +108,7 @@ export function BottomNav() {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-40 safe-area-bottom shadow-sm" style={{ position: 'fixed', bottom: 0 }}>
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-40 safe-area-bottom shadow-sm" style={{ position: 'fixed', bottom: 0, transform: 'translateZ(0)', willChange: 'transform' }}>
         <div className="flex items-center justify-around px-1 py-1 max-w-md mx-auto">
           {navItems.map((item) => {
             const isActive = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href));
