@@ -8,6 +8,23 @@ export function initTelegramWebApp() {
     const tg = (window as any).Telegram.WebApp;
     tg.ready();
     tg.expand();
+    
+    // Enable rounded corners for smooth miniapp appearance
+    if (tg.setHeaderColor) {
+      tg.setHeaderColor('#ffffff');
+    }
+    if (tg.setBackgroundColor) {
+      tg.setBackgroundColor('#f9fafb');
+    }
+    
+    // Apply rounded corners via CSS
+    if (typeof document !== 'undefined') {
+      document.documentElement.style.borderRadius = '24px 24px 0 0';
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.borderRadius = '24px 24px 0 0';
+      document.body.style.overflow = 'hidden';
+    }
+    
     return tg;
   }
 

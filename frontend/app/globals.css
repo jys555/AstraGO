@@ -453,19 +453,27 @@ nav.fixed {
 }
 
 /* Rounded top corners for Telegram Mini App - smooth appearance */
-.miniapp-rounded {
+html {
   border-radius: 24px 24px 0 0 !important;
-  overflow: hidden;
+  overflow: hidden !important;
+}
+
+body {
+  border-radius: 24px 24px 0 0 !important;
+  overflow: hidden !important;
+  position: relative;
 }
 
 .miniapp-content {
-  border-radius: 24px 24px 0 0;
-  overflow: hidden;
+  border-radius: 24px 24px 0 0 !important;
+  overflow: hidden !important;
   min-height: 100vh;
   background: #f9fafb;
+  position: relative;
 }
 
-/* Ensure all pages have rounded top corners */
-.miniapp-content > * {
-  border-radius: 24px 24px 0 0;
+/* Ensure all main content areas have rounded top corners */
+.miniapp-content > *:first-child {
+  border-radius: 24px 24px 0 0 !important;
+  overflow: hidden;
 }
