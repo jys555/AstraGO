@@ -38,7 +38,7 @@ export default function HomePage() {
 
   // Onboarding hooks
   const { onboardingState, completeStep, updatePreferences, updateLastAppOpen, dismissBanner } = useOnboarding();
-  const { shouldShowPinBanner, shouldShowNotifBanner, isLoading: bannersLoading } = useBanners();
+  const { shouldShowPinBanner, shouldShowNotifBanner, isLoading: bannersLoading } = useBanners(!!user);
   const [onboardingStep, setOnboardingStep] = useState<number | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
 

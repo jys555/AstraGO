@@ -23,11 +23,11 @@ export function OnboardingModal({
 
   if (!isOpen) return null;
 
-  const handleNext = () => {
+  const handleNext = (notifOptIn?: boolean) => {
     if (currentStep < 3) {
-      onStepComplete(currentStep, 'next');
+      onStepComplete(currentStep, 'next', notifOptIn);
     } else {
-      onStepComplete(3, 'next');
+      onStepComplete(3, 'next', notifOptIn);
       onClose();
     }
   };
@@ -146,8 +146,7 @@ export function OnboardingModal({
                   <div className="space-y-3">
                     <Button
                       onClick={() => {
-                        onStepComplete(2, 'next', true); // Opt in
-                        handleNext();
+                        handleNext(true); // Opt in
                       }}
                       className="w-full bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 rounded-xl"
                     >
@@ -155,8 +154,7 @@ export function OnboardingModal({
                     </Button>
                     <button
                       onClick={() => {
-                        onStepComplete(2, 'next', false); // Opt out
-                        handleNext();
+                        handleNext(false); // Opt out
                       }}
                       className="w-full text-gray-600 hover:text-gray-800 text-sm font-medium py-2"
                     >

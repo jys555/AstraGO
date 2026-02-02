@@ -3,13 +3,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 
-export function useBanners() {
+export function useBanners(enabled: boolean = true) {
   const { data: pinBanner, isLoading: pinLoading } = useQuery({
     queryKey: ['banners', 'pin'],
     queryFn: async () => {
       const response = await apiClient.getBannerVisibility('pin');
       return response.shouldShow;
     },
+    enabled,
     retry: false,
   });
 
@@ -19,6 +20,7 @@ export function useBanners() {
       const response = await apiClient.getBannerVisibility('notifications');
       return response.shouldShow;
     },
+    enabled,
     retry: false,
   });
 

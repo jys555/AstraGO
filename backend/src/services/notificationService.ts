@@ -127,13 +127,22 @@ async function sendTelegramNotification(
   telegramUserId: string,
   message: string
 ): Promise<void> {
-  // TODO: Implement Telegram Bot API integration
-  // This would use the Telegram Bot API to send a message to the user
-  // For now, we'll just log it
-  console.log(`[Notification] To ${telegramUserId}: ${message}`);
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
   
-  // In production, you would do:
-  // await telegramBot.sendMessage(telegramUserId, message);
+  if (!botToken) {
+    console.warn('TELEGRAM_BOT_TOKEN not set, skipping notification');
+    console.log(`[Notification] To ${telegramUserId}: ${message}`);
+    return;
+  }
+
+  try {
+    const { sendTelegramMessage } = await import('./telegramBotService');
+    await sendTelegramMessage(botToken, telegramUserId, message);
+    console.log(`[Notification] Sent to ${telegramUserId}: ${message}`);
+  } catch (error) {
+    console.error(`[Notification] Failed to send to ${telegramUserId}:`, error);
+    // Don't throw - we don't want notification failures to break the app
+  }
 }
 
 /**
