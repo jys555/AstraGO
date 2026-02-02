@@ -1,10 +1,11 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { ArrowLeft } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
-import { AppHeader } from '@/components/layout/AppHeader';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useRouter } from 'next/navigation';
 import { Chat } from '@/types';
@@ -63,9 +64,25 @@ export default function ChatListPage() {
   return (
     <RegistrationGuard>
       <div className="min-h-screen bg-gray-50 pb-20">
-        <AppHeader />
+        {/* Header */}
+        <header className="border-b border-gray-200 bg-white sticky top-0 z-50 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push('/')}
+                className="hover:bg-gray-50 -ml-2"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <h1 className="text-xl font-bold text-gray-900">
+                Chatlar
+              </h1>
+            </div>
+          </div>
+        </header>
         <main className="container mx-auto px-4 py-6">
-          <h1 className="text-2xl font-bold mb-6 text-gray-900">Chatlar</h1>
 
           {isLoading ? (
             <div className="text-center py-12">
