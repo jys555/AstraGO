@@ -9,9 +9,9 @@ export function initTelegramWebApp() {
     tg.ready();
     tg.expand();
     
-    // Enable rounded corners for smooth miniapp appearance
+    // Set Telegram bot header to black (absolute header from bot settings)
     if (tg.setHeaderColor) {
-      tg.setHeaderColor('#ffffff');
+      tg.setHeaderColor('#000000'); // Qora rang
     }
     if (tg.setBackgroundColor) {
       tg.setBackgroundColor('#f9fafb');
