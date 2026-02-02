@@ -98,11 +98,11 @@ export default function ChatPage() {
   // Prevent navbar from moving with keyboard - simple CSS solution
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // Set navbar to always stay fixed at bottom using CSS
+      // Set navbar to always stay fixed at bottom using CSS with GPU acceleration
       const navbar = document.querySelector('nav[class*="fixed bottom-0"]');
       if (navbar) {
         const navElement = navbar as HTMLElement;
-        navElement.style.cssText = 'position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; z-index: 40 !important;';
+        navElement.style.cssText = 'position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; z-index: 40 !important; transform: translateZ(0) !important; will-change: transform !important;';
       }
     }
   }, []);
