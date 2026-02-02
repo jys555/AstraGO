@@ -95,6 +95,16 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messagesData?.messages]);
 
+  // Prevent navbar from moving with keyboard using Telegram WebApp API
+  useEffect(() => {
+    if (typeof window !== 'undefined' && (window as any).Telegram?.WebApp) {
+      const tg = (window as any).Telegram.WebApp;
+      // Disable viewport auto-resize to prevent navbar from moving
+      tg.expand();
+      tg.enableClosingConfirmation();
+    }
+  }, []);
+
   // Mark messages as read when they're viewed (using Intersection Observer)
   useEffect(() => {
     if (!chatId || !currentUserIdValue || !messagesData?.messages) return;

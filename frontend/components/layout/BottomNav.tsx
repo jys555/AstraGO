@@ -36,6 +36,16 @@ export function BottomNav() {
     return sum;
   }, 0) || 0;
 
+  // Prevent navbar from moving with keyboard using Telegram WebApp API
+  useEffect(() => {
+    if (typeof window !== 'undefined' && (window as any).Telegram?.WebApp) {
+      const tg = (window as any).Telegram.WebApp;
+      // Disable viewport auto-resize to prevent navbar from moving
+      tg.expand();
+      tg.enableClosingConfirmation();
+    }
+  }, []);
+
   const handleNavClick = (e: React.MouseEvent, href: string) => {
     // Allow home page navigation without registration
     if (href === '/') {
