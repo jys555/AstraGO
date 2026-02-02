@@ -253,8 +253,8 @@ export default function ChatPage() {
       <div className="flex flex-col h-screen bg-gray-50 overflow-hidden relative">
         {/* Header */}
         <header className="border-b border-gray-100 bg-white flex-shrink-0">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-2">
-            <div className="flex items-center gap-4">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-1.5">
+            <div className="flex items-center gap-3">
               <Button
                 variant="ghost"
                 size="sm"
@@ -269,12 +269,12 @@ export default function ChatPage() {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1">
-                <h1 className="text-lg font-semibold text-gray-900">
+                <h1 className="text-lg font-semibold text-gray-900 leading-tight">
                   {otherUser?.firstName} {otherUser?.lastName}
                 </h1>
-                <div className="flex items-center gap-3 mt-1">
+                <div className="flex items-center gap-3 mt-0.5">
                   {chat?.trip && (
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 leading-tight">
                       {chat.trip.routeFrom} → {chat.trip.routeTo}
                     </p>
                   )}
@@ -288,7 +288,7 @@ export default function ChatPage() {
                   )}
                 </div>
                 {otherUser?.phone && (
-                  <p className="text-sm text-gray-500 mt-1">{otherUser.phone}</p>
+                  <p className="text-sm text-gray-500 mt-0.5 leading-tight">{otherUser.phone}</p>
                 )}
               </div>
             </div>
