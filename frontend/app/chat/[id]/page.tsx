@@ -441,7 +441,7 @@ export default function ChatPage() {
 
         {/* Input Area - Show for both drivers and passengers (unless read-only) */}
         {!isReadOnly && (
-          <footer className="fixed bottom-[64px] left-0 right-0 border-t border-gray-100 bg-white z-30 safe-area-bottom">
+          <footer className="fixed bottom-[56px] left-0 right-0 border-t border-gray-100 bg-white z-30 safe-area-bottom">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3">
               <form onSubmit={handleSend} className="flex items-end gap-2">
                 <Button
