@@ -250,7 +250,7 @@ export default function ChatPage() {
 
   return (
     <RegistrationGuard>
-      <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+      <div className="flex flex-col h-screen bg-gray-50 overflow-hidden relative">
         {/* Header */}
         <header className="border-b border-gray-100 bg-white flex-shrink-0">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-2">
@@ -431,7 +431,7 @@ export default function ChatPage() {
 
         {/* Input Area - Show for both drivers and passengers (unless read-only) */}
         {!isReadOnly && (
-          <footer className="border-t border-gray-100 bg-white flex-shrink-0 safe-area-bottom z-30">
+          <footer className="border-t border-gray-100 bg-white flex-shrink-0 safe-area-bottom z-30 sticky bottom-0">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 py-2">
               <form onSubmit={handleSend} className="flex items-end gap-2">
                 <Button
