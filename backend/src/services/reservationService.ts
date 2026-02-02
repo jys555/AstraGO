@@ -70,10 +70,22 @@ export async function createReservation(
     include: {
       trip: {
         include: {
-          driver: true,
+          driver: {
+            select: {
+              id: true,
+              telegramId: true,
+              username: true,
+              phone: true,
+            },
+          },
         },
       },
-      passenger: true,
+      passenger: {
+        select: {
+          id: true,
+          telegramId: true,
+        },
+      },
     },
   });
 
@@ -189,8 +201,17 @@ export async function confirmReservation(
       confirmedAt: new Date(),
     },
     include: {
-      trip: true,
-      passenger: true,
+      trip: {
+        select: {
+          id: true,
+        },
+      },
+      passenger: {
+        select: {
+          id: true,
+          telegramId: true,
+        },
+      },
     },
   });
 
