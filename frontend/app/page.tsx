@@ -330,13 +330,15 @@ export default function HomePage() {
           isOpen={showOnboarding}
           currentStep={onboardingStep}
           onStepComplete={async (step, action, notifOptIn) => {
-            await completeStep({ step, action });
-            
-            // Handle step 2 notification preference
+            // Handle step 2 notification preference first
             if (step === 2 && action === 'next' && notifOptIn !== undefined) {
-              updatePreferences({ notifOptIn });
+              await updatePreferences({ notifOptIn });
             }
             
+            // Complete the step
+            await completeStep({ step, action });
+            
+            // Navigate to next step or close
             if (action === 'next' && step < 3) {
               setOnboardingStep(step + 1);
             } else if (action === 'next' && step === 3) {
