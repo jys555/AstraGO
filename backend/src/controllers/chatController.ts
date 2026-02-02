@@ -318,6 +318,7 @@ export async function markMessagesAsRead(
   try {
     const user = (req as any).user;
     const { chatId } = req.params;
+    const { messageIds } = req.body; // Optional: array of specific message IDs to mark as read
 
     // Verify user has access to this chat
     const chat = await prisma.chat.findUnique({
@@ -332,19 +333,38 @@ export async function markMessagesAsRead(
       throw new ValidationError('Not authorized to access this chat');
     }
 
-    // Mark all unread messages as read
-    await prisma.chatMessage.updateMany({
-      where: {
-        chatId,
-        senderId: {
-          not: user.id, // Messages not sent by current user
+    // If specific message IDs provided, mark only those
+    if (messageIds && Array.isArray(messageIds) && messageIds.length > 0) {
+      await prisma.chatMessage.updateMany({
+        where: {
+          id: {
+            in: messageIds,
+          },
+          chatId,
+          senderId: {
+            not: user.id, // Messages not sent by current user
+          },
+          readAt: null, // Unread messages
         },
-        readAt: null, // Unread messages
-      },
-      data: {
-        readAt: new Date(),
-      },
-    });
+        data: {
+          readAt: new Date(),
+        },
+      });
+    } else {
+      // Mark all unread messages as read
+      await prisma.chatMessage.updateMany({
+        where: {
+          chatId,
+          senderId: {
+            not: user.id, // Messages not sent by current user
+          },
+          readAt: null, // Unread messages
+        },
+        data: {
+          readAt: new Date(),
+        },
+      });
+    }
 
     res.json({ success: true });
   } catch (error) {

@@ -95,14 +95,63 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messagesData?.messages]);
 
-  // Mark messages as read when chat is opened
+  // Mark messages as read when they're viewed (using Intersection Observer)
   useEffect(() => {
-    if (chatId && currentUserIdValue && messagesData?.messages) {
-      // Mark all unread messages as read
-      apiClient.markChatAsRead(chatId).then(() => {
-        queryClient.invalidateQueries({ queryKey: ['chats'] });
-      }).catch(console.error);
-    }
+    if (!chatId || !currentUserIdValue || !messagesData?.messages) return;
+
+    // Get unread messages (messages not sent by current user and not read)
+    const unreadMessages = messagesData.messages.filter(
+      (msg: ChatMessage) => msg.senderId !== currentUserIdValue && !msg.readAt
+    );
+
+    if (unreadMessages.length === 0) return;
+
+    // Small delay to ensure DOM is ready
+    const timeoutId = setTimeout(() => {
+      // Mark messages as read when they come into view
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visibleMessageIds = entries
+            .filter((entry) => entry.isIntersecting)
+            .map((entry) => entry.target.getAttribute('data-message-id'))
+            .filter((id): id is string => id !== null);
+
+          if (visibleMessageIds.length > 0) {
+            // Mark visible unread messages as read
+            const unreadVisibleIds = visibleMessageIds.filter((id) => {
+              const msg = messagesData.messages.find((m: ChatMessage) => m.id === id);
+              return msg && msg.senderId !== currentUserIdValue && !msg.readAt;
+            });
+
+            if (unreadVisibleIds.length > 0) {
+              apiClient.markChatAsRead(chatId, unreadVisibleIds).then(() => {
+                queryClient.invalidateQueries({ queryKey: ['chat-messages', chatId] });
+                queryClient.invalidateQueries({ queryKey: ['chats'] });
+              }).catch(console.error);
+            }
+          }
+        },
+        {
+          threshold: 0.5, // Message is considered visible when 50% is in view
+        }
+      );
+
+      // Observe all unread messages
+      unreadMessages.forEach((msg: ChatMessage) => {
+        const element = document.querySelector(`[data-message-id="${msg.id}"]`);
+        if (element) {
+          observer.observe(element);
+        }
+      });
+
+      return () => {
+        observer.disconnect();
+      };
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [chatId, currentUserIdValue, messagesData?.messages, queryClient]);
 
   const handleSend = (e: React.FormEvent) => {
@@ -302,6 +351,7 @@ export default function ChatPage() {
                 return (
                   <div
                     key={msg.id}
+                    data-message-id={msg.id}
                     className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
@@ -314,14 +364,39 @@ export default function ChatPage() {
                       `}
                     >
                       <p className="text-sm leading-relaxed">{msg.content}</p>
-                      <p 
-                        className={`
-                          text-xs mt-1.5
-                          ${isOwn ? 'text-primary-100' : 'text-gray-500'}
-                        `}
-                      >
-                        {formatTimeLocal(msg.createdAt)}
-                      </p>
+                      <div className="flex items-center justify-end gap-1.5 mt-1.5">
+                        <p 
+                          className={`
+                            text-xs
+                            ${isOwn ? 'text-primary-100' : 'text-gray-500'}
+                          `}
+                        >
+                          {formatTimeLocal(msg.createdAt)}
+                        </p>
+                        {isOwn && (
+                          <span className={`
+                            flex items-center
+                            ${msg.readAt ? 'text-primary-100' : 'text-primary-200'}
+                          `}>
+                            {msg.readAt ? (
+                              // Double checkmark (read) - two checkmarks side by side
+                              <span className="flex items-center -space-x-0.5">
+                                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              </span>
+                            ) : (
+                              // Single checkmark (sent)
+                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                            )}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );

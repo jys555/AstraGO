@@ -100,9 +100,10 @@ class ApiClient {
     });
   }
 
-  async markChatAsRead(chatId: string): Promise<{ success: boolean }> {
+  async markChatAsRead(chatId: string, messageIds?: string[]): Promise<{ success: boolean }> {
     return this.request<{ success: boolean }>(`/api/chats/${chatId}/read`, {
       method: 'POST',
+      body: JSON.stringify({ messageIds }),
     });
   }
 
