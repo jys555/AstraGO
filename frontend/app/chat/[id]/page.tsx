@@ -262,9 +262,9 @@ export default function ChatPage() {
 
   return (
     <RegistrationGuard>
-      <div className="flex flex-col bg-gray-50 relative pb-20">
+      <div className="flex flex-col h-screen bg-gray-50 relative overflow-hidden">
         {/* Header */}
-        <header className="border-b border-gray-100 bg-white flex-shrink-0">
+        <header className="border-b border-gray-100 bg-white flex-shrink-0 sticky top-0 z-50">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-1.5">
             <div className="flex items-center gap-3">
               <Button
@@ -341,7 +341,7 @@ export default function ChatPage() {
 
 
         {/* Messages */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 overscroll-contain pb-32">
+        <main className="flex-1 overflow-y-auto bg-gray-50 overscroll-contain min-h-0 pb-32">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 space-y-3">
             {messages.length === 0 ? (
               <div className="text-center py-12">

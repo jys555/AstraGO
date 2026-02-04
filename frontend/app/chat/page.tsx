@@ -106,7 +106,7 @@ export default function ChatListPage() {
             </Card>
           ) : (
             <Tabs defaultValue="active" className="w-full">
-              <TabsList className="grid w-full max-w-md grid-cols-2 mb-6 bg-gray-100 rounded-xl p-1">
+              <TabsList className="sticky top-[73px] z-40 bg-white pt-4 pb-2 -mt-6 mb-6 grid w-full max-w-md grid-cols-2 bg-gray-100 rounded-xl p-1">
                 <TabsTrigger value="active" className="data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm rounded-lg font-semibold">
                   Faol ({activeChats.length})
                 </TabsTrigger>
