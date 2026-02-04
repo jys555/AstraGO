@@ -309,7 +309,25 @@ export default function CreateTripPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">O&apos;rinlar soni</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Qabul qilish turi</label>
+                <select
+                  value={deliveryType}
+                  onChange={(e) => setDeliveryType(e.target.value as 'PASSENGER_ONLY' | 'CARGO_ACCEPTED')}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
+                >
+                  <option value="PASSENGER_ONLY">Faqat yo&apos;lovchi</option>
+                  <option value="CARGO_ACCEPTED">Yo&apos;lovchi + Yuk (Pochta)</option>
+                </select>
+                <p className="text-xs text-gray-500 mt-1">
+                  {deliveryType === 'PASSENGER_ONLY' 
+                    ? 'Siz faqat yo\'lovchilarni qabul qilasiz'
+                    : 'Siz yo\'lovchilar va yuk (pochta) qabul qilasiz'}
+                </p>
+              </div>
+
+              {deliveryType === 'PASSENGER_ONLY' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">O&apos;rinlar soni</label>
                   <input
                     type="number"
                     min={1}
@@ -318,32 +336,20 @@ export default function CreateTripPage() {
                     onChange={(e) => setTotalSeats(Number(e.target.value))}
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
                   />
-                {errors.totalSeats && <p className="text-xs text-red-500 mt-1">{errors.totalSeats}</p>}
-              </div>
+                  {errors.totalSeats && <p className="text-xs text-red-500 mt-1">{errors.totalSeats}</p>}
+                </div>
+              )}
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Olish joyi</label>
-                  <select
-                    value={pickupType}
-                    onChange={(e) => setPickupType(e.target.value as 'STATION_ONLY' | 'HOME_PICKUP')}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
-                  >
-                    <option value="STATION_ONLY">Fakat bekatdan</option>
-                    <option value="HOME_PICKUP">Uy manzilidan ham</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Yo&apos;lovchi / Yuk</label>
-                  <select
-                    value={deliveryType}
-                    onChange={(e) => setDeliveryType(e.target.value as 'PASSENGER_ONLY' | 'CARGO_ACCEPTED')}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
-                  >
-                    <option value="PASSENGER_ONLY">Faqat yo&apos;lovchi</option>
-                    <option value="CARGO_ACCEPTED">Yo&apos;lovchi + Yuk</option>
-                  </select>
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Olish joyi</label>
+                <select
+                  value={pickupType}
+                  onChange={(e) => setPickupType(e.target.value as 'STATION_ONLY' | 'HOME_PICKUP')}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
+                >
+                  <option value="STATION_ONLY">Fakat bekatdan</option>
+                  <option value="HOME_PICKUP">Uy manzilidan ham</option>
+                </select>
               </div>
 
               {errors.submit && (
