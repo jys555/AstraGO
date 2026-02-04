@@ -114,7 +114,7 @@ export default function CreateTripPage() {
 
   if (userLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="bg-gray-50 flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
           <p className="text-gray-600">Yuklanmoqda...</p>
@@ -125,7 +125,7 @@ export default function CreateTripPage() {
 
   return (
     <RegistrationGuard>
-      <div className="min-h-screen bg-gray-50 pb-20">
+      <div className="bg-gray-50 pb-20">
         <AppHeader />
 
         <main className="container mx-auto px-4 py-6">

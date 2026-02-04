@@ -106,7 +106,7 @@ function TripsPage() {
   if (error) {
     return (
       <RegistrationGuard>
-        <div className="min-h-screen bg-gray-50 pb-20">
+        <div className="bg-gray-50 pb-20">
           <AppHeader />
           <div className="container mx-auto px-4 py-12 text-center">
             <p className="text-red-600">Safarlarni yuklashda xatolik yuz berdi. Iltimos, qayta urinib ko'ring.</p>
@@ -135,7 +135,7 @@ function TripsPage() {
   if (user && user.role === 'DRIVER') {
     return (
       <RegistrationGuard>
-        <div className="min-h-screen bg-gray-50 pb-20">
+        <div className="bg-gray-50 pb-20">
           <AppHeader />
           <div className="container mx-auto px-4 py-12 text-center">
             <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 max-w-md mx-auto">
