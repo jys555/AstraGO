@@ -190,7 +190,7 @@ export default function ChatPage() {
   if (chatLoading || messagesLoading) {
     return (
       <RegistrationGuard>
-        <div className="bg-gray-50 pb-20">
+        <div className="bg-white pb-20">
           <AppHeader />
           <div className="container mx-auto px-4 py-12 text-center">
             <div className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
@@ -207,7 +207,7 @@ export default function ChatPage() {
   if (!chat) {
     return (
       <RegistrationGuard>
-        <div className="bg-gray-50 pb-20">
+        <div className="bg-white pb-20">
           <AppHeader />
           <div className="container mx-auto px-4 py-12 text-center">
             <p className="text-red-600">Chat topilmadi</p>
