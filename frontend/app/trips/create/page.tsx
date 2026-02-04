@@ -6,9 +6,9 @@ import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 import { RegistrationModal } from '@/components/auth/RegistrationModal';
 import { RegistrationGuard } from '@/components/auth/RegistrationGuard';
-import { AppHeader } from '@/components/layout/AppHeader';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 import { STANDARD_ROUTES, VEHICLE_TYPES } from '@/lib/constants';
 import { formatTime, formatDate } from '@/lib/dateUtils';
 import { DateInput } from '@/components/ui/DateInput';
@@ -148,10 +148,26 @@ export default function CreateTripPage() {
   return (
     <RegistrationGuard>
       <div className="bg-gray-50 pb-20">
-        <AppHeader />
+        {/* Header */}
+        <header className="border-b border-gray-200 bg-white sticky top-0 z-50 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push('/')}
+                className="hover:bg-gray-100"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <h1 className="text-xl font-bold text-gray-900">
+                Yangi Safar Yaratish
+              </h1>
+            </div>
+          </div>
+        </header>
 
-        <main className="container mx-auto px-4 py-6">
-          <h1 className="text-2xl font-bold mb-4">Yangi Safar Yaratish</h1>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
           {!isProfileComplete && (
             <div className="mb-4 bg-yellow-50 border border-yellow-200 text-yellow-800 text-sm rounded-xl p-3">
@@ -177,15 +193,14 @@ export default function CreateTripPage() {
           )}
 
           {isProfileComplete && isDriver && (
-            <Card>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <Card className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+              <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Qayerdan</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Qayerdan</label>
                 <select
                   value={routeFrom}
                   onChange={(e) => setRouteFrom(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
                 >
                   <option value="">Manzilni tanlang</option>
                   {STANDARD_ROUTES.map((route) => (
@@ -198,11 +213,11 @@ export default function CreateTripPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Qayerga</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Qayerga</label>
                 <select
                   value={routeTo}
                   onChange={(e) => setRouteTo(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
                 >
                   <option value="">Manzilni tanlang</option>
                   {STANDARD_ROUTES.map((route) => (
@@ -214,26 +229,26 @@ export default function CreateTripPage() {
                 {errors.routeTo && <p className="text-xs text-red-500 mt-1">{errors.routeTo}</p>}
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Sana</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Sana</label>
                   <DateInput
                     value={date}
                     onChange={setDate}
                     min={minDate}
                     max={maxDate}
-                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
                     required
                     placeholder="DD/MM/YYYY"
                   />
                   {errors.date && <p className="text-xs text-red-500 mt-1">{errors.date}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Boshlanish vaqti</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Boshlanish vaqti</label>
                   <TimeInput
                     value={startTime}
                     onChange={setStartTime}
-                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
                     required
                     placeholder="HH:mm"
                   />
@@ -242,7 +257,7 @@ export default function CreateTripPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Taxminiy davomiyligi (soat)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Taxminiy davomiyligi (soat)</label>
                 <input
                   type="number"
                   min={0.5}
@@ -250,7 +265,7 @@ export default function CreateTripPage() {
                   step={0.5}
                   value={durationHours}
                   onChange={(e) => setDurationHours(Number(e.target.value))}
-                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
                   placeholder="Masalan: 6"
                 />
                 {errors.durationHours && <p className="text-xs text-red-500 mt-1">{errors.durationHours}</p>}
@@ -278,13 +293,13 @@ export default function CreateTripPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Mashina turi / modeli</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Mashina turi / modeli</label>
                 <input
                   type="text"
                   value={vehicleType}
                   readOnly
                   disabled
-                  className="w-full border rounded-lg px-3 py-2 text-sm bg-gray-100 text-gray-600 cursor-not-allowed"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-gray-50 text-gray-600 cursor-not-allowed"
                   title="Mashina modeli profilingizdan olinadi"
                 />
                 <p className="text-xs text-gray-500 mt-1">Mashina modeli profilingizdan avtomatik olinadi</p>
@@ -292,36 +307,36 @@ export default function CreateTripPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">O&apos;rinlar soni</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">O&apos;rinlar soni</label>
                   <input
                     type="number"
                     min={1}
                     max={8}
                     value={totalSeats}
                     onChange={(e) => setTotalSeats(Number(e.target.value))}
-                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
                   />
                 {errors.totalSeats && <p className="text-xs text-red-500 mt-1">{errors.totalSeats}</p>}
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Olish joyi</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Olish joyi</label>
                   <select
                     value={pickupType}
                     onChange={(e) => setPickupType(e.target.value as 'STATION_ONLY' | 'HOME_PICKUP')}
-                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
                   >
                     <option value="STATION_ONLY">Fakat bekatdan</option>
                     <option value="HOME_PICKUP">Uy manzilidan ham</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Yo&apos;lovchi / Yuk</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Yo&apos;lovchi / Yuk</label>
                   <select
                     value={deliveryType}
                     onChange={(e) => setDeliveryType(e.target.value as 'PASSENGER_ONLY' | 'CARGO_ACCEPTED')}
-                    className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
                   >
                     <option value="PASSENGER_ONLY">Faqat yo&apos;lovchi</option>
                     <option value="CARGO_ACCEPTED">Yo&apos;lovchi + Yuk</option>
@@ -336,7 +351,7 @@ export default function CreateTripPage() {
               <Button
                 type="submit"
                 variant="primary"
-                className="w-full mt-2"
+                className="w-full h-11 text-base font-semibold rounded-xl mt-4"
                 isLoading={isSubmitting}
                 disabled={isSubmitting}
               >
