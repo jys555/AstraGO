@@ -485,16 +485,22 @@ body {
   min-height: 100vh;
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   position: relative;
   /* Subtle border to separate from gradient */
   box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.05);
+  /* Enable smooth scrolling */
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Content area - scrollable */
-.app-shell > main,
-.app-shell > div {
+/* Ensure body and html allow scrolling */
+html {
   overflow-y: auto;
   overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  overflow-y: auto;
+  overflow-x: hidden;
 }
