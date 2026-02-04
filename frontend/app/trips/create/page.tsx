@@ -125,7 +125,7 @@ export default function CreateTripPage() {
 
   return (
     <RegistrationGuard>
-      <div className="bg-gray-50 pb-20">
+      <div className="bg-white pb-20">
         <AppHeader />
 
         <main className="container mx-auto px-4 py-6">

@@ -425,10 +425,6 @@ input, textarea, select {
   display: none;
 }
 
-/* Safe area for bottom navigation */
-.safe-area-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
-}
 
 /* Fix navbar position - prevent keyboard from pushing it up */
 nav.fixed {

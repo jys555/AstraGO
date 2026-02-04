@@ -147,7 +147,7 @@ export default function HomePage() {
   // Show unified homepage - guest mode or role-based for registered users
   return (
     <RegistrationGuard>
-      <div className="bg-gray-50 pb-20">
+      <div className="bg-white pb-20">
         {/* Header */}
         <AppHeader hideMenu />
         

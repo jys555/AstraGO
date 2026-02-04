@@ -262,7 +262,7 @@ export default function ChatPage() {
 
   return (
     <RegistrationGuard>
-      <div className="flex flex-col h-screen bg-gray-50 relative overflow-hidden">
+      <div className="flex flex-col h-screen bg-white relative overflow-hidden">
         {/* Header */}
         <header className="border-b border-gray-100 bg-white flex-shrink-0 sticky top-0 z-50">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-1.5">
@@ -341,7 +341,7 @@ export default function ChatPage() {
 
 
         {/* Messages */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 overscroll-contain min-h-0 pb-32">
+        <main className="flex-1 overflow-y-auto bg-white overscroll-contain min-h-0 pb-32">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 space-y-3">
             {messages.length === 0 ? (
               <div className="text-center py-12">
@@ -443,7 +443,7 @@ export default function ChatPage() {
 
         {/* Input Area - Show for both drivers and passengers (unless read-only) */}
         {!isReadOnly && (
-          <footer className="fixed bottom-[60px] left-0 right-0 border-t border-gray-100 bg-white z-30 safe-area-bottom">
+          <footer className="fixed bottom-[60px] left-0 right-0 border-t border-gray-100 bg-white z-30">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3">
               <form onSubmit={handleSend} className="flex items-end gap-2">
                 <Button
