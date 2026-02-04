@@ -168,11 +168,14 @@ export default function ChatListPage() {
                               <p className="text-sm text-gray-600 truncate flex-1">
                                 {getLastMessage(chat)}
                               </p>
-                              {(chat.unreadCount ?? 0) > 0 && (
-                                <span className="ml-2 flex-shrink-0 bg-primary-500 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
-                                  {chat.unreadCount > 99 ? '99+' : chat.unreadCount}
-                                </span>
-                              )}
+                              {(() => {
+                                const unreadCount = chat.unreadCount ?? 0;
+                                return unreadCount > 0 && (
+                                  <span className="ml-2 flex-shrink-0 bg-primary-500 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
+                                    {unreadCount > 99 ? '99+' : unreadCount}
+                                  </span>
+                                );
+                              })()}
                             </div>
                           </div>
                         </div>
@@ -235,11 +238,14 @@ export default function ChatListPage() {
                               <p className="text-sm text-gray-500 truncate flex-1">
                                 {getLastMessage(chat)}
                               </p>
-                              {(chat.unreadCount ?? 0) > 0 && (
-                                <span className="ml-2 flex-shrink-0 bg-primary-500 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
-                                  {chat.unreadCount > 99 ? '99+' : chat.unreadCount}
-                                </span>
-                              )}
+                              {(() => {
+                                const unreadCount = chat.unreadCount ?? 0;
+                                return unreadCount > 0 && (
+                                  <span className="ml-2 flex-shrink-0 bg-primary-500 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
+                                    {unreadCount > 99 ? '99+' : unreadCount}
+                                  </span>
+                                );
+                              })()}
                             </div>
                           </div>
                         </div>
