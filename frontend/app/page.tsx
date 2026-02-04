@@ -151,8 +151,8 @@ export default function HomePage() {
         {/* Header */}
         <AppHeader hideMenu />
         
-        {/* Rounded top corners with banner carousel */}
-        <div className="bg-white rounded-t-3xl relative z-10 mt-2">
+        {/* Content with gray background */}
+        <div className="relative z-10 mt-2">
           <BannerCarousel />
           
           {/* Guest mode - show general info and presentation */}
@@ -246,6 +246,7 @@ export default function HomePage() {
                 <>
                   {/* Passenger Search Section */}
                   <div className="px-4 py-6 space-y-6">
+                    {/* RouteSearch card stays white */}
                     <RouteSearch
                       onSearch={handleSearch}
                     />
