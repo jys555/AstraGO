@@ -190,7 +190,7 @@ export default function ChatPage() {
   if (chatLoading || messagesLoading) {
     return (
       <RegistrationGuard>
-        <div className="bg-white pb-20">
+        <div className="bg-gray-50 pb-20">
           <AppHeader />
           <div className="container mx-auto px-4 py-12 text-center">
             <div className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
@@ -207,7 +207,7 @@ export default function ChatPage() {
   if (!chat) {
     return (
       <RegistrationGuard>
-        <div className="bg-white pb-20">
+        <div className="bg-gray-50 pb-20">
           <AppHeader />
           <div className="container mx-auto px-4 py-12 text-center">
             <p className="text-red-600">Chat topilmadi</p>
@@ -262,7 +262,7 @@ export default function ChatPage() {
 
   return (
     <RegistrationGuard>
-      <div className="flex flex-col h-screen bg-white relative overflow-hidden">
+      <div className="flex flex-col h-screen bg-gray-50 relative overflow-hidden">
         {/* Header */}
         <header className="border-b border-gray-100 bg-white flex-shrink-0 sticky top-0 z-50">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-1.5">
@@ -330,7 +330,7 @@ export default function ChatPage() {
         )}
 
         {isReservationExpired && (
-          <div className="bg-white border-b border-gray-200 px-4 py-3">
+          <div className="bg-gray-50 border-b border-gray-200 px-4 py-3">
             <div className="max-w-4xl mx-auto">
               <p className="text-sm font-medium text-gray-700 text-center">
                 Kelishuvga erishilmadi. Chat faqat o'qish uchun.
@@ -341,7 +341,7 @@ export default function ChatPage() {
 
 
         {/* Messages */}
-        <main className="flex-1 overflow-y-auto bg-white overscroll-contain min-h-0 pb-32">
+        <main className="flex-1 overflow-y-auto bg-gray-50 overscroll-contain min-h-0 pb-32">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 space-y-3">
             {messages.length === 0 ? (
               <div className="text-center py-12">

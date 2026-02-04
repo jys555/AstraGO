@@ -477,7 +477,7 @@ body {
 
 /* App Shell - white card with rounded top corners (SCROLLABLE CONTAINER) */
 .app-shell {
-  background: #ffffff;
+  background: #f9fafb; /* bg-gray-50 - professional light gray background */
   height: 100vh; /* Fixed height - fills viewport */
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
