@@ -147,12 +147,12 @@ export default function HomePage() {
   // Show unified homepage - guest mode or role-based for registered users
   return (
     <RegistrationGuard>
-      <div className="min-h-screen bg-gray-50 pb-20">
+      <div className="bg-gray-50 pb-20">
         {/* Header */}
         <AppHeader hideMenu />
         
         {/* Rounded top corners with banner carousel */}
-        <div className="bg-white rounded-t-3xl -mt-4 relative z-10">
+        <div className="bg-white rounded-t-3xl relative z-10 mt-2">
           <BannerCarousel />
           
           {/* Guest mode - show general info and presentation */}

@@ -64,7 +64,7 @@ export default function ChatListPage() {
 
   return (
     <RegistrationGuard>
-      <div className="min-h-screen bg-gray-50 pb-20">
+      <div className="bg-gray-50 pb-20">
         {/* Header */}
         <header className="border-b border-gray-200 bg-white sticky top-0 z-50 shadow-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
