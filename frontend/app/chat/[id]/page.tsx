@@ -341,7 +341,7 @@ export default function ChatPage() {
 
 
         {/* Messages */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 overscroll-contain min-h-0 pb-32">
+        <main className="flex-1 overflow-y-auto bg-gray-50 overscroll-contain pb-32">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 space-y-3">
             {messages.length === 0 ? (
               <div className="text-center py-12">
