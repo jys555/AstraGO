@@ -230,6 +230,7 @@
   z-index: 10; /* Z-index yuqori - header overlay ustida */
 }
 
+
 /* Label moves up when input is focused or has value - on border */
 .register-modal .floating-input input:focus ~ label,
 .register-modal .floating-input input:not(:placeholder-shown) ~ label,
