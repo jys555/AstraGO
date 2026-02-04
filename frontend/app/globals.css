@@ -468,6 +468,7 @@ html {
   background: linear-gradient(180deg, #0B1220 0%, #111827 50%, #0B1220 100%);
   min-height: 100vh;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 body {
@@ -476,6 +477,7 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  overflow-y: auto;
   position: relative;
 }
 
@@ -494,13 +496,10 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Ensure body and html allow scrolling */
-html {
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-body {
-  overflow-y: auto;
-  overflow-x: hidden;
+/* Make all headers sticky */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: white;
 }
