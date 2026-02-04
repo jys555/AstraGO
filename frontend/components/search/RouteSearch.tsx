@@ -20,12 +20,28 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
 }) => {
   const [from, setFrom] = useState(initialFrom);
   const [to, setTo] = useState(initialTo);
+  // Calculate max date: tomorrow (1 day ahead)
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const maxDate = tomorrow.toISOString().split('T')[0];
+  const minDate = today.toISOString().split('T')[0];
   const [date, setDate] = useState(initialDate || new Date().toISOString().split('T')[0]);
   const [passengerCount, setPassengerCount] = useState(initialPassengerCount || 1);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (from && to) {
+      // Validate date is not more than 1 day ahead
+      if (date) {
+        const selectedDate = new Date(date);
+        const maxAllowedDate = new Date(tomorrow);
+        maxAllowedDate.setHours(23, 59, 59, 999);
+        if (selectedDate > maxAllowedDate) {
+          alert('Sana ertaga (1 kun) dan oshmasligi kerak');
+          return;
+        }
+      }
       onSearch(from, to, date, passengerCount);
     }
   };

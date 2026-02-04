@@ -61,7 +61,23 @@ export default function CreateTripPage() {
 
     if (!routeFrom.trim()) newErrors.routeFrom = 'Jo\'nash manzili majburiy';
     if (!routeTo.trim()) newErrors.routeTo = 'Borish manzili majburiy';
-    if (!date) newErrors.date = 'Sana majburiy';
+    if (!date) {
+      newErrors.date = 'Sana majburiy';
+    } else {
+      // Validate date is not more than 1 day ahead
+      const selectedDate = new Date(date);
+      const maxAllowedDate = new Date(tomorrow);
+      maxAllowedDate.setHours(23, 59, 59, 999);
+      if (selectedDate > maxAllowedDate) {
+        newErrors.date = 'Sana ertaga (1 kun) dan oshmasligi kerak';
+      }
+      // Validate date is not in the past
+      const todayStart = new Date(today);
+      todayStart.setHours(0, 0, 0, 0);
+      if (selectedDate < todayStart) {
+        newErrors.date = 'Sana o\'tgan kun bo\'lishi mumkin emas';
+      }
+    }
     if (!startTime) newErrors.startTime = 'Boshlanish vaqti majburiy';
     if (!durationHours || durationHours < 0.5) newErrors.durationHours = 'Davomiylik kamida 0.5 soat bo\'lishi kerak';
     if (!vehicleType.trim()) newErrors.vehicleType = 'Mashina turi majburiy';
