@@ -135,6 +135,7 @@ export default function HomePage() {
       from,
       to,
       date,
+      ...(cargoType === 'CARGO' ? { cargoAccepted: 'true' } : {}),
       ...(passengerCount && passengerCount > 1 ? { passengerCount: passengerCount.toString() } : {}),
     });
     router.push(`/trips?${urlParams.toString()}`);
