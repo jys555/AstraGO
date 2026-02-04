@@ -81,7 +81,9 @@ export default function CreateTripPage() {
     if (!startTime) newErrors.startTime = 'Boshlanish vaqti majburiy';
     if (!durationHours || durationHours < 0.5) newErrors.durationHours = 'Davomiylik kamida 0.5 soat bo\'lishi kerak';
     if (!vehicleType.trim()) newErrors.vehicleType = 'Mashina turi majburiy';
-    if (!totalSeats || totalSeats < 1) newErrors.totalSeats = 'O\'rinlar soni kamida 1 bo\'lishi kerak';
+    if (deliveryType === 'PASSENGER_ONLY' && (!totalSeats || totalSeats < 1)) {
+      newErrors.totalSeats = 'O\'rinlar soni kamida 1 bo\'lishi kerak';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;

@@ -129,7 +129,7 @@ export default function HomePage() {
     window.location.reload();
   };
 
-  const handleSearch = (from: string, to: string, date: string, passengerCount?: number) => {
+  const handleSearch = (from: string, to: string, date: string, passengerCount?: number, cargoType?: 'PASSENGER' | 'CARGO') => {
     // Build URL with all params including passengerCount
     const urlParams = new URLSearchParams({
       from,

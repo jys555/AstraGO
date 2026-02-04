@@ -4,11 +4,12 @@ import { STANDARD_ROUTES } from '@/lib/constants';
 import { DateInput } from '../ui/DateInput';
 
 interface RouteSearchProps {
-  onSearch: (from: string, to: string, date: string, passengerCount?: number) => void;
+  onSearch: (from: string, to: string, date: string, passengerCount?: number, cargoType?: 'PASSENGER' | 'CARGO') => void;
   initialFrom?: string;
   initialTo?: string;
   initialDate?: string;
   initialPassengerCount?: number;
+  initialCargoType?: 'PASSENGER' | 'CARGO';
 }
 
 export const RouteSearch: React.FC<RouteSearchProps> = ({
@@ -17,6 +18,7 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
   initialTo = '',
   initialDate = '',
   initialPassengerCount = 1,
+  initialCargoType = 'PASSENGER',
 }) => {
   const [from, setFrom] = useState(initialFrom);
   const [to, setTo] = useState(initialTo);
@@ -27,6 +29,7 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
   const maxDate = tomorrow.toISOString().split('T')[0];
   const minDate = today.toISOString().split('T')[0];
   const [date, setDate] = useState(initialDate || new Date().toISOString().split('T')[0]);
+  const [cargoType, setCargoType] = useState<'PASSENGER' | 'CARGO'>(initialCargoType);
   const [passengerCount, setPassengerCount] = useState(initialPassengerCount || 1);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -42,7 +45,7 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
           return;
         }
       }
-      onSearch(from, to, date, passengerCount);
+      onSearch(from, to, date, cargoType === 'PASSENGER' ? passengerCount : undefined, cargoType);
     }
   };
 
@@ -85,6 +88,20 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
             ))}
           </select>
         </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Turi
+          </label>
+          <select
+            value={cargoType}
+            onChange={(e) => setCargoType(e.target.value as 'PASSENGER' | 'CARGO')}
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
+            required
+          >
+            <option value="PASSENGER">Yo'lovchi</option>
+            <option value="CARGO">Yuk (Pochta)</option>
+          </select>
+        </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -100,19 +117,21 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
               placeholder="DD/MM/YYYY"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Yo'lovchilar
-            </label>
-            <input
-              type="number"
-              min="1"
-              max="10"
-              value={passengerCount}
-              onChange={(e) => setPassengerCount(parseInt(e.target.value) || 1)}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
-            />
-          </div>
+          {cargoType === 'PASSENGER' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Yo'lovchilar soni
+              </label>
+              <input
+                type="number"
+                min="1"
+                max="10"
+                value={passengerCount}
+                onChange={(e) => setPassengerCount(parseInt(e.target.value) || 1)}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
+              />
+            </div>
+          )}
         </div>
       </div>
       <Button type="submit" variant="primary" className="w-full bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 rounded-xl shadow-sm">
