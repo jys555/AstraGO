@@ -463,37 +463,49 @@ nav.fixed {
    - Content starts immediately under Telegram header
 */
 
-/* Root gradient background - visible behind the app */
+/* Root gradient background - visible behind the app (FIXED, NO SCROLL) */
 html {
   background: linear-gradient(180deg, #0B1220 0%, #111827 50%, #0B1220 100%);
-  min-height: 100vh;
-  overflow-x: hidden;
-  overflow-y: auto;
+  height: 100vh;
+  overflow: hidden; /* Prevent html from scrolling - gradient stays fixed */
 }
 
 body {
   background: linear-gradient(180deg, #0B1220 0%, #111827 50%, #0B1220 100%);
-  min-height: 100vh;
+  height: 100vh;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden; /* Prevent body from scrolling - gradient stays fixed */
   position: relative;
 }
 
-/* App Shell - white card with rounded top corners */
+/* App Shell - white card with rounded top corners (SCROLLABLE CONTAINER) */
 .app-shell {
   background: #ffffff;
-  min-height: 100vh;
+  height: 100vh; /* Fixed height */
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: auto; /* Only app-shell scrolls, not html/body */
   position: relative;
   /* Subtle border to separate from gradient */
   box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.05);
   /* Enable smooth scrolling */
   -webkit-overflow-scrolling: touch;
+  /* Flex layout to position BottomNav at bottom */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Content area inside app-shell - grows and scrolls */
+.app-shell > *:not(nav) {
+  flex-shrink: 0;
+}
+
+/* BottomNav stays at bottom */
+.app-shell > nav {
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
 /* Make all headers sticky */
