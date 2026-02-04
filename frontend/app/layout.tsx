@@ -38,9 +38,9 @@ export default function RootLayout({
           />
         )}
       </head>
-      <body className={`${inter.className} miniapp-rounded`}>
+      <body className={inter.className}>
         <Providers>
-          <div className="miniapp-content">
+          <div className="app-shell">
             {children}
             <BottomNav />
           </div>

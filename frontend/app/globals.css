@@ -453,28 +453,48 @@ nav.fixed {
   }
 }
 
-/* Rounded top corners for Telegram Mini App - smooth appearance */
+/* ============================================
+   TELEGRAM MINI APP LAYOUT
+   ============================================
+   
+   Modern "white card on gradient" design:
+   - Outer gradient background (visible around app)
+   - Inner white app shell with rounded top corners
+   - Content starts immediately under Telegram header
+*/
+
+/* Root gradient background - visible behind the app */
 html {
-  border-radius: 24px 24px 0 0 !important;
-  overflow: hidden !important;
+  background: linear-gradient(180deg, #0B1220 0%, #111827 50%, #0B1220 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 body {
-  border-radius: 24px 24px 0 0 !important;
-  overflow: hidden !important;
-  position: relative;
-}
-
-.miniapp-content {
-  border-radius: 24px 24px 0 0 !important;
-  overflow: hidden !important;
+  background: linear-gradient(180deg, #0B1220 0%, #111827 50%, #0B1220 100%);
   min-height: 100vh;
-  background: #f9fafb;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
   position: relative;
 }
 
-/* Ensure all main content areas have rounded top corners */
-.miniapp-content > *:first-child {
-  border-radius: 24px 24px 0 0 !important;
+/* App Shell - white card with rounded top corners */
+.app-shell {
+  background: #ffffff;
+  min-height: 100vh;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
   overflow: hidden;
+  position: relative;
+  /* Subtle border to separate from gradient */
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Content area - scrollable */
+.app-shell > main,
+.app-shell > div {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
