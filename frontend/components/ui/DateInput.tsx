@@ -7,12 +7,13 @@ interface DateInputProps {
   value: string; // YYYY-MM-DD format
   onChange: (value: string) => void;
   min?: string;
+  max?: string;
   className?: string;
   required?: boolean;
   placeholder?: string;
 }
 
-export function DateInput({ value, onChange, min, className = '', required = false, placeholder }: DateInputProps) {
+export function DateInput({ value, onChange, min, max, className = '', required = false, placeholder }: DateInputProps) {
   const [displayValue, setDisplayValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -69,6 +70,7 @@ export function DateInput({ value, onChange, min, className = '', required = fal
         value={value}
         onChange={handleChange}
         min={min}
+        max={max}
         required={required}
         style={{
           position: 'absolute',

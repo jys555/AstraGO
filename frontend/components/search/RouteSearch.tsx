@@ -77,7 +77,8 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
             <DateInput
               value={date}
               onChange={setDate}
-              min={new Date().toISOString().split('T')[0]}
+              min={minDate}
+              max={maxDate}
               className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
               required
               placeholder="DD/MM/YYYY"

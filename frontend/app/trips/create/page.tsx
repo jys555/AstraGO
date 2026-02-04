@@ -32,6 +32,12 @@ export default function CreateTripPage() {
 
   const [routeFrom, setRouteFrom] = useState('');
   const [routeTo, setRouteTo] = useState('');
+  // Calculate max date: tomorrow (1 day ahead)
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const maxDate = tomorrow.toISOString().split('T')[0];
+  const minDate = today.toISOString().split('T')[0];
   const [date, setDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [durationHours, setDurationHours] = useState(6); // Default 6 hours
