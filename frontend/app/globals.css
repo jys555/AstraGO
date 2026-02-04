@@ -441,11 +441,11 @@ nav.fixed {
   will-change: transform;
 }
 
-/* Prevent viewport resize on keyboard open (mobile) */
+/* iOS Safari viewport fix - but don't block scrolling */
 @supports (-webkit-touch-callout: none) {
-  /* iOS Safari */
+  /* iOS Safari - use fill-available but allow overflow */
   html {
-    height: -webkit-fill-available;
+    min-height: -webkit-fill-available;
   }
   
   body {
@@ -494,15 +494,6 @@ body {
   box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.05);
   /* Enable smooth scrolling */
   -webkit-overflow-scrolling: touch;
-  /* Ensure content can overflow and scroll */
-  display: flex;
-  flex-direction: column;
-}
-
-/* Content wrapper inside app-shell should grow and be scrollable */
-.app-shell > * {
-  flex: 1;
-  min-height: 0;
 }
 
 /* Make all headers sticky */

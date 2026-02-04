@@ -262,7 +262,7 @@ export default function ChatPage() {
 
   return (
     <RegistrationGuard>
-      <div className="flex flex-col h-screen bg-gray-50 overflow-hidden relative">
+      <div className="flex flex-col bg-gray-50 relative pb-20">
         {/* Header */}
         <header className="border-b border-gray-100 bg-white flex-shrink-0">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-1.5">

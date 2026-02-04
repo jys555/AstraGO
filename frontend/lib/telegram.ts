@@ -6,23 +6,23 @@ export function initTelegramWebApp() {
   // Check if running in Telegram
   if ((window as any).Telegram?.WebApp) {
     const tg = (window as any).Telegram.WebApp;
-    tg.ready();
-    tg.expand();
-    
-    // Set Telegram bot header to black (absolute header from bot settings)
-    if (tg.setHeaderColor) {
-      tg.setHeaderColor('#000000'); // Qora rang
-    }
-    if (tg.setBackgroundColor) {
-      tg.setBackgroundColor('#f9fafb');
-    }
-    
-    // Apply rounded corners via CSS
-    if (typeof document !== 'undefined') {
-      document.documentElement.style.borderRadius = '24px 24px 0 0';
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.borderRadius = '24px 24px 0 0';
-      document.body.style.overflow = 'hidden';
+    try {
+      if (tg.ready) {
+        tg.ready();
+      }
+      
+      // Set Telegram bot header to black (absolute header from bot settings)
+      if (tg.setHeaderColor) {
+        tg.setHeaderColor('#000000');
+      }
+      if (tg.setBackgroundColor) {
+        tg.setBackgroundColor('#0B1220');
+      }
+      if (tg.setBottomBarColor) {
+        tg.setBottomBarColor('#000000');
+      }
+    } catch (error) {
+      console.warn('Telegram WebApp init error:', error);
     }
     
     return tg;

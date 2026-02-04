@@ -40,9 +40,10 @@ export function BottomNav() {
   useEffect(() => {
     if (typeof window !== 'undefined' && (window as any).Telegram?.WebApp) {
       const tg = (window as any).Telegram.WebApp;
-      // Disable viewport auto-resize to prevent navbar from moving
-      tg.expand();
-      tg.enableClosingConfirmation();
+      // Enable closing confirmation
+      if (tg.enableClosingConfirmation) {
+        tg.enableClosingConfirmation();
+      }
     }
   }, []);
 

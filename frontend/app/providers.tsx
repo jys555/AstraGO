@@ -26,14 +26,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
     // Initialize Telegram WebApp
     const tg = initTelegramWebApp();
     
-    // Apply rounded corners even if not in Telegram (for development)
-    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-      document.documentElement.style.borderRadius = '24px 24px 0 0';
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.borderRadius = '24px 24px 0 0';
-      document.body.style.overflow = 'hidden';
-    }
-    
     if (tg) {
       const user = getTelegramUser();
       if (user) {
