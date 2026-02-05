@@ -260,7 +260,7 @@ export default function CreateTripPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div>
+                <div className="flex flex-col">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Taxminiy davomiyligi (soat)</label>
                   <input
                     type="number"
@@ -272,9 +272,11 @@ export default function CreateTripPage() {
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
                     placeholder="Masalan: 6"
                   />
-                  {errors.durationHours && <p className="text-xs text-red-500 mt-1">{errors.durationHours}</p>}
+                  <div className="h-5 mt-1">
+                    {errors.durationHours && <p className="text-xs text-red-500">{errors.durationHours}</p>}
+                  </div>
                 </div>
-                <div>
+                <div className="flex flex-col">
                   <label className="block text-sm font-medium text-gray-700 mb-2">O&apos;rinlar soni</label>
                   <input
                     type="number"
@@ -284,7 +286,9 @@ export default function CreateTripPage() {
                     onChange={(e) => setTotalSeats(Number(e.target.value))}
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
                   />
-                  {errors.totalSeats && <p className="text-xs text-red-500 mt-1">{errors.totalSeats}</p>}
+                  <div className="h-5 mt-1">
+                    {errors.totalSeats && <p className="text-xs text-red-500">{errors.totalSeats}</p>}
+                  </div>
                 </div>
               </div>
               {date && startTime && durationHours > 0 && (
