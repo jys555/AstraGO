@@ -59,7 +59,7 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
           <select
             value={from}
             onChange={(e) => setFrom(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
             required
           >
             <option value="">Manzilni tanlang</option>
@@ -77,7 +77,7 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
           <select
             value={to}
             onChange={(e) => setTo(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
             required
           >
             <option value="">Manzilni tanlang</option>
@@ -95,7 +95,7 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
           <select
             value={cargoType}
             onChange={(e) => setCargoType(e.target.value as 'PASSENGER' | 'CARGO')}
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
             required
           >
             <option value="PASSENGER">Yo'lovchi</option>
@@ -112,7 +112,7 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
               onChange={setDate}
               min={minDate}
               max={maxDate}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
               required
               placeholder="DD/MM/YYYY"
             />
@@ -122,14 +122,14 @@ export const RouteSearch: React.FC<RouteSearchProps> = ({
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Yo'lovchilar soni
               </label>
-              <input
-                type="number"
-                min="1"
-                max="10"
-                value={passengerCount}
-                onChange={(e) => setPassengerCount(parseInt(e.target.value) || 1)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
-              />
+                <input
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={passengerCount}
+                  onChange={(e) => setPassengerCount(parseInt(e.target.value) || 1)}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
+                />
             </div>
           )}
         </div>
