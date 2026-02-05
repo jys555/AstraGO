@@ -259,41 +259,55 @@ export default function CreateTripPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Taxminiy davomiyligi (soat)</label>
-                <input
-                  type="number"
-                  min={0.5}
-                  max={24}
-                  step={0.5}
-                  value={durationHours}
-                  onChange={(e) => setDurationHours(Number(e.target.value))}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
-                  placeholder="Masalan: 6"
-                />
-                {errors.durationHours && <p className="text-xs text-red-500 mt-1">{errors.durationHours}</p>}
-                {date && startTime && durationHours > 0 && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    Taxminiy tugash vaqti: {
-                      (() => {
-                        const start = new Date(`${date}T${startTime}:00`);
-                        const end = new Date(start);
-                        end.setHours(end.getHours() + Math.floor(durationHours));
-                        end.setMinutes(end.getMinutes() + Math.round((durationHours % 1) * 60));
-                        return formatTime(end);
-                      })()
-                    }
-                    {(() => {
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Taxminiy davomiyligi (soat)</label>
+                  <input
+                    type="number"
+                    min={0.5}
+                    max={24}
+                    step={0.5}
+                    value={durationHours}
+                    onChange={(e) => setDurationHours(Number(e.target.value))}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
+                    placeholder="Masalan: 6"
+                  />
+                  {errors.durationHours && <p className="text-xs text-red-500 mt-1">{errors.durationHours}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">O&apos;rinlar soni</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={8}
+                    value={totalSeats}
+                    onChange={(e) => setTotalSeats(Number(e.target.value))}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
+                  />
+                  {errors.totalSeats && <p className="text-xs text-red-500 mt-1">{errors.totalSeats}</p>}
+                </div>
+              </div>
+              {date && startTime && durationHours > 0 && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Taxminiy tugash vaqti: {
+                    (() => {
                       const start = new Date(`${date}T${startTime}:00`);
                       const end = new Date(start);
                       end.setHours(end.getHours() + Math.floor(durationHours));
                       end.setMinutes(end.getMinutes() + Math.round((durationHours % 1) * 60));
-                      const isNextDay = end.toDateString() !== start.toDateString();
-                      return isNextDay ? ` (${formatDate(end)})` : '';
-                    })()}
-                  </p>
-                )}
-              </div>
+                      return formatTime(end);
+                    })()
+                  }
+                  {(() => {
+                    const start = new Date(`${date}T${startTime}:00`);
+                    const end = new Date(start);
+                    end.setHours(end.getHours() + Math.floor(durationHours));
+                    end.setMinutes(end.getMinutes() + Math.round((durationHours % 1) * 60));
+                    const isNextDay = end.toDateString() !== start.toDateString();
+                    return isNextDay ? ` (${formatDate(end)})` : '';
+                  })()}
+                </p>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Mashina turi / modeli</label>
@@ -307,19 +321,6 @@ export default function CreateTripPage() {
                 />
                 <p className="text-xs text-gray-500 mt-1">Mashina modeli profilingizdan avtomatik olinadi</p>
                 {errors.vehicleType && <p className="text-xs text-red-500 mt-1">{errors.vehicleType}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">O&apos;rinlar soni</label>
-                <input
-                  type="number"
-                  min={1}
-                  max={8}
-                  value={totalSeats}
-                  onChange={(e) => setTotalSeats(Number(e.target.value))}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
-                />
-                {errors.totalSeats && <p className="text-xs text-red-500 mt-1">{errors.totalSeats}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
