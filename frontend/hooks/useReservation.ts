@@ -24,7 +24,8 @@ export function useReservation() {
 
   // Calculate time remaining
   useEffect(() => {
-    if (!reservation || reservation.status !== 'PENDING') {
+    // For cargo-only inquiries (seatCount === 0), we don't show a countdown timer
+    if (!reservation || reservation.status !== 'PENDING' || reservation.seatCount === 0) {
       setTimeRemaining(null);
       return;
     }

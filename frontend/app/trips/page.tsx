@@ -26,6 +26,7 @@ function TripsPage() {
     date: searchParams.get('date') || undefined,
   });
   const passengerCount = parseInt(searchParams.get('passengerCount') || '1') || 1;
+  const isCargoMode = searchParams.get('cargoAccepted') === 'true';
 
   const { data, isLoading, error } = useTrips(filters);
   
@@ -67,7 +68,9 @@ function TripsPage() {
     }
 
     try {
-      await createReservation(tripId, passengerCount || 1);
+      // If user searched as cargo (pochta), create a cargo-only reservation with seatCount = 0
+      const effectiveSeatCount = isCargoMode ? 0 : (passengerCount || 1);
+      await createReservation(tripId, effectiveSeatCount);
     } catch (error: any) {
       console.error('Failed to create reservation:', error);
       // If 401 or profile incomplete error, show registration

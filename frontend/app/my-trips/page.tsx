@@ -258,7 +258,10 @@ export default function MyTripsPage() {
                                 {trip.reservations.map((reservation: any) => (
                                   <div key={reservation.id} className="flex items-center justify-between text-xs text-blue-800">
                                     <span>
-                                      {reservation.passenger.firstName} {reservation.passenger.lastName} - {reservation.seatCount} o'rin
+                                      {reservation.passenger.firstName} {reservation.passenger.lastName} -{' '}
+                                      {reservation.seatCount === 0
+                                        ? 'Yuk (pochta)'
+                                        : `${reservation.seatCount} o'rin`}
                                     </span>
                                     {reservation.chat ? (
                                       <Button
@@ -387,7 +390,14 @@ export default function MyTripsPage() {
 
                               {/* Booking Info */}
                               <div className="text-sm text-gray-600">
-                                <span className="font-medium text-gray-900">{reservation.seatCount}</span> o'rin rezervatsiya qilingan
+                                {reservation.seatCount === 0 ? (
+                                  <span className="font-medium text-gray-900">Yuk (pochta) bo'yicha murojaat</span>
+                                ) : (
+                                  <>
+                                    <span className="font-medium text-gray-900">{reservation.seatCount}</span> o'rin
+                                    rezervatsiya qilingan
+                                  </>
+                                )}
                               </div>
 
                               {/* Actions */}
@@ -569,7 +579,14 @@ export default function MyTripsPage() {
                               </div>
 
                               <div className="text-sm text-gray-600">
-                                <span className="font-medium text-gray-900">{reservation.seatCount}</span> o'rin rezervatsiya qilingan
+                                {reservation.seatCount === 0 ? (
+                                  <span className="font-medium text-gray-900">Yuk (pochta) bo'yicha murojaat</span>
+                                ) : (
+                                  <>
+                                    <span className="font-medium text-gray-900">{reservation.seatCount}</span> o'rin
+                                    rezervatsiya qilingan
+                                  </>
+                                )}
                               </div>
 
                               <div className="flex gap-2">

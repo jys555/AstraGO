@@ -81,7 +81,8 @@ export default function CreateTripPage() {
     if (!startTime) newErrors.startTime = 'Boshlanish vaqti majburiy';
     if (!durationHours || durationHours < 0.5) newErrors.durationHours = 'Davomiylik kamida 0.5 soat bo\'lishi kerak';
     if (!vehicleType.trim()) newErrors.vehicleType = 'Mashina turi majburiy';
-    if (deliveryType === 'PASSENGER_ONLY' && (!totalSeats || totalSeats < 1)) {
+    // Driver always sets totalSeats as before (seats are for passengers only)
+    if (!totalSeats || totalSeats < 1) {
       newErrors.totalSeats = 'O\'rinlar soni kamida 1 bo\'lishi kerak';
     }
 
@@ -308,8 +309,23 @@ export default function CreateTripPage() {
                 {errors.vehicleType && <p className="text-xs text-red-500 mt-1">{errors.vehicleType}</p>}
               </div>
 
+              {/* Total seats (always visible, like before) */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Qabul qilish turi</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">O&apos;rinlar soni</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={8}
+                  value={totalSeats}
+                  onChange={(e) => setTotalSeats(Number(e.target.value))}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
+                />
+                {errors.totalSeats && <p className="text-xs text-red-500 mt-1">{errors.totalSeats}</p>}
+              </div>
+
+              {/* Passenger / cargo acceptance (for info & filtering – does NOT change seat logic) */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Yo&apos;lovchi / Yuk</label>
                 <select
                   value={deliveryType}
                   onChange={(e) => setDeliveryType(e.target.value as 'PASSENGER_ONLY' | 'CARGO_ACCEPTED')}
@@ -319,26 +335,11 @@ export default function CreateTripPage() {
                   <option value="CARGO_ACCEPTED">Yo&apos;lovchi + Yuk (Pochta)</option>
                 </select>
                 <p className="text-xs text-gray-500 mt-1">
-                  {deliveryType === 'PASSENGER_ONLY' 
+                  {deliveryType === 'PASSENGER_ONLY'
                     ? 'Siz faqat yo\'lovchilarni qabul qilasiz'
                     : 'Siz yo\'lovchilar va yuk (pochta) qabul qilasiz'}
                 </p>
               </div>
-
-              {deliveryType === 'PASSENGER_ONLY' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">O&apos;rinlar soni</label>
-                  <input
-                    type="number"
-                    min={1}
-                    max={8}
-                    value={totalSeats}
-                    onChange={(e) => setTotalSeats(Number(e.target.value))}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white text-gray-900 transition-all"
-                  />
-                  {errors.totalSeats && <p className="text-xs text-red-500 mt-1">{errors.totalSeats}</p>}
-                </div>
-              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Olish joyi</label>

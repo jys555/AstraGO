@@ -37,7 +37,8 @@ export async function createReservation(
     throw new ValidationError('Trip is not active');
   }
 
-  if (trip.availableSeats < seatCount) {
+  // For cargo-only inquiries (seatCount === 0), we don't reserve seats
+  if (seatCount > 0 && trip.availableSeats < seatCount) {
     throw new ConflictError('Not enough available seats');
   }
 
@@ -89,8 +90,10 @@ export async function createReservation(
     },
   });
 
-  // Reserve seats
-  await reserveSeats(tripId, seatCount);
+  // Reserve seats only when we actually reserve passenger seats
+  if (seatCount > 0) {
+    await reserveSeats(tripId, seatCount);
+  }
 
   // Create chat session with Telegram deep link
   const chatLink = generateChatDeepLink(
@@ -121,26 +124,28 @@ export async function createReservation(
     console.error('Failed to send reservation notification to driver:', error);
   }
 
-  // Schedule expiration notification (2 minutes before expiry)
-  setTimeout(async () => {
-    try {
-      const reservationCheck = await prisma.reservation.findUnique({
-        where: { id: reservation.id },
-        include: { passenger: true },
-      });
-      
-      if (reservationCheck && reservationCheck.status === 'PENDING') {
-        await sendNotification(
-          reservationCheck.passenger.telegramId,
-          NotificationType.RESERVATION_EXPIRING_2MIN,
-          trip.id,
-          reservation.id
-        );
+  // Schedule expiration notification (2 minutes before expiry) ONLY for seat reservations
+  if (seatCount > 0) {
+    setTimeout(async () => {
+      try {
+        const reservationCheck = await prisma.reservation.findUnique({
+          where: { id: reservation.id },
+          include: { passenger: true },
+        });
+        
+        if (reservationCheck && reservationCheck.status === 'PENDING') {
+          await sendNotification(
+            reservationCheck.passenger.telegramId,
+            NotificationType.RESERVATION_EXPIRING_2MIN,
+            trip.id,
+            reservation.id
+          );
+        }
+      } catch (error) {
+        console.error('Failed to send expiration notification:', error);
       }
-    } catch (error) {
-      console.error('Failed to send expiration notification:', error);
-    }
-  }, RESERVATION_DURATION_MS - 2 * 60 * 1000); // 2 minutes before expiry
+    }, RESERVATION_DURATION_MS - 2 * 60 * 1000); // 2 minutes before expiry
+  }
 
   return {
     ...reservation,
@@ -261,8 +266,10 @@ export async function cancelReservation(
     throw new ConflictError('Not authorized to cancel this reservation');
   }
 
-  // Release seats
-  await releaseSeats(reservation.tripId, reservation.seatCount);
+  // Release seats only if seats were actually reserved
+  if (reservation.seatCount > 0) {
+    await releaseSeats(reservation.tripId, reservation.seatCount);
+  }
 
   // Update reservation
   const updated = await prisma.reservation.update({
@@ -294,6 +301,11 @@ export async function expireReservation(reservationId: string) {
   });
 
   if (!reservation || reservation.status !== 'PENDING') {
+    return;
+  }
+
+  // Cargo-only inquiries (seatCount === 0) should NOT auto-expire or auto-archive
+  if (reservation.seatCount === 0) {
     return;
   }
 
@@ -392,6 +404,10 @@ export async function expireOldReservations() {
       status: 'PENDING',
       expiresAt: {
         lt: new Date(),
+      },
+      // Only auto-expire real seat reservations
+      seatCount: {
+        gt: 0,
       },
     },
   });

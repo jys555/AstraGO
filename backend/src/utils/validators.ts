@@ -26,7 +26,8 @@ export const updateTripSchema = z.object({
 
 export const createReservationSchema = z.object({
   tripId: z.string().uuid(),
-  seatCount: z.number().int().min(1).max(10).optional().default(1),
+  // seatCount = 0 -> cargo-only inquiry (no seats reserved)
+  seatCount: z.number().int().min(0).max(10).optional().default(1),
 });
 
 export const updateSeatsSchema = z.object({
